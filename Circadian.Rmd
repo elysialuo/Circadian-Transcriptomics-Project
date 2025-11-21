@@ -1,0 +1,127 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+
+install.packages("devtools")
+devtools::install_github("naef-lab/dryR")
+library("dryR")
+
+install.packages('simphony')
+
+install.packages('stringr')
+library(stringr)
+
+```
+
+```{r}
+processed_data <- read_csv("Bignon_RNA-seq_processed.csv")
+processed_data
+```
+
+```{r}
+
+# prepare arguments
+countData = simData[["countData"]]
+group     = simData[["group"]]
+time      = simData[["time"]]
+
+# prefilter
+keep <- rowSums(countData) > 0
+countData <- countData[keep,]
+
+# run the analysis for count data (e.g. RNA-Seq data)
+dryList   = dryseq(countData,group,time)
+
+# explore the results
+dryList[["results"]]     # data frame summarizing results
+dryList[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+dryList[["ncounts"]]     # normalized counts
+dryList[["counts"]]      # raw counts
+dryList[["cook"]]        # cook's distance for outlier detection
+dryList[["BICW_rhythm"]] # BICW for each rhythmic model
+dryList[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(dryList, "./")
+
+# plot a feature of interest
+dry_plot(dryList, "feature_113")
+
+```
+
+```{r}
+processed_data
+count_data_bignon <- processed_data |>
+    column_to_rownames("Gene_ID") |>
+    select(-c(Gene_Name, description, Gene_type))
+
+# Check for missing values or empty rows
+table(rowSums(count_data_bignon) == 0) 
+table(is.na(count_data_bignon))
+
+group_bignon <- as.data.frame(t(count_data_bignon)) |>
+    rownames_to_column("Label") |>
+    select(Label) |> t()
+
+time_bignon <- str_extract(group_bignon, 'ZT(\\d*)_', group = 1) |> strtoi (base=10)
+
+# test <- 'ZT0_KO3'
+group_bignon_new <- str_extract(group_bignon, 'ZT\\d*_(\\D*)', group = 1)
+group_bignon_new
+
+
+```
+
+```{r}
+
+processed_data_result = dryseq(count_data_bignon,group_bignon_new,time_bignon)
+
+# explore the results
+dryList[["results"]]     # data frame summarizing results
+dryList[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+dryList[["ncounts"]]     # normalized counts
+dryList[["counts"]]      # raw counts
+dryList[["cook"]]        # cook's distance for outlier detection
+dryList[["BICW_rhythm"]] # BICW for each rhythmic model
+dryList[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(dryList, "./")
+
+# plot a feature of interest
+dry_plot(dryList, "feature_113")
+
+
+
+```
+
+
+```{r}
+install.packages("BiocManager")
+BiocManager::install("GEOquery")
+library(stringr)
+library(tidyr)
+
+gse <- getGEO(filename = "~/Desktop/Circadian analysis/Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
+    getGPL = FALSE)
+
+meta <- gse[[1]]
+gsm <- gse[[2]]
+label_df <- as.data.frame(t(rbind(gsm, meta))) |> separate_wider_delim(cols = meta, delim = ", ", names = c("sample", "genotype", "timepoint", "replicate")) |> separate_wider_delim(cols = replicate, delim = " ", names = c("rep", "replicate")) |> separate_wider_delim(cols = genotype, delim = " ", names = c("genotype", "gen"))
+
+label_df <- label_df |> select(-c(sample, rep, gen))
+
+
+
+```
+
+```{r}
+
+```
+
+
