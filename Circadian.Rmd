@@ -13,6 +13,8 @@ install.packages('stringr')
 library(tidyverse)
 library("dryR")
 library(stringr)
+library(ggplot2)
+library(ggpubr)
 
 ```
 
@@ -74,6 +76,9 @@ time_drylm <- str_extract(group_drylm, 'ZT(\\d*)_', group = 1) |> strtoi (base=1
 group_drylm_new <- str_extract(group_drylm, 'ZT\\d*_(\\D*)', group = 1)
 group_drylm_new
 
+replicate_drylm <- c(1:5)
+replicate_drylm <- rep(replicate_drylm, times=12)
+
 
 ```
 
@@ -111,7 +116,7 @@ library(GEOquery)
 library(stringr)
 library(tidyr)
 
-gse <- getGEO(filename = "~/Circadian-Transcriptomics//Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
+gse <- getGEO(filename = "Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
     getGPL = FALSE)
 
 meta <- gse[[1]]
@@ -121,16 +126,17 @@ label_df <- as.data.frame(t(rbind(gsm, meta))) |> separate_wider_delim(cols = me
 label_df <- label_df |>
   mutate(genotype_new = recode(genotype, control = "C", cKO = "KO")) |> 
   mutate(timepoint_new = str_remove(timepoint, "ZT")) |>
-  select(gsm, genotype_new, timepoint_new, replicate)
+  dplyr::select(gsm, genotype_new, timepoint_new, replicate)
 
 
 ```
 
 ```{r}
-setwd("~/Circadian-Transcriptomics/Count data/GSE216252_RAW")
+### run whole chunk
+setwd("Count data/GSE216252_RAW")
 
 file_list <- list.files(".")
-count_matrix <- read.delim(file_list[1]) |> select(Gene_ID)
+count_matrix <- read.delim(file_list[1]) |> dplyr::select(Gene_ID)
 
 for (file in file_list){
   gsm <- str_extract(file, '([[:alnum:]]*)_\\S*', group = 1)
@@ -138,7 +144,6 @@ for (file in file_list){
       rename_with(~gsm, 2) |> 
     full_join(count_matrix)
 }
-
 
 ```
 
@@ -172,49 +177,194 @@ nrow(count_data_dryseq)
 dryseq_result = dryseq(count_data_dryseq, group_dryseq, time_dryseq)
 
 # explore the results
-dryList[["results"]]     # data frame summarizing results
-dryList[["parameters"]]  # coefficients: phase, amplitude and mean for each group
-dryList[["ncounts"]]     # normalized counts
-dryList[["counts"]]      # raw counts
-dryList[["cook"]]        # cook's distance for outlier detection
-dryList[["BICW_rhythm"]] # BICW for each rhythmic model
-dryList[["BICW_mean"]]   # BICW for each mean model
+dryseq_result[["results"]]     # data frame summarizing results
+dryseq_result[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+dryseq_result[["ncounts"]]     # normalized counts
+dryseq_result[["counts"]]      # raw counts
+dryseq_result[["cook"]]        # cook's distance for outlier detection
+dryseq_result[["BICW_rhythm"]] # BICW for each rhythmic model
+dryseq_result[["BICW_mean"]]   # BICW for each mean model
 
 # generate a pdf with a global summary of all models
-plot_models_rhythm(dryList, "./")
+plot_models_rhythm(dryseq_result, "./")
 
 # plot a feature of interest
-dry_plot(dryList, "feature_113")
-```
+dry_plot(dryseq_result, "ENSMUSG00000000440")
+dry_plot(dryseq_result, "ENSMUSG00000000441")
+dry_plot(dryseq_result, "ENSMUSG00000000486")
 
+dryseq_parameters <- dryseq_result[["parameters"]]
+table(dryseq_parameters$chosen_model)
+```
+    1     2     3     4     5 
+26307  1369   786  4222   240
 
 Bruhhh it seems that the RNA-seq data is too skewed (with a few extremely big values), and it breaks the negative binomial (NB) algorithm in dryseq...
 
+HUH why did it suddenly work again when I changed to LMB mac (R version issue? or did I not filter away the rowsum=0???)
+
 
 ```{r}
-as.data.frame(count_data_dryseq[order(rowSums(count_data_dryseq), decreasing=TRUE),])
+count_data_dryseq_sorted <- as.data.frame(count_data_dryseq[order(rowSums(count_data_dryseq), decreasing=TRUE),])
 
 BiocManager::install("AnnotationHub")
+BiocManager::install("ensembldb")
 library(AnnotationHub)
 library(AnnotationDbi)
+library(ensembldb)
 
 ah <- AnnotationHub()
 
-dbResult <- query(ah, c("EnsDb", "Mus musculus", "102"))
+# search for id of desired dataset
+dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
 dbResult[1]
 
+# load mouse transcript dataset
 MouseEnsDb <- ah[[dbResult$ah_id]]
 MouseEnsDb
+
+# output data of interest in form of data.frame
+annotations <- genes(MouseEnsDb, return.type = "data.frame")
+annotations
+
+annotation_selection <- annotations |> 
+    dplyr::select(gene_id, gene_name, description, entrezid) |>
+    dplyr::filter(gene_id %in% rownames(count_data_dryseq_sorted))
+
+length(annotation_selection$entrezid)
+length(unique(annotation_selection$entrezid))
+sum(is.na(annotation_selection$entrezid))
+
+
+
+count_data_dryseq_sorted_annot <- count_data_dryseq_sorted |> 
+    rownames_to_column("gene_id") |>
+    left_join(annotation_selection, "gene_id") |>
+    relocate(c(gene_name, description, entrezid), .after=gene_id)
 ```
 
-- The 
+- The extremely high read are all related to kidney functioning / respiration
 bruhhh okay let's go with drylm first
 
 ### Drylm result analysis
 ```{r}
-drylm_result[["parameters"]]
+BiocManager::install("limma")
+library(limma)
+
+drylm_parameters <- drylm_result[["parameters"]]
+#tail(drylm_result[["parameters"]])
+
+table(drylm_parameters$chosen_model)
+nrow(drylm_parameters)
+nrow(count_data_drylm)
+nrow(count_data_dryseq)
+sum(rowSums(count_data_dryseq) > 100)
+
+```
+   1    2    3    4    5 
+7021 1624 1067 5252  582 
+
+
+Why the number of transcripts in in drylm dataset is so low?? what did they remove??
+
+```{r}
+# plot a feature of interest
+# model 3: gain-of rhythm
+dry_plot(drylm_result, "ENSMUSG00000022698")
+dry_plot(drylm_result, "ENSMUSG00000054893")
+
+# model 5: altered rhythm
+dry_plot(drylm_result, "ENSMUSG00000059824")
+dry_plot(drylm_result, "ENSMUSG00000028957")
+
+# model 2: loss of rhythm
+dry_plot(drylm_result, "ENSMUSG00000026077")
+```
+```{r}
+ggpaired(drylm_parameters[1:100,], cond1 = "mean_C", cond2 = "mean_KO")
+#plot(drylm_parameters$mean_C, drylm_parameters$mean_KO)
+```
+
+Oh it seems like the reason they choose limma over DEseq is because limma accepts normalised values but DEseq only accepts count data!
+
+```{r}
+drylm_parameters_limma <- dplyr::select(drylm_parameters, c(mean_C, mean_KO))
+group_limma <- factor(c("C", "KO"))
+design <- model.matrix(~ group_limma)
+
+fit <- lmFit(drylm_parameters_limma, design)
+# fit <- eBayes(fit)
+# topTable(fit, coef = "groupTreatment", number = Inf)
+
+count_data_drylm
+
+```
+
+__You cannot perform a significance test on two means unless you know the variability behind those means.__ HUHHHHHH
+
+```{r}
+meta_drylm <- rbind(gse[[2]], group_drylm, group_drylm_new, time_drylm, replicate_drylm)
+meta_drylm <- as.data.frame(t(meta_drylm)) |> dplyr::rename(gene_id = V1, label = Label, group = group_drylm_new, time = time_drylm, replicate = replicate_drylm)
+meta_drylm
+
+# calculate mean value over timepoints
+
+
 ```
 
 
+### Comparing the rhythmic transcripts from two methods
 
-test
+drylm:
+   1    2    3    4    5 
+7021 1624 1067 5252  582 
+
+dryseq:
+    1     2     3     4     5 
+26307  1369   786  4222   240
+
+1 nonrhythmic
+2 loss of rhythm
+3 gain
+4 unaltered rhythm
+5 altered 
+
+```{r}
+
+common_2 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 2) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 2)))
+ 
+nrow(common_2)
+
+common_3 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 3) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 3)))
+ 
+nrow(common_3)
+
+common_4 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 4) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 4)))
+ 
+nrow(common_4)
+
+common_5 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 5) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 5)))
+ 
+nrow(common_5)
+
+dryseq_result
+
+
+```
+
+erm two methods not completely the same but ok-ish overlap
+
+
+
