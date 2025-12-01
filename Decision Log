@@ -1,0 +1,27 @@
+---
+title: "Decision Log"
+output: github_document
+---
+## Decision Log
+This document logs key decisions made during the analysis process, including rationale and alternatives considered.
+### Decision 1: Choosing dryR for Rhythmicity Analysis
+- **Date**: 2024-11-20
+- **Decision**: Use the dryR package for initial rhythmicity analysis of circadian transcriptomics data.
+- **Rationale**: It is used in Bignon and Weger's paper to analyse LD samples over 24 hr
+- **Alternatives Considered**: Other packages such as MetaCycle and JTK_CYCLE might be used later but dryR used first for consistency with published methods.
+
+
+### Decision 2: Data Normalization Method
+- **Date**: 2024-06-16
+- **Decision**: Apply log2 transformation followed by quantile normalization to the RNA-seq data.
+- **Rationale**: Log2 transformation helps stabilize variance across the range of expression values, while quantile normalization ensures that the distribution of expression values is consistent across samples, which is crucial for downstream comparative analyses.
+- **Alternatives Considered**: Other normalization methods such as TPM and RPKM were considered, but they were not selected due to their limitations in handling lowly expressed genes.
+
+
+### Decision 3: Comparison of Mean
+- **Date**: 2024-11-21
+- **Decision**: Use limma to calculate the mean expression levels between different conditions.
+- **Rationale**: Limma allows normalised data input, DEseq only allows raw counts.
+- **Alternatives Considered**: DESeq2 was considered, but limma was chosen
+
+- **Decision**: 
