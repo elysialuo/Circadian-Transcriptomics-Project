@@ -26,10 +26,17 @@ library(stringr)
 library(ggplot2)
 library(ggpubr)
 
+library(MASS)
+library(janitor)
+library(naniar)
+library(patchwork)
+library(scales)
+library(cluster)
+
 ```
 
 ```{r}
-processed_data <- read_csv("Bignon_RNA-seq_processed.csv")
+processed_data <- read_csv("../../data/processed/Bignon_RNA-seq_processed.csv")
 processed_data
 ```
 
@@ -125,24 +132,24 @@ library(GEOquery)
 library(stringr)
 library(tidyr)
 
-gse <- getGEO(filename = "Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
+gse <- getGEO(filename = "../../Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
     getGPL = FALSE)
 
 meta <- gse[[1]]
 gsm <- gse[[2]]
 label_df <- as.data.frame(t(rbind(gsm, meta))) |> separate_wider_delim(cols = meta, delim = ", ", names = c("sample", "genotype", "timepoint", "replicate")) |> separate_wider_delim(cols = replicate, delim = " ", names = c("rep", "replicate")) |> separate_wider_delim(cols = genotype, delim = " ", names = c("genotype", "gen"))
 
-label_df <- label_df |>
+meta_dryseq <- label_df |>
   mutate(genotype_new = recode(genotype, control = "C", cKO = "KO")) |> 
   mutate(timepoint_new = str_remove(timepoint, "ZT")) |>
-  dplyr::select(gsm, genotype_new, timepoint_new, replicate)
+  dplyr::select(gsm, genotype_new, timepoint_new, replicate) |> column_to_rownames("gsm")
 
 
 ```
 
 ```{r}
 ### run whole chunk
-setwd("Count data/GSE216252_RAW")
+setwd("../../Count data/GSE216252_RAW")
 
 file_list <- list.files(".")
 count_matrix <- read.delim(file_list[1]) |> dplyr::select(Gene_ID)
@@ -170,20 +177,20 @@ count_data_dryseq <- count_data_dryseq[,order(colnames(count_data_dryseq))] |> a
 
 tail(count_data_dryseq)
   
-is.unsorted(label_df$gsm) # check if the metadata is sorted
+is.unsorted(meta_dryseq$gsm) # check if the metadata is sorted
 
-group_dryseq <- label_df$genotype_new 
-time_dryseq <- strtoi(label_df$timepoint_new, base=10)
+group_dryseq <- meta_dryseq$genotype_new 
+time_dryseq <- strtoi(meta_dryseq$timepoint_new, base=10)
 ```
 
 
 ```{r}
 # prefilter
 keep <- rowSums(count_data_dryseq) > 0
-count_data_dryseq <- count_data_dryseq[keep,]
-nrow(count_data_dryseq)
+count_data_dryseq_prefilter <- count_data_dryseq[keep,]
+nrow(count_data_dryseq_prefilter)
 
-dryseq_result = dryseq(count_data_dryseq, group_dryseq, time_dryseq)
+dryseq_result = dryseq(count_data_dryseq_prefilter, group_dryseq, time_dryseq)
 
 # explore the results
 dryseq_result[["results"]]     # data frame summarizing results
@@ -389,10 +396,12 @@ erm two methods not completely the same but ok-ish overlap
 ```{r}
 # 1. Convert to CPM
 
+# Compute CPM
 count_data_dryseq_cpm <- as.data.frame(count_data_dryseq) |>
   mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
 
-count_data_dryseq_cpm_filtered <- filter(count_data_dryseq_cpm, apply(count_data_dryseq_cpm, 1, max) >= 1)
+# Filter for at least CPM >= 1 in one sample
+count_data_dryseq_cpm_filtered <- dplyr::filter(count_data_dryseq_cpm, apply(count_data_dryseq_cpm, 1, max) >= 1)
 count_data_dryseq_cpm_filtered
 count_data_drylm_sorted <- count_data_drylm[order(rownames(count_data_drylm), decreasing=FALSE),]
 sum(rownames(count_data_dryseq_cpm_filtered)==rownames(count_data_drylm_sorted))
@@ -401,7 +410,7 @@ nrow(count_data_dryseq)
 nrow(count_data_drylm)
 
 ```
--> filtered rows match that in Bignon 2023!
+-> filtered row no. match that in Bignon 2023!
 
 
 
@@ -409,19 +418,61 @@ nrow(count_data_drylm)
 # 2. TMM normalisation
 
 BiocManager::install("edgeR")
+library(edgeR)
 
+# Filter raw count based on cpm
+count_data_dryseq_filtered <- count_data_dryseq[rownames(count_data_dryseq) %in% rownames(count_data_dryseq_cpm_filtered),]
+nrow(count_data_dryseq_filtered)
 
+# Normalise library size of filtered raw count
+count_data_dryseq_filtered_norm <- DGEList(counts=count_data_dryseq_filtered) |> normLibSizes()
+str(count_data_dryseq_filtered_norm)
+count_data_dryseq_filtered_norm$samples
 
-count_data_dryseq_filtered_norm <- count_data_dryseq[rownames(count_data_dryseq) %in% rownames(count_data_dryseq_cpm_filtered),] |>
-    
-nrow(count_data_dryseq[rownames(count_data_dryseq) %in% rownames(count_data_dryseq_cpm_filtered),])
+# log2 cpm with normalised library size
+dryseq_filtered_norm_logcpm <- cpm(count_data_dryseq_filtered_norm, log=TRUE)
+
 
 ```
 
 
 
+```{r}
+# PCA plot: CPM filtered raw count
+pca_test_raw <- prcomp(t(count_data_dryseq_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- cbind(pca_df_raw, meta_dryseq[rownames(pca_df_raw),])
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
 
 
+
+```
+
+
+```{r}
+
+## PCA plot: TMM_log_cpm normalised
+
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm), center=TRUE, scale=TRUE)
+summary(pca_test)
+
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
 
 
 
