@@ -167,12 +167,14 @@ for (file in file_list){
 summary(count_matrix)
 sum(is.na(count_matrix))
 count_matrix
+
 ```
+
 
 ```{r}
 # sort gsm (i.e.) in count_matrix
 count_data_dryseq <- count_matrix[1:(nrow(count_matrix)-5),] |> remove_rownames() |>
-  column_to_rownames("Gene_ID") 
+  column_to_rownames("Gene_ID")  # remove last five lines of garbage
 count_data_dryseq <- count_data_dryseq[,order(colnames(count_data_dryseq))] |> as.matrix()
 
 tail(count_data_dryseq)
@@ -183,6 +185,22 @@ group_dryseq <- meta_dryseq$genotype_new
 time_dryseq <- strtoi(meta_dryseq$timepoint_new, base=10)
 ```
 
+# Data distribution check
+
+```{r}
+
+library_sizes <- colSums(count_data_dryseq)
+library_sizes
+
+boxplot(count_data_dryseq[,1:20])
+
+cor_mat <- cor(count_data_dryseq, method="spearman")
+heatmap(cor_mat)
+
+```
+
+1. rather uniform sequence depth
+2. some very highly expressed genes -> normalisation needed
 
 ```{r}
 # prefilter
@@ -451,7 +469,6 @@ ggplot(pca_df_raw, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
 
 
-
 ```
 
 
@@ -475,8 +492,112 @@ ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) 
 ```
 
 
+### RUV attempt
+```{r}
+BiocManager::install("RUVSeq")
+library(RUVSeq)
+
+```
+```{r}
+## filtered, unnormalised
+boxplot(count_data_dryseq_filtered[,1:10])
+plotRLE(count_data_dryseq_filtered[,1:10], outlint=FALSE)
+
+## filtered, log2 cpm normalised
+boxplot(dryseq_filtered_norm_logcpm[,1:10])
+```
+seems pretty normalised after log2 cpm only?! doesn't justify the need for RUV! or does PCA help justify???
+
+```{r}
+x <- str_c(meta_dryseq[,1],meta_dryseq[,2],sep="_")
+differences <- makeGroups(x)
+controls <- rownames(dryseq_filtered_norm_logcpm)
+
+# k=2
+RUVs_output <- RUVs(dryseq_filtered_norm_logcpm, controls, k=2, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k2 <- RUVs_output$normalizedCounts
+as.data.frame(dryseq_filtered_norm_logcpm)
+as.data.frame(dryseq_filtered_norm_logcpm_RUVcount_k2)
+
+# k=1
+RUVs_output_k1 <- RUVs(dryseq_filtered_norm_logcpm, controls, k=1, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k1 <- RUVs_output_k1$normalizedCounts
+
+# k=5
+RUVs_output_k5 <- RUVs(dryseq_filtered_norm_logcpm, controls, k=5, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k5 <- RUVs_output_k5$normalizedCounts
+
+# k=10
+RUVs_output_k10 <- RUVs(dryseq_filtered_norm_logcpm, controls, k=10, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k10 <- RUVs_output_k10$normalizedCounts
+```
+
+How valid is mixing C and KO in covariance analysis?
+
+```{r}
+boxplot(RUVs_output$normalizedCounts[,1:10])
+```
+```{r}
+
+# PCA plot, k=1
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k1), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=1)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=2
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k2), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=2)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=5
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k5), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=5)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=10
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k10), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=10)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+```
+looks very similar to the paper's plot!! but idk why the RUV normalised number are similar but slightly off (+- 0.01??)
+
+```{r}
+plotRLE(count_data_dryseq_filtered[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k1[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k2[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k5[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k10[,1:20], outline=FALSE)
 
 
+```
 
-
-
+Is there a need for RUV correction!?!??!
