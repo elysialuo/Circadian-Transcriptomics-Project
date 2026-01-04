@@ -1,0 +1,832 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+mamba_folder <- "/Users/elysialuo/miniforge3"
+env_name <- "circadian"
+.libPaths(paste(mamba_folder, "envs", env_name, "lib/R/library", sep = "/"))
+
+
+
+install.packages(c("MASS", "janitor", "naniar", "patchwork"))
+install.packages(c("scales", "tidyverse"))
+
+install.packages("devtools")
+devtools::install_github("naef-lab/dryR")
+install.packages('simphony')
+install.packages('stringr')
+install.packages('ggpubr')
+
+library(tidyverse)
+library("dryR")
+library(stringr)
+library(ggplot2)
+library(ggpubr)
+
+library(MASS)
+library(janitor)
+library(naniar)
+library(patchwork)
+library(scales)
+library(cluster)
+
+```
+
+```{r}
+processed_data <- read_csv("../../data/processed/Bignon_RNA-seq_processed.csv")
+processed_data
+```
+### DryR usage example
+```{r}
+
+# prepare arguments
+countData = simData[["countData"]]
+group     = simData[["group"]]
+time      = simData[["time"]]
+
+# prefilter
+keep <- rowSums(countData) > 0
+countData <- countData[keep,]
+
+# run the analysis for count data (e.g. RNA-Seq data)
+dryList   = dryseq(countData,group,time)
+
+# explore the results
+dryList[["results"]]     # data frame summarizing results
+dryList[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+dryList[["ncounts"]]     # normalized counts
+dryList[["counts"]]      # raw counts
+dryList[["cook"]]        # cook's distance for outlier detection
+dryList[["BICW_rhythm"]] # BICW for each rhythmic model
+dryList[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(dryList, "./")
+
+# plot a feature of interest
+dry_plot(dryList, "feature_113")
+
+```
+
+### Generate processed count matrix
+
+```{r}
+processed_data
+count_data_drylm <- processed_data |>
+    column_to_rownames("Gene_ID") |>
+    dplyr::select(-c(Gene_Name, description, Gene_type))
+
+# Check for missing values or empty rows
+table(rowSums(count_data_drylm) == 0) 
+table(is.na(count_data_drylm))
+
+group_drylm <- as.data.frame(t(count_data_drylm)) |>
+    rownames_to_column("Label") |>
+    dplyr::select(Label) |> t()
+
+time_drylm <- str_extract(group_drylm, 'ZT(\\d*)_', group = 1) |> strtoi (base=10)
+
+# test <- 'ZT0_KO3'
+group_drylm <- str_extract(group_drylm, 'ZT\\d*_(\\D*)', group = 1)
+group_drylm
+
+replicate_drylm <- c(1:5)
+replicate_drylm <- rep(replicate_drylm, times=12)
+
+
+```
+
+```{r}
+
+drylm_result = drylm(count_data_drylm,group_drylm,time_drylm, period = 24)
+
+# explore the results
+drylm_result[["results"]]     # data frame summarizing results
+drylm_result[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+drylm_result[["ncounts"]]     # normalized counts
+drylm_result[["counts"]]      # raw counts (NULL)
+drylm_result[["cook"]]        # cook's distance for outlier detection (NULL)
+drylm_result[["BICW_rhythm"]] # BICW for each rhythmic model
+drylm_result[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(drylm_result, "./")
+
+# plot a feature of interest
+dry_plot(drylm_result, "ENSMUSG00000000001")
+
+
+```
+
+This is what the Bignon paper did, they used *drylm* on logCPM normalised (?) data.
+
+### Generate raw count matrix
+
+```{r}
+install.packages("BiocManager")
+BiocManager::install("GEOquery")
+library(GEOquery)
+library(stringr)
+library(tidyr)
+
+gse <- getGEO(filename = "../../Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
+    getGPL = FALSE)
+
+meta <- gse[[1]]
+gsm <- gse[[2]]
+label_df <- as.data.frame(t(rbind(gsm, meta))) |> separate_wider_delim(cols = meta, delim = ", ", names = c("sample", "genotype", "timepoint", "replicate")) |> separate_wider_delim(cols = replicate, delim = " ", names = c("rep", "replicate")) |> separate_wider_delim(cols = genotype, delim = " ", names = c("genotype", "gen"))
+
+meta_dryseq <- label_df |>
+  mutate(genotype_new = recode(genotype, control = "C", cKO = "KO")) |> 
+  mutate(timepoint_new = str_remove(timepoint, "ZT")) |>
+  dplyr::select(gsm, genotype_new, timepoint_new, replicate) |> column_to_rownames("gsm")
+
+
+```
+
+```{r}
+### run whole chunk
+setwd("../../Count data/GSE216252_RAW")
+
+file_list <- list.files(".")
+count_matrix <- read.delim(file_list[1]) |> dplyr::select(Gene_ID)
+
+for (file in file_list){
+  gsm <- str_extract(file, '([[:alnum:]]*)_\\S*', group = 1)
+  count_matrix <- read.delim(file) |> 
+      rename_with(~gsm, 2) |> 
+    full_join(count_matrix)
+}
+
+```
+
+```{r}
+summary(count_matrix)
+sum(is.na(count_matrix))
+count_matrix
+
+```
+
+
+```{r}
+# sort gsm (i.e.) in count_matrix
+count_data_dryseq <- count_matrix[1:(nrow(count_matrix)-5),] |> remove_rownames() |>
+  column_to_rownames("Gene_ID")  # remove last five lines of garbage
+count_data_dryseq <- count_data_dryseq[,order(colnames(count_data_dryseq))] |> as.matrix()
+
+tail(count_data_dryseq)
+  
+is.unsorted(meta_dryseq$gsm) # check if the metadata is sorted
+
+group_dryseq <- meta_dryseq$genotype_new 
+time_dryseq <- strtoi(meta_dryseq$timepoint_new, base=10)
+```
+
+# Data distribution check
+
+```{r}
+
+library_sizes <- colSums(count_data_dryseq)
+library_sizes
+
+boxplot(count_data_dryseq[,1:20])
+
+cor_mat <- cor(count_data_dryseq, method="spearman")
+heatmap(cor_mat)
+
+```
+
+1. rather uniform sequence depth
+2. some very highly expressed genes -> normalisation needed
+
+### dryseq pipeline on unnormalised raw count
+```{r}
+# prefilter
+keep <- rowSums(count_data_dryseq) > 0
+count_data_dryseq_prefilter <- count_data_dryseq[keep,]
+nrow(count_data_dryseq_prefilter)
+
+dryseq_result = dryseq(count_data_dryseq_prefilter, group_dryseq, time_dryseq)
+
+# explore the results
+dryseq_result[["results"]]     # data frame summarizing results
+dryseq_result[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+dryseq_result[["ncounts"]]     # normalized counts
+dryseq_result[["counts"]]      # raw counts
+dryseq_result[["cook"]]        # cook's distance for outlier detection
+dryseq_result[["BICW_rhythm"]] # BICW for each rhythmic model
+dryseq_result[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(dryseq_result, "./")
+
+# plot a feature of interest
+dry_plot(dryseq_result, "ENSMUSG00000000440")
+dry_plot(dryseq_result, "ENSMUSG00000000441")
+dry_plot(dryseq_result, "ENSMUSG00000000486")
+
+dryseq_parameters <- dryseq_result[["parameters"]]
+table(dryseq_parameters$chosen_model)
+
+```
+    1     2     3     4     5 
+26307  1369   786  4222   240
+
+Bruhhh it seems that the RNA-seq data is too skewed (with a few extremely big values), and it breaks the negative binomial (NB) algorithm in dryseq...
+
+HUH why did it suddenly work again when I changed to LMB mac (R version issue? or did I not filter away the rowsum=0???)
+
+
+```{r}
+count_data_dryseq_sorted <- as.data.frame(count_data_dryseq[order(rowSums(count_data_dryseq), decreasing=TRUE),])
+
+BiocManager::install("AnnotationHub")
+BiocManager::install("ensembldb")
+library(AnnotationHub)
+library(AnnotationDbi)
+library(ensembldb)
+
+ah <- AnnotationHub()
+
+# search for id of desired dataset
+dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
+dbResult[1]
+
+# load mouse transcript dataset
+MouseEnsDb <- ah[[dbResult$ah_id]]
+MouseEnsDb
+
+# output data of interest in form of data.frame
+annotations <- genes(MouseEnsDb, return.type = "data.frame")
+annotations
+
+annotation_selection <- annotations |> 
+    dplyr::select(gene_id, gene_name, description, entrezid) |>
+    dplyr::filter(gene_id %in% rownames(count_data_dryseq_sorted))
+
+length(annotation_selection$entrezid)
+length(unique(annotation_selection$entrezid))
+sum(is.na(annotation_selection$entrezid))
+
+
+
+count_data_dryseq_sorted_annot <- count_data_dryseq_sorted |> 
+    rownames_to_column("gene_id") |>
+    left_join(annotation_selection, "gene_id") |>
+    relocate(c(gene_name, description, entrezid), .after=gene_id)
+```
+
+- The extremely high read are all related to kidney functioning / respiration
+bruhhh okay let's go with drylm first
+
+
+### Drylm result analysis
+```{r}
+BiocManager::install("limma")
+library(limma)
+
+drylm_parameters <- drylm_result[["parameters"]]
+#tail(drylm_result[["parameters"]])
+
+table(drylm_parameters$chosen_model)
+nrow(drylm_parameters)
+nrow(count_data_drylm)
+nrow(count_data_dryseq)
+sum(rowSums(count_data_dryseq) > 100)
+
+```
+   1    2    3    4    5 
+7021 1624 1067 5252  582 
+
+
+Why the number of transcripts in in drylm dataset is so low?? what did they remove??
+* 23-11-2025: filtering
+
+```{r}
+# plot a feature of interest
+# model 3: gain-of rhythm
+dry_plot(drylm_result, "ENSMUSG00000022698")
+dry_plot(drylm_result, "ENSMUSG00000054893")
+
+# model 5: altered rhythm
+dry_plot(drylm_result, "ENSMUSG00000059824")
+dry_plot(drylm_result, "ENSMUSG00000028957")
+
+# model 2: loss of rhythm
+dry_plot(drylm_result, "ENSMUSG00000026077")
+```
+```{r}
+ggpaired(drylm_parameters[1:100,], cond1 = "mean_C", cond2 = "mean_KO")
+#plot(drylm_parameters$mean_C, drylm_parameters$mean_KO)
+```
+
+Oh it seems like the reason they choose limma over DEseq is because limma accepts normalised values but DEseq only accepts raw count!
+* 27-11-25: actually no, it's the statistics
+
+```{r}
+drylm_parameters_limma <- dplyr::select(drylm_parameters, c(mean_C, mean_KO))
+group_limma <- factor(c("C", "KO"))
+design <- model.matrix(~ group_limma)
+
+fit <- lmFit(drylm_parameters_limma, design)
+# fit <- eBayes(fit)
+# topTable(fit, coef = "groupTreatment", number = Inf)
+
+count_data_drylm
+
+```
+
+__You cannot perform a significance test on two means unless you know the variability behind those means.__ HUHHHHHH
+
+```{r}
+meta_drylm <- rbind(gse[[2]], group_drylm, group_drylm_new, time_drylm, replicate_drylm)
+meta_drylm <- as.data.frame(t(meta_drylm)) |> dplyr::rename(gene_id = V1, label = Label, group = group_drylm_new, time = time_drylm, replicate = replicate_drylm)
+meta_drylm
+
+# calculate mean value over timepoints
+
+t_count_data_drylm <- as.data.frame(t(count_data_drylm)) |> group_by(group = meta_drylm$group, replicate = meta_drylm$replicate) 
+
+
+```
+
+nope it doesn't work, the replicates over each timepoint are not paired.
+
+
+### Comparing the rhythmic output from two methods
+
+drylm:
+   1    2    3    4    5 
+7021 1624 1067 5252  582 
+
+dryseq:
+    1     2     3     4     5 
+26307  1369   786  4222   240
+
+1 nonrhythmic
+2 loss of rhythm
+3 gain
+4 unaltered rhythm
+5 altered 
+
+```{r}
+
+common_2 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 2) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 2)))
+ 
+nrow(common_2)
+
+common_3 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 3) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 3)))
+ 
+nrow(common_3)
+
+common_4 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 4) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 4)))
+ 
+nrow(common_4)
+
+common_5 <- drylm_parameters |> 
+    rownames_to_column("gene_id") |> 
+    dplyr::filter(chosen_model == 5) |>
+    dplyr::filter(gene_id %in% rownames(dplyr::filter(dryseq_parameters, chosen_model == 5)))
+ 
+nrow(common_5)
+
+dryseq_result
+
+
+```
+
+erm two methods not completely the same but ok-ish overlap
+
+
+### Following Bignon 2023's method
+
+```{r}
+# 1. Convert to CPM
+
+# Compute CPM
+count_data_dryseq_cpm <- as.data.frame(count_data_dryseq) |>
+  mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
+
+# Filter for at least CPM >= 1 in one sample
+count_data_dryseq_cpm_filtered <- dplyr::filter(count_data_dryseq_cpm, apply(count_data_dryseq_cpm, 1, max) >= 1)
+count_data_dryseq_cpm_filtered
+count_data_drylm_sorted <- count_data_drylm[order(rownames(count_data_drylm), decreasing=FALSE),]
+sum(rownames(count_data_dryseq_cpm_filtered)==rownames(count_data_drylm_sorted))
+nrow(count_data_dryseq_cpm_filtered)
+nrow(count_data_dryseq)
+nrow(count_data_drylm_sorted)
+
+```
+-> filtered row no. match that in Bignon 2023!
+
+
+
+```{r}
+# 2. TMM normalisation
+
+BiocManager::install("edgeR")
+library(edgeR)
+
+# Filter raw count based on cpm
+count_data_dryseq_filtered <- count_data_dryseq[rownames(count_data_dryseq) %in% rownames(count_data_dryseq_cpm_filtered),]
+nrow(count_data_dryseq_filtered)
+
+# Normalise library size of filtered raw count
+count_data_dryseq_filtered_norm <- DGEList(counts=count_data_dryseq_filtered) |> normLibSizes()
+str(count_data_dryseq_filtered_norm)
+count_data_dryseq_filtered_norm$samples
+
+# log2 cpm with normalised library size
+dryseq_filtered_norm_logcpm <- cpm(count_data_dryseq_filtered_norm, log=TRUE)
+dryseq_filtered_norm_logcpm_prior <- cpm(count_data_dryseq_filtered_norm, log=TRUE, prior.count=3)
+
+```
+
+bruhhhh Bignon et al used prior.count=3 without specifying it in the paper......
+baddd
+
+```{r}
+# PCA plot: CPM filtered raw count
+pca_test_raw <- prcomp(t(count_data_dryseq_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- cbind(pca_df_raw, meta_dryseq[rownames(pca_df_raw),])
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+
+```
+
+
+```{r}
+
+## PCA plot: TMM_log_cpm normalised
+
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm), center=TRUE, scale=TRUE)
+summary(pca_test)
+
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
+
+
+### RUV attempt
+```{r}
+BiocManager::install("RUVSeq")
+library(RUVSeq)
+
+```
+```{r}
+## filtered, unnormalised
+boxplot(count_data_dryseq_filtered[,1:10])
+plotRLE(count_data_dryseq_filtered[,1:10], outlint=FALSE)
+
+## filtered, log2 cpm normalised
+boxplot(dryseq_filtered_norm_logcpm[,1:10])
+```
+seems pretty normalised after log2 cpm only?! doesn't justify the need for RUV! or does PCA help justify???
+
+```{r}
+x <- str_c(meta_dryseq[,1],meta_dryseq[,2],sep="_")
+differences <- makeGroups(x)
+controls <- rownames(dryseq_filtered_norm_logcpm)
+
+# k=2
+RUVs_output <- RUVs(dryseq_filtered_norm_logcpm, controls, k=2, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k2 <- RUVs_output$normalizedCounts
+as.data.frame(dryseq_filtered_norm_logcpm)
+as.data.frame(dryseq_filtered_norm_logcpm_RUVcount_k2)
+
+# k=2, prior
+RUVs_output_prior <- RUVs(dryseq_filtered_norm_logcpm_prior, controls, k=2, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_prior_RUVcount_k2 <- RUVs_output_prior$normalizedCounts
+as.data.frame(dryseq_filtered_norm_logcpm_prior)
+as.data.frame(dryseq_filtered_norm_logcpm_prior_RUVcount_k2)
+
+# k=1
+RUVs_output_k1 <- RUVs(dryseq_filtered_norm_logcpm, controls, k=1, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k1 <- RUVs_output_k1$normalizedCounts
+
+# k=5
+RUVs_output_k5 <- RUVs(dryseq_filtered_norm_logcpm, controls, k=5, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k5 <- RUVs_output_k5$normalizedCounts
+
+# k=10
+RUVs_output_k10 <- RUVs(dryseq_filtered_norm_logcpm, controls, k=10, differences, isLog=TRUE)
+dryseq_filtered_norm_logcpm_RUVcount_k10 <- RUVs_output_k10$normalizedCounts
+```
+
+How valid is mixing C and KO in covariance analysis?
+
+```{r}
+boxplot(RUVs_output_prior$normalizedCounts[,1:10])
+```
+
+```{r}
+
+# PCA plot, k=1
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k1), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=1)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=2
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=2)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=2, prior
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k2), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=2, prior)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=5
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k5), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=5)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+# PCA plot, k=10
+pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k10), center=TRUE, scale=TRUE)
+summary(pca_test)
+pca_df_norm <- as.data.frame(pca_test$x)
+pca_df_norm <- cbind(pca_df_norm, meta_dryseq[rownames(pca_df_norm),])
+ggplot(pca_df_norm, aes(PC1, PC2, color = genotype_new, shape = timepoint_new)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (k=10)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+```
+looks very similar to the paper's plot!! but idk why the RUV normalised number are similar but slightly off (+- 0.01??)
+=> Jan: it's due to prior.count=3, but only slightly changes the value!
+
+```{r}
+plotRLE(count_data_dryseq_filtered[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k1[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k2[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k5[,1:20], outline=FALSE)
+plotRLE(dryseq_filtered_norm_logcpm_RUVcount_k10[,1:20], outline=FALSE)
+
+```
+
+Is there a need for RUV correction!?!??!
+- it indeed separates light vs dark phase data but how much useful info did it remove?
+
+
+
+
+### Limma adventure!!
+
+```{r}
+
+library(limma)
+
+count_data_drylm_sorted
+
+as.data.frame(dryseq_filtered_norm_logcpm)
+
+as.data.frame(RUVs_output$normalizedCounts)
+
+as.data.frame(RUVs_output_prior$normalizedCounts)
+
+
+
+
+```
+
+Bignon used prior.count=3 during TMM normalisation...
+
+```{r}
+### Detour to understand splines
+library(splines)
+as.numeric(meta_dryseq$timepoint_new)
+X <- ns(as.numeric(meta_dryseq$timepoint_new), df=5)
+dim(X)
+```
+
+
+```{r}
+meta_dryseq
+genotype <- factor(meta_dryseq$genotype_new)
+
+y <- as.data.frame(dryseq_filtered_norm_logcpm)
+y_normalised <- RUVs_output_prior$normalizedCounts
+W1 <- RUVs_output_prior$W[,1]
+W2 <- RUVs_output_prior$W[,2]
+sin <- c(0, 0.866, 0.866, 0, -0.866, -0.866) |> rep(2, each=5)
+cos <- c(1, 0.5, -0.5, -1, -0.5, 0.5) |> rep(2, each=5)
+
+design <- model.matrix(~ genotype + sin + cos + W1 + W2) 
+fit <- lmFit(y, design)
+fit <- eBayes(fit, trend=TRUE)
+fit_RUVnorm <- lmFit(y_normalised, design)
+fit_RUVnorm <- eBayes(fit_RUVnorm, trend=TRUE)
+
+fit$p.value
+results <- decideTests(fit, adjust.method = "none")
+results_adj <- decideTests(fit, adjust.method = "BH")
+results_RUVnorm <- decideTests(fit_RUVnorm, adjust.method = "BH")
+summary(results)
+summary(results_adj)
+summary(results_RUVnorm)
+
+
+as.data.frame(dryseq_filtered_norm_logcpm)
+```
+decideTests does BH p-vlue adjustment by default
+
+1. ~ genotype
+      (Intercept) genotypeKO
+Down          1445       2575
+NotSig         488       9993
+Up           13613       2978
+
+2. ~ genotype + W1 + W2
+       (Intercept) genotypeKO    W1    W2
+Down           665       3204  4823  1560
+NotSig        1661       8620  5946 12498
+Up           13220       3722  4777  1488
+
+3. ~ genotype + sin + cos 
+       (Intercept) genotypeKO   sin   cos
+Down          1458       2796  1853  1132
+NotSig         464       9547 11671 13416
+Up           13624       3203  2022   998
+
+4. ~ genotype + sin + cos + W1 + W2
+       (Intercept) genotypeKO   sin   cos    W1    W2
+Down           708       3495  2769  1851  4997  1900
+NotSig        1587       8007  9986 11780  5540 11986
+Up           13251       4044  2791  1915  5009  1660
+
+5. #4 with RUV normalised y as input (not suggested by paper)
+       (Intercept) genotypeKO   sin   cos  WW_1  WW_2
+Down           617       3498  2776  1846     0     0
+NotSig        1603       8001  9970 11786 15546 15546
+Up           13326       4047  2800  1914     0     0
+(therefore difference not due to this...)
+
+Bignon:
+Down    3505
+NotSig  7970
+Up      4070
+
+quite similar actually... small difference due to FDR??
+
+```{r}
+### Checking if limma-trend's usage is reasonable
+count_data_dryseq_sorted
+colSums(count_data_dryseq_sorted)
+```
+Limma-trend is simpler than voom, good when sample size fairly consistent. Here the colSum is very close -> limma-trend good to use for the simplicity and speed!!
+
+### Compare with rhythmic models
+
+```{r}
+# Re-run dryR on data normalised by myself
+
+count_data_drylm_new <- as.data.frame(RUVs_output_prior$normalizedCounts)
+
+# Check for missing values or empty rows
+table(rowSums(count_data_drylm_new) == 0) 
+table(is.na(count_data_drylm_new))
+
+group_drylm_new <- meta_dryseq[,'genotype_new']
+
+time_drylm_new <- as.numeric(meta_dryseq[,'timepoint_new'])
+
+replicate_drylm_new <- c(1:5)
+replicate_drylm_new <- rep(replicate_drylm, times=12)
+
+
+drylm_result_new = drylm(count_data_drylm_new,group_drylm_new,time_drylm_new, period = 24)
+
+# explore the results
+drylm_result_new[["results"]]     # data frame summarizing results
+drylm_result_new[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+drylm_result_new[["ncounts"]]     # normalized counts
+drylm_result_new[["counts"]]      # raw counts (NULL)
+drylm_result_new[["cook"]]        # cook's distance for outlier detection (NULL)
+drylm_result_new[["BICW_rhythm"]] # BICW for each rhythmic model
+drylm_result_new[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(drylm_result, "./")
+
+# plot a feature of interest
+dry_plot(drylm_result, "ENSMUSG00000000001")
+
+
+```
+
+
+```{r}
+# mean change classification
+mean_result <- as.data.frame(results_adj[,'genotypeKO']) |> rownames_to_column('gene_id')
+
+# rhythm model classification
+rhythm_result <- drylm_result_new$parameters |> dplyr::select(chosen_model) |> rownames_to_column('gene_id')
+## add in ambiguous classification (group 0)
+rhythm_result <- mutate(rhythm_result,chosen_model = replace(chosen_model, drylm_result_new$parameters[,'chosen_model_BICW']<0.65, 0))
+
+```
+
+```{r}
+# check model number with Bignon's count
+table(column_to_rownames(rhythm_result, 'gene_id'))
+```
+
+Bignon:
+chosen_model
+   0    1    2    3    4    5 
+4461 5274  970  535 3936  370 
+
+```{r}
+mean_rhythm_result <- full_join(rhythm_result, mean_result, by='gene_id') |> column_to_rownames('gene_id')
+
+table(mean_rhythm_result)
+table(column_to_rownames(mean_result, 'gene_id'))
+```
+
+1. Without specifying 'ambiguous' data
+
+            genotypeKO
+chosen_model   -1    0    1
+           1 1288 4139 1594
+           2  445  612  567
+           3  293  502  272
+           4 1229 2615 1408
+           5  240  139  203
+           
+          all 3495 8007 4044 
+           
+omg i got it!! but the number is off and there's no group 0...
+okay i found out why: they categorised some as 'ambiguous' for BICW >0.65(model) and >0.95(mean)...
+
+
+2. Specifying 'ambiguous' data
+
+            genotypeKO
+chosen_model   -1    0    1
+           0 1040 2230 1191
+           1  942 3179 1153
+           2  281  328  361
+           3  168  231  136
+           4  908 1959 1069
+           5  156   80  134
+ 
+          all 3495 8007 4044 
+
+*==> okay this looks more like the result in the paper but how valid is it to draw conclusion ignoring the 'ambiguous' data????????? and why the criteria BICW<0.65????*
