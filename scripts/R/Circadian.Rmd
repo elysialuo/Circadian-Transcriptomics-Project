@@ -19,6 +19,7 @@ devtools::install_github("naef-lab/dryR")
 install.packages('simphony')
 install.packages('stringr')
 install.packages('ggpubr')
+install.packages('limma')
 
 library(tidyverse)
 library("dryR")
@@ -131,6 +132,10 @@ BiocManager::install("GEOquery")
 library(GEOquery)
 library(stringr)
 library(tidyr)
+```
+
+```{r}
+# Read in metadata
 
 gse <- getGEO(filename = "../../Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
     getGPL = FALSE)
@@ -147,7 +152,9 @@ meta_dryseq <- label_df |>
 
 ```
 
+
 ```{r}
+# Read in raw count
 ### run whole chunk
 setwd("../../Count data/GSE216252_RAW")
 
@@ -170,7 +177,7 @@ count_matrix
 
 ```
 
-
+### Clean up data matrix
 ```{r}
 # sort gsm (i.e.) in count_matrix
 count_data_dryseq <- count_matrix[1:(nrow(count_matrix)-5),] |> remove_rownames() |>
@@ -241,6 +248,7 @@ HUH why did it suddenly work again when I changed to LMB mac (R version issue? o
 
 
 ```{r}
+# Sort & annotate
 count_data_dryseq_sorted <- as.data.frame(count_data_dryseq[order(rowSums(count_data_dryseq), decreasing=TRUE),])
 
 BiocManager::install("AnnotationHub")
@@ -410,7 +418,7 @@ dryseq_result
 erm two methods not completely the same but ok-ish overlap
 
 
-### Following Bignon 2023's method
+## Following Bignon 2023's method!!!
 
 ```{r}
 # 1. Convert to CPM
@@ -547,6 +555,7 @@ boxplot(RUVs_output_prior$normalizedCounts[,1:10])
 ```
 
 ```{r}
+# PCA plots comparison
 
 # PCA plot, k=1
 pca_test <- prcomp(t(dryseq_filtered_norm_logcpm_RUVcount_k1), center=TRUE, scale=TRUE)
@@ -657,6 +666,8 @@ dim(X)
 ```
 
 
+## a. RUV version
+
 ```{r}
 meta_dryseq
 genotype <- factor(meta_dryseq$genotype_new)
@@ -682,8 +693,6 @@ summary(results)
 summary(results_adj)
 summary(results_RUVnorm)
 
-
-as.data.frame(dryseq_filtered_norm_logcpm)
 ```
 decideTests does BH p-vlue adjustment by default
 
@@ -763,10 +772,10 @@ drylm_result_new[["BICW_rhythm"]] # BICW for each rhythmic model
 drylm_result_new[["BICW_mean"]]   # BICW for each mean model
 
 # generate a pdf with a global summary of all models
-plot_models_rhythm(drylm_result, "./")
+plot_models_rhythm(drylm_result_new, "./")
 
 # plot a feature of interest
-dry_plot(drylm_result, "ENSMUSG00000000001")
+dry_plot(drylm_result_new, "ENSMUSG00000000001")
 
 
 ```
@@ -830,3 +839,87 @@ chosen_model   -1    0    1
           all 3495 8007 4044 
 
 *==> okay this looks more like the result in the paper but how valid is it to draw conclusion ignoring the 'ambiguous' data????????? and why the criteria BICW<0.65????*
+
+
+## b. W/O RUV version
+
+```{r}
+meta_dryseq
+genotype <- factor(meta_dryseq$genotype_new)
+
+y <- as.data.frame(dryseq_filtered_norm_logcpm)
+sin <- c(0, 0.866, 0.866, 0, -0.866, -0.866) |> rep(2, each=5)
+cos <- c(1, 0.5, -0.5, -1, -0.5, 0.5) |> rep(2, each=5)
+
+design <- model.matrix(~ genotype + sin + cos) 
+fit <- lmFit(y, design)
+fit <- eBayes(fit, trend=TRUE)
+
+results_noRUV_adj <- decideTests(fit, adjust.method = "BH")
+
+summary(results_noRUV_adj)
+
+```
+
+```{r}
+# Re-run dryR (w/o RUV)
+
+count_data_drylm_new_noRUV <- as.data.frame(dryseq_filtered_norm_logcpm)
+
+# Check for missing values or empty rows
+table(rowSums(count_data_drylm_new) == 0) 
+table(is.na(count_data_drylm_new))
+
+group_drylm_new <- meta_dryseq[,'genotype_new']
+
+time_drylm_new <- as.numeric(meta_dryseq[,'timepoint_new'])
+
+replicate_drylm_new <- c(1:5)
+replicate_drylm_new <- rep(replicate_drylm, times=12)
+
+
+drylm_result_new_noRUV = drylm(count_data_drylm_new_noRUV,group_drylm_new,time_drylm_new, period = 24)
+
+# explore the results
+drylm_result_new_noRUV[["results"]]     # data frame summarizing results
+drylm_result_new_noRUV[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+drylm_result_new_noRUV[["ncounts"]]     # normalized counts
+drylm_result_new_noRUV[["counts"]]      # raw counts (NULL)
+drylm_result_new_noRUV[["cook"]]        # cook's distance for outlier detection (NULL)
+drylm_result_new_noRUV[["BICW_rhythm"]] # BICW for each rhythmic model
+drylm_result_new_noRUV[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(drylm_result_new_noRUV, "./")
+
+# plot a feature of interest
+dry_plot(drylm_result_new_noRUV, "ENSMUSG00000000001")
+```
+
+```{r}
+# mean change classification
+mean_result <- as.data.frame(results_adj[,'genotypeKO']) |> rownames_to_column('gene_id')
+
+# rhythm model classification
+rhythm_result <- drylm_result_new$parameters |> dplyr::select(chosen_model) |> rownames_to_column('gene_id')
+## add in ambiguous classification (group 0)
+rhythm_result <- mutate(rhythm_result,chosen_model = replace(chosen_model, drylm_result_new$parameters[,'chosen_model_BICW']<0.65, 0))
+
+```
+
+```{r}
+# check model number with Bignon's count
+table(column_to_rownames(rhythm_result, 'gene_id'))
+```
+
+Bignon:
+chosen_model
+   0    1    2    3    4    5 
+4461 5274  970  535 3936  370 
+
+```{r}
+mean_rhythm_result <- full_join(rhythm_result, mean_result, by='gene_id') |> column_to_rownames('gene_id')
+
+table(mean_rhythm_result)
+table(column_to_rownames(mean_result, 'gene_id'))
+```
