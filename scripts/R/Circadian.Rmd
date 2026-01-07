@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 
@@ -927,7 +929,7 @@ chosen_model
 ```{r}
 mean_rhythm_result_noRUV <- full_join(rhythm_result_noRUV, mean_result_noRUV, by='gene_id') |> column_to_rownames('gene_id')
 
-table(mean_rhythm_result)
+table(mean_rhythm_result_noRUV)
 table(column_to_rownames(mean_result, 'gene_id'))
 ```
 
@@ -949,15 +951,15 @@ genotypeKO
 2. no RUV
             genotypeKO
 chosen_model   -1    0    1
-           0 1040 2230 1191
-           1  942 3179 1153
-           2  281  328  361
-           3  168  231  136
-           4  908 1959 1069
-           5  156   80  134
+           0  823 2213  882
+           1 1055 5220 1202
+           2  228  270  294
+           3   82  174   81
+           4  545 1641  683
+           5   63   29   61
 genotypeKO
   -1    0    1 
 2796 9547 3203
 
-But similar conclusion can be drawn?
+But similar conclusion can be drawn? Supports 
 
