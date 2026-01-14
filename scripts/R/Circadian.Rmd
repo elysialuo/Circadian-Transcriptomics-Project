@@ -36,6 +36,8 @@ library(patchwork)
 library(scales)
 library(cluster)
 
+library(RColorBrewer)
+library(ggrepel)
 ```
 
 ```{r}
@@ -691,6 +693,15 @@ summary(results)
 summary(results_adj)
 summary(results_RUVnorm)
 
+
+mean_result_level<- as.data.frame(fit$coefficients[,1:2]) |> mutate(mean_WT = `(Intercept)`, mean_KO = `(Intercept)` + genotypeKO, FC = genotypeKO/`(Intercept)`, log2FC = log(genotypeKO/`(Intercept)`, base=2)) |> dplyr::select(-c(`(Intercept)`, genotypeKO))
+
+## is this the correct way to calculate fold_change??????????????
+
+mean_result_sig_filtered <- topTable(fit, coef='genotypeKO', p.value=0.05, adjust.method = "BH", number=Inf)
+
+mean_result <- topTable(fit, coef='genotypeKO', adjust.method = "BH", number=Inf)
+
 ```
 decideTests does BH p-vlue adjustment by default
 
@@ -839,6 +850,20 @@ chosen_model   -1    0    1
 *==> okay this looks more like the result in the paper but how valid is it to draw conclusion ignoring the 'ambiguous' data????????? and why the criteria BICW<0.65????*
 
 
+1. RUV
+            genotypeKO
+chosen_model   -1    0    1
+           0 1040 2230 1191
+           1  942 3179 1153
+           2  281  328  361
+           3  168  231  136
+           4  908 1959 1069
+           5  156   80  134
+genotypeKO
+  -1    0    1 
+3495 8007 4044
+
+
 ## b. W/O RUV version
 
 ```{r}
@@ -962,4 +987,107 @@ genotypeKO
 2796 9547 3203
 
 But similar conclusion can be drawn? Supports 
+
+
+
+
+# Combining group 2,4,5 vs 1,3 vs 0 (as suggested by JO)
+
+Only knowing the number of genes in each category is not informative - need to consider how much they changed too.
+
+```{r}
+
+rhythm_result_grouped <- rhythm_result |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic')) |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(0), true='ambiguous', false=grouped_chosen_model)) 
+
+
+mean_rhythm_result_grouped_level_sig_filtered <- mean_result_sig_filtered |> dplyr::select(logFC, P.Value, adj.P.Val) |> rownames_to_column('gene_id') |> left_join(rhythm_result_grouped, by='gene_id')
+
+```
+
+
+```{r}
+ggplot(data = mean_rhythm_result_grouped_level_sig_filtered,
+       mapping = aes(x = grouped_chosen_model, y = logFC, fill = grouped_chosen_model)) + 
+  geom_point() + 
+  geom_violin(alpha = 0.8, linewidth = 0) +
+  geom_boxplot()
+
+ggplot(data = mean_rhythm_result_grouped_level_sig_filtered,
+       mapping = aes(x = factor(chosen_model), y = logFC, fill = factor(chosen_model))) + 
+  geom_boxplot()
+```
+
+```{r}
+
+volvano_data <- mean_result |> dplyr::select(logFC, P.Value, adj.P.Val) |> rownames_to_column('gene_id') |> left_join(rhythm_result_grouped, by='gene_id')
+
+volvano_data$diffExpressed <- 'NO'
+volvano_data$diffExpressed[volvano_data$logFC>0.8 & volvano_data$adj.P.Val<0.05] <- 'UP'
+volvano_data$diffExpressed[volvano_data$logFC<(-0.8) & volvano_data$adj.P.Val<0.05] <- 'DOWN'
+
+table(volvano_data$diffExpressed)
+table(volvano_data[, c('diffExpressed', 'grouped_chosen_model')])
+table(volvano_data[, c('diffExpressed', 'chosen_model')])
+
+```
+*logFC > 1*
+DOWN    NO    UP 
+  118 15319   109 
+             grouped_chosen_model
+diffExpressed ambiguous non-rhythmic rhythmic
+         DOWN        40           41       37
+         NO        4391         5749     5179
+         UP          30           19       60
+             chosen_model
+diffExpressed    0    1    2    3    4    5
+         DOWN   40   37   20    4    9    8
+         NO   4391 5221  909  528 3922  348
+         UP     30   16   41    3    5   14
+
+
+*logFC > 0.8*
+ DOWN    NO    UP 
+  212 15168   166 
+             grouped_chosen_model
+diffExpressed ambiguous non-rhythmic rhythmic
+         DOWN        64           80       68
+         NO        4349         5696     5123
+         UP          48           33       85
+             chosen_model
+diffExpressed    0    1    2    3    4    5
+         DOWN   64   71   31    9   23   14
+         NO   4349 5177  887  519 3900  336
+         UP     48   26   52    7   13   20
+
+
+Bignon's paper didn't set logFC limit??!?! ()
+
+
+```{r}
+volvano_data_rhythmic <- volvano_data |> filter(grouped_chosen_model=='rhythmic')
+volvano_data_nonrhythmic <- volvano_data |> filter(grouped_chosen_model=='non-rhythmic')
+
+ggplot(data=volvano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Rhythmic genes")
+
+ggplot(data=volvano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Non-rhythmic genes")
+
+```
+
+
+
+
 
