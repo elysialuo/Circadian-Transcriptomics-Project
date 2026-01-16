@@ -1,0 +1,24 @@
+INFO [2026-01-15 21:21:02] $x
+INFO [2026-01-15 21:21:02] vlist
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $category.names
+INFO [2026-01-15 21:21:02] c("DryR", "JTK_Cycle")
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $filename
+INFO [2026-01-15 21:21:02] [1] "dryR_vs_JTK_rhythmic_filtered.png"
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $output
+INFO [2026-01-15 21:21:02] [1] TRUE
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $main
+INFO [2026-01-15 21:21:02] [1] "dryR vs JTK_Cycle (Rhythmic genes, ambiguous filtered)"
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $fill
+INFO [2026-01-15 21:21:02] c("lightgreen", "lightcoral")
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $cat.col
+INFO [2026-01-15 21:21:02] [1] "black"
+INFO [2026-01-15 21:21:02] 
+INFO [2026-01-15 21:21:02] $cex
+INFO [2026-01-15 21:21:02] [1] 1.2
+INFO [2026-01-15 21:21:02] 

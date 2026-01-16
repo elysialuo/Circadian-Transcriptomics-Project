@@ -514,11 +514,11 @@ library(RUVSeq)
 
 ```{r}
 ## filtered, unnormalised
-boxplot(count_data_dryseq_filtered[,1:10])
-plotRLE(count_data_dryseq_filtered[,1:10], outlint=FALSE)
+boxplot(count_data_dryseq_filtered[,1:40])
+plotRLE(count_data_dryseq_filtered[,1:40], outlint=FALSE)
 
 ## filtered, log2 cpm normalised
-boxplot(dryseq_filtered_norm_logcpm[,1:10])
+boxplot(dryseq_filtered_norm_logcpm[,1:40])
 ```
 seems pretty normalised after log2 cpm only?! doesn't justify the need for RUV! or does PCA help justify???
 
@@ -555,7 +555,8 @@ dryseq_filtered_norm_logcpm_RUVcount_k10 <- RUVs_output_k10$normalizedCounts
 How valid is mixing C and KO in covariance analysis?
 
 ```{r}
-boxplot(RUVs_output_prior$normalizedCounts[,1:10])
+
+boxplot(RUVs_output_prior$normalizedCounts[,1:40])
 ```
 
 ```{r}
@@ -795,9 +796,10 @@ dry_plot(drylm_result_new, "ENSMUSG00000000001")
 mean_result <- as.data.frame(results_adj[,'genotypeKO']) |> rownames_to_column('gene_id')
 
 # rhythm model classification
-rhythm_result <- drylm_result_new$parameters |> dplyr::select(chosen_model) |> rownames_to_column('gene_id')
+rhythm_result_raw <- drylm_result_new$parameters |> dplyr::select(chosen_model) |> rownames_to_column('gene_id')
+
 ## add in ambiguous classification (group 0)
-rhythm_result <- mutate(rhythm_result,chosen_model = replace(chosen_model, drylm_result_new$parameters[,'chosen_model_BICW']<0.65, 0))
+rhythm_result <- mutate(rhythm_result_raw,chosen_model = replace(chosen_model, drylm_result_new$parameters[,'chosen_model_BICW']<0.65, 0))
 
 ```
 
@@ -996,11 +998,18 @@ But similar conclusion can be drawn? Supports
 Only knowing the number of genes in each category is not informative - need to consider how much they changed too.
 
 ```{r}
-
+# Group for result with model 0-5
 rhythm_result_grouped <- rhythm_result |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic')) |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(0), true='ambiguous', false=grouped_chosen_model)) 
+
+# Group for result with model 1-5 (pre ambiguity filtering)
+rhythm_result_raw_grouped <-rhythm_result_raw |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic')) |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(0), true='ambiguous', false=grouped_chosen_model)) 
 
 
 mean_rhythm_result_grouped_level_sig_filtered <- mean_result_sig_filtered |> dplyr::select(logFC, P.Value, adj.P.Val) |> rownames_to_column('gene_id') |> left_join(rhythm_result_grouped, by='gene_id')
+
+```
+
+```{r}
 
 ```
 
@@ -1019,15 +1028,15 @@ ggplot(data = mean_rhythm_result_grouped_level_sig_filtered,
 
 ```{r}
 
-volvano_data <- mean_result |> dplyr::select(logFC, P.Value, adj.P.Val) |> rownames_to_column('gene_id') |> left_join(rhythm_result_grouped, by='gene_id')
+volcano_data <- mean_result |> dplyr::select(logFC, P.Value, adj.P.Val) |> rownames_to_column('gene_id') |> left_join(rhythm_result_grouped, by='gene_id')
 
-volvano_data$diffExpressed <- 'NO'
-volvano_data$diffExpressed[volvano_data$logFC>0.8 & volvano_data$adj.P.Val<0.05] <- 'UP'
-volvano_data$diffExpressed[volvano_data$logFC<(-0.8) & volvano_data$adj.P.Val<0.05] <- 'DOWN'
+volcano_data$diffExpressed <- 'NO'
+volcano_data$diffExpressed[volcano_data$logFC>0.8 & volcano_data$adj.P.Val<0.05] <- 'UP'
+volcano_data$diffExpressed[volcano_data$logFC<(-0.8) & volcano_data$adj.P.Val<0.05] <- 'DOWN'
 
-table(volvano_data$diffExpressed)
-table(volvano_data[, c('diffExpressed', 'grouped_chosen_model')])
-table(volvano_data[, c('diffExpressed', 'chosen_model')])
+table(volcano_data$diffExpressed)
+table(volcano_data[, c('diffExpressed', 'grouped_chosen_model')])
+table(volcano_data[, c('diffExpressed', 'chosen_model')])
 
 ```
 *logFC > 1*
@@ -1064,30 +1073,252 @@ Bignon's paper didn't set logFC limit??!?! ()
 
 
 ```{r}
-volvano_data_rhythmic <- volvano_data |> filter(grouped_chosen_model=='rhythmic')
-volvano_data_nonrhythmic <- volvano_data |> filter(grouped_chosen_model=='non-rhythmic')
+volcano_data_rhythmic <- volcano_data |> filter(grouped_chosen_model=='rhythmic')
+volcano_data_nonrhythmic <- volcano_data |> filter(grouped_chosen_model=='non-rhythmic')
 
-ggplot(data=volvano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ), col = diffExpressed)) +
   geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
-  ggtitle("Rhythmic genes")
+  ggtitle("Rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50)
 
-ggplot(data=volvano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ), col = diffExpressed)) +
   geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
-  ggtitle("Non-rhythmic genes")
+  ggtitle("Non-rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50)
 
 ```
 
 
 
+
+
+
+# *JTK & RAIN comparison!*
+
+```{r}
+# log-TMM normalised matrix, control only
+
+JTK_matrix <- as.data.frame(dryseq_filtered_norm_logcpm[,1:30])
+colnames(JTK_matrix) <- meta_drylm$label[1:30]
+JTK_matrix <- rownames_to_column(JTK_matrix, 'Probe')
+
+```
+
+
+```{r}
+write.table(JTK_matrix, file = 'JTK_Cycle/Bignon_JTK_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix['Probe'], file = 'JTK_Cycle/Bignon_JTK_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+```
+
+
+--- running JTK cycle ---
+
+```{r}
+getwd()
+JTK_output <- read.table(file = 'JTK_Cycle/JTK.Bignon_JTK_run.txt', header = TRUE ) |> rename('Probe' = 'gene_id')
+
+# Lable as rythmic & non-rhythmic
+JTK_output$Rhythmicity <- 'Non-rhythmic'
+JTK_output$Rhythmicity[JTK_output$BH.Q < 0.05] <- 'Rhythmic'
+JTK_output <- relocate(JTK_output, Rhythmicity, .before = BH.Q)
+table(JTK_output$Rhythmicity)
+JTK_output
+
+```
+
+1. JTK: 
+Non-rhythmic      Rythmic 
+       12778         2768 
+       
+
+lol ADJ.P means “p-value adjusted for the discrete null distribution of the JTK test” here
+q value = actually BH FDR adjusted p value
+
+How to classify rhythmic vs non-rhythmic here? just q.value<0.05? how is this comparable to the use of BICW 'ambiguous' threshold? 
+
+
+```{r}
+rhythm_result_grouped
+table(rhythm_result_grouped$grouped_chosen_model)
+
+rhythm_result_raw_grouped
+table(rhythm_result_raw_grouped$grouped_chosen_model)
+
+```
+
+2. dryR 
+(ambiguity filtered)
+   ambiguous non-rhythmic     rhythmic 
+        4461         5809         5276 
+
+(unfiltered)
+non-rhythmic     rhythmic 
+        8088         7458 
+
+### Venn diagram comparison
+```{r}
+# Plot Venn diagram
+install.packages("VennDiagram")
+library(VennDiagram)
+
+## rhythmic (ambiguous filtered)
+dryR_rhythmic_list <- rhythm_result_grouped$gene_id[rhythm_result_grouped$grouped_chosen_model == 'rhythmic']
+JTK_rhythmic_list <- JTK_output$gene_id[JTK_output$Rhythmicity == 'Rhythmic'] 
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("DryR", "JTK_Cycle")
+
+venn.diagram(
+  x = vlist,
+  category.names = c("DryR", "JTK_Cycle"),
+  filename = "VennDiagram/dryR_vs_JTK_rhythmic_filtered.png",
+  output = TRUE,
+  main = "dryR vs JTK_Cycle (Rhythmic genes, ambiguous filtered)", # Title
+  fill = c("lightgreen", "lightcoral"), # Circle fill colors
+  cat.col = "black", # Category label colors
+  cex = 1.2 # Size of text
+)
+
+
+## rhythmic (unfiltered)
+dryR_rhythmic_list <- rhythm_result_raw_grouped$gene_id[rhythm_result_raw_grouped$grouped_chosen_model == 'rhythmic']
+JTK_rhythmic_list <- JTK_output$gene_id[JTK_output$Rhythmicity == 'Rhythmic'] 
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("DryR", "JTK_Cycle")
+
+venn.diagram(
+  x = vlist,
+  category.names = c("DryR", "JTK_Cycle"),
+  filename = "VennDiagram/dryR_vs_JTK_rhythmic_unfiltered.png",
+  output = TRUE,
+  main = "dryR vs JTK_Cycle (Rhythmic genes, ambiguous unfiltered)", # Title
+  fill = c("lightgreen", "lightcoral"), # Circle fill colors
+  cat.col = "black", # Category label colors
+  cex = 1.2 # Size of text
+)
+
+
+## non-rhythmic
+dryR_rhythmic_list <- rhythm_result_grouped$gene_id[rhythm_result_grouped$grouped_chosen_model == 'non-rhythmic']
+JTK_rhythmic_list <- JTK_output$gene_id[JTK_output$Rhythmicity == 'Non-rhythmic'] 
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("DryR", "JTK_Cycle")
+
+venn.diagram(
+  x = vlist,
+  category.names = c("DryR", "JTK_Cycle"),
+  filename = "VennDiagram/dryR_vs_JTK_unrhythmic_filtered.png",
+  output = TRUE,
+  main = "dryR vs JTK_Cycle (Non-rhythmic genes, ambiguous filtered)", # Title
+  fill = c("lightgreen", "lightcoral"), # Circle fill colors
+  cat.col = "black", # Category label colors
+  cex = 1.2 # Size of text
+)
+
+
+dryR_rhythmic_list <- rhythm_result_raw_grouped$gene_id[rhythm_result_raw_grouped$grouped_chosen_model == 'non-rhythmic']
+JTK_rhythmic_list <- JTK_output$gene_id[JTK_output$Rhythmicity == 'Non-rhythmic'] 
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("DryR", "JTK_Cycle")
+
+venn.diagram(
+  x = vlist,
+  category.names = c("DryR", "JTK_Cycle"),
+  filename = "VennDiagram/dryR_vs_JTK_unrhythmic_unfiltered.png",
+  output = TRUE,
+  main = "dryR vs JTK_Cycle (Non-rhythmic genes, ambiguous unfiltered)", # Title
+  fill = c("lightgreen", "lightcoral"), # Circle fill colors
+  cat.col = "black", # Category label colors
+  cex = 1.2 # Size of text
+)
+
+
+```
+
+
+
+### Volcano plots of JTK!
+```{r}
+JTK_output_Rhythmicity <- JTK_output |> dplyr::select(gene_id, Rhythmicity)
+
+volcano_data <- mean_result |> dplyr::select(logFC, P.Value, adj.P.Val) |> rownames_to_column('gene_id') |> left_join(JTK_output_Rhythmicity, by='gene_id')
+
+volcano_data$diffExpressed <- 'NO'
+volcano_data$diffExpressed[volcano_data$logFC>0.8 & volcano_data$adj.P.Val<0.05] <- 'UP'
+volcano_data$diffExpressed[volcano_data$logFC<(-0.8) & volcano_data$adj.P.Val<0.05] <- 'DOWN'
+
+table(volcano_data$diffExpressed)
+table(volcano_data[, c('diffExpressed', 'Rhythmicity')])
+  
+```
+ DOWN    NO    UP 
+  212 15168   166 
+             Rhythmicity
+diffExpressed Non-rhythmic Rhythmic
+         DOWN          141       71
+         NO          12549     2619
+         UP             88       78
+
+
+```{r}
+volcano_data_rhythmic <- volcano_data |> filter(Rhythmicity=='Rhythmic')
+volcano_data_nonrhythmic <- volcano_data |> filter(Rhythmicity=='Non-rhythmic')
+
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50)
+  
+
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Non-rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50)
+```
 
 
