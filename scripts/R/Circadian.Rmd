@@ -41,7 +41,7 @@ library(ggrepel)
 ```
 
 ```{r}
-processed_data <- read_csv("../../data/processed/Bignon_RNA-seq_processed.csv")
+processed_data <- read_csv("../../data/Bignon_processed_data//Bignon_RNA-seq_processed.csv")
 processed_data
 ```
 ### DryR usage example
@@ -139,7 +139,7 @@ library(tidyr)
 ```
 
 ```{r}
-# Read in metadata
+# Read in meta data
 
 gse <- getGEO(filename = "../../Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
     getGPL = FALSE)
@@ -160,7 +160,8 @@ meta_dryseq <- label_df |>
 ```{r}
 # Read in raw count
 ### run whole chunk
-setwd("../../Count data/GSE216252_RAW")
+getwd()
+setwd("../../data/Bignon_raw_data/GSE216252_RAW")
 
 file_list <- list.files(".")
 count_matrix <- read.delim(file_list[1]) |> dplyr::select(Gene_ID)
@@ -190,7 +191,7 @@ count_data_dryseq <- count_data_dryseq[,order(colnames(count_data_dryseq))] |> a
 
 tail(count_data_dryseq)
   
-is.unsorted(meta_dryseq$gsm) # check if the metadata is sorted
+is.unsorted(meta_dryseq$gsm) # check if the meta data is sorted
 
 group_dryseq <- meta_dryseq$genotype_new 
 time_dryseq <- strtoi(meta_dryseq$timepoint_new, base=10)
@@ -277,7 +278,7 @@ annotations
 
 annotation_selection <- annotations |> 
     dplyr::select(gene_id, gene_name, description, entrezid) |>
-    dplyr::filter(gene_id %in% rownames(count_data_dryseq_sorted))
+    dplyr::filter(gene_id %in% rownames(count_data_dryseq_prefilter))
 
 length(annotation_selection$entrezid)
 length(unique(annotation_selection$entrezid))
@@ -285,14 +286,20 @@ sum(is.na(annotation_selection$entrezid))
 
 
 
-count_data_dryseq_sorted_annot <- count_data_dryseq_sorted |> 
+count_data_dryseq_sorted_annot <- as.data.frame(count_data_dryseq_prefilter) |> 
     rownames_to_column("gene_id") |>
     left_join(annotation_selection, "gene_id") |>
     relocate(c(gene_name, description, entrezid), .after=gene_id)
+
+
+count_data_dryseq_sorted_annot[count_data_dryseq_sorted_annot$gene_name == "Per1", ]
+
 ```
 
 - The extremely high read are all related to kidney functioning / respiration
 bruhhh okay let's go with drylm first
+
+
 
 
 ### Drylm result analysis
@@ -354,13 +361,15 @@ count_data_drylm
 __You cannot perform a significance test on two means unless you know the variability behind those means.__ HUHHHHHH
 
 ```{r}
-meta_drylm <- rbind(gse[[2]], group_drylm, group_drylm_new, time_drylm, replicate_drylm)
-meta_drylm <- as.data.frame(t(meta_drylm)) |> dplyr::rename(gene_id = V1, label = Label, group = group_drylm_new, time = time_drylm, replicate = replicate_drylm)
-meta_drylm
+### Obtain meta data matrix
+metadata <- rbind(gse[[2]], group_drylm, time_drylm, replicate_drylm)
+metadata <- as.data.frame(t(metadata)) |> dplyr::rename(gene_id = V1, group = group_drylm, time = time_drylm, replicate = replicate_drylm)
+metadata['label'] <- paste0(metadata$group, '_', 'ZT', metadata$time, '_', metadata$replicate)
 
 # calculate mean value over timepoints
 
-t_count_data_drylm <- as.data.frame(t(count_data_drylm)) |> group_by(group = meta_drylm$group, replicate = meta_drylm$replicate) 
+t_count_data_drylm <- as.data.frame(t(count_data_drylm)) |> group_by(group = metadata$group, replicate = metadata$replicate) 
+
 
 
 ```
@@ -422,7 +431,11 @@ dryseq_result
 erm two methods not completely the same but ok-ish overlap
 
 
-## Following Bignon 2023's method!!!
+
+
+
+
+# Following Bignon 2023's method!!!
 
 ```{r}
 # 1. Convert to CPM
@@ -1107,11 +1120,13 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 
 # *JTK & RAIN comparison!*
 
+* log-TMM used here for trial, no RUV yet
+
 ```{r}
 # log-TMM normalised matrix, control only
 
 JTK_matrix <- as.data.frame(dryseq_filtered_norm_logcpm[,1:30])
-colnames(JTK_matrix) <- meta_drylm$label[1:30]
+colnames(JTK_matrix) <- metadata$label[1:30]
 JTK_matrix <- rownames_to_column(JTK_matrix, 'Probe')
 
 ```
@@ -1320,5 +1335,327 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
   xlim(-5, 5) +
   ylim(-1, 50)
 ```
+
+
+
+# RUV vs no RUV of known rhythmic genes
+
+```{r}
+# RUV dryR
+
+count_data_drylm_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts)
+
+# Check for missing values or empty rows
+table(rowSums(count_data_drylm_RUV) == 0) 
+table(is.na(count_data_drylm_RUV))
+
+group_drylm_RUV <- meta_dryseq[,'genotype_new']
+
+time_drylm_RUV <- as.numeric(meta_dryseq[,'timepoint_new'])
+
+replicate_drylm_RUV <- c(1:5)
+replicate_drylm_RUV <- rep(replicate_drylm, times=12)
+
+
+drylm_result_RUV = drylm(count_data_drylm_RUV,group_drylm_RUV,time_drylm_RUV, period = 24)
+
+# explore the results
+drylm_result_RUV[["results"]]     # data frame summarizing results
+drylm_result_RUV[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+drylm_result_RUV[["ncounts"]]     # normalized counts
+drylm_result_RUV[["counts"]]      # raw counts (NULL)
+drylm_result_RUV[["cook"]]        # cook's distance for outlier detection (NULL)
+drylm_result_RUV[["BICW_rhythm"]] # BICW for each rhythmic model
+drylm_result_RUV[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(drylm_result_RUV, "./")
+
+# plot a feature of interest
+dry_plot(drylm_result_RUV, "ENSMUSG00000000001")
+
+```
+
+```{r}
+# noRUV dryR
+
+count_data_drylm_noRUV <- as.data.frame(dryseq_filtered_norm_logcpm)
+
+# Check for missing values or empty rows
+table(rowSums(count_data_drylm_noRUV) == 0) 
+table(is.na(count_data_drylm_noRUV))
+
+group_drylm_noRUV <- meta_dryseq[,'genotype_new']
+
+time_drylm_noRUV <- as.numeric(meta_dryseq[,'timepoint_new'])
+
+replicate_drylm_noRUV <- c(1:5)
+replicate_drylm_noRUV <- rep(replicate_drylm, times=12)
+
+
+drylm_result_noRUV = drylm(count_data_drylm_noRUV,group_drylm_noRUV,time_drylm_noRUV, period = 24)
+
+# explore the results
+drylm_result_noRUV[["results"]]     # data frame summarizing results
+drylm_result_noRUV[["parameters"]]  # coefficients: phase, amplitude and mean for each group
+drylm_result_noRUV[["ncounts"]]     # normalized counts
+drylm_result_noRUV[["counts"]]      # raw counts (NULL)
+drylm_result_noRUV[["cook"]]        # cook's distance for outlier detection (NULL)
+drylm_result_noRUV[["BICW_rhythm"]] # BICW for each rhythmic model
+drylm_result_noRUV[["BICW_mean"]]   # BICW for each mean model
+
+# generate a pdf with a global summary of all models
+plot_models_rhythm(drylm_result_noRUV, "./")
+
+# plot a feature of interest
+dry_plot(drylm_result_noRUV, "ENSMUSG00000000001")
+```
+
+
+```{r}
+### Annotation 
+annotation_selection <- annotations |> 
+    dplyr::select(gene_id, gene_name, description, entrezid) |>
+    dplyr::filter(gene_id %in% rownames(count_data_dryseq_prefilter))
+
+length(annotation_selection$entrezid)
+length(unique(annotation_selection$entrezid))
+sum(is.na(annotation_selection$entrezid))
+
+
+
+count_data_dryseq_sorted_annot <- as.data.frame(count_data_dryseq_prefilter) |> 
+    rownames_to_column("gene_id") |>
+    left_join(annotation_selection, "gene_id") |>
+    relocate(c(gene_name, description, entrezid), .after=gene_id)
+
+
+annotations[annotations$gene_name == "Actb", ]$gene_id
+```
+
+```{r}
+rhythmic_list <- c("Per1", "Per2", "Per3", "Cry1", "Cry2", "Arntl", "Clock", "Npas2", "Nr1d1","Dbp", "Kcnj15", "Actb")
+
+for (gene in rhythmic_list) {
+  ID <- annotations[annotations$gene_name == gene, ]$gene_id
+  print(gene)
+  print(ID)
+  print(ID %in% rownames(drylm_result_noRUV[["results"]]))
+  # print(dry_plot(drylm_result_RUV, ID))
+  # print(dry_plot(drylm_result_noRUV, ID))
+}
+
+```
+
+```{r}
+gene = "Per1"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+It's not arhythmic in the KO...
+
+
+```{r}
+gene = "Per2"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+```{r}
+gene = "Per3"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+```{r}
+gene = "Cry1"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+```{r}
+gene = "Cry2"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+```{r}
+gene = "Arntl"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+```{r}
+gene = "Kcnj15"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+
+```{r}
+gene = "Actb"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+
+```{r}
+gene = "Rplp0"
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == gene, ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == gene, ]$gene_id)
+
+```
+
+(from previous analysis)
+1. RUV:
+chosen_model
+   0    1    2    3    4    5 
+4461 5274  970  535 3936  370 
+
+2. no RUV
+chosen_model
+   0    1    2    3    4    5 
+3918 *7477*  792  337 2869  153 
+==> no RUV gives fewer rhythmic genes
+
+
+## JTK on RUV vs noRUV
+
+### no RUV
+```{r}
+JTK_output
+table(JTK_output$Rhythmicity)
+```
+
+
+### RUV
+
+```{r}
+# log-TMM normalised matrix, control only
+RUVs_output_prior$normalizedCounts[,1:30]
+
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,1:30])
+colnames(JTK_matrix_RUV) <- metadata$label[1:30]
+JTK_matrix_RUV <- rownames_to_column(JTK_matrix_RUV, 'Probe')
+
+```
+
+
+```{r}
+write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Bignon_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Bignon_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+```
+
+
+--- running JTK cycle ---
+
+```{r}
+JTK_output_RUV <- read.table(file = 'JTK_Cycle/JTK.Bignon_JTK_RUV_run.txt', header = TRUE ) |> rename('Probe' = 'gene_id')
+
+# Lable as rythmic & non-rhythmic
+JTK_output_RUV$Rhythmicity <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity[JTK_output_RUV$BH.Q < 0.05] <- 'Rhythmic'
+JTK_output_RUV <- relocate(JTK_output_RUV, Rhythmicity, .before = BH.Q)
+table(JTK_output_RUV$Rhythmicity)
+
+```
+
+
+
+```{r}
+### Venn diagram comparison
+
+## rhythmic (ambiguous filtered)
+JTK_RUV_rhythmic_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity == 'Rhythmic'] 
+
+length(JTK_RUV_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+vlist <- list(JTK_RUV_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("JTK_Cycle_RUV", "JTK_Cycle_noRUV")
+
+venn.diagram(
+  x = vlist,
+  category.names = c("JTK_Cycle_RUV", "JTK_Cycle_noRUV"),
+  filename = "VennDiagram/JTK_RUV_vs_JTK_noRUV.png",
+  output = TRUE,
+  main = "JTK with RUV vs without RUV", # Title
+  fill = c("lightyellow", "lightblue"), # Circle fill colors
+  cat.col = "black", # Category label colors
+  cex = 1.2 # Size of text
+)
+```
+
+### Plot out genes genes with different classification with dryR (shortcut:>)
+```{r}
+
+JTK_both_rhythmic <- JTK_rhythmic_list[JTK_rhythmic_list %in% JTK_RUV_rhythmic_list]
+JTK_both_rhythmic <- annotations[annotations$gene_id %in% JTK_both_rhythmic, ]
+
+JTK_RUV_rhythmic <- JTK_RUV_rhythmic_list[!(JTK_RUV_rhythmic_list %in% JTK_rhythmic_list)]
+JTK_RUV_rhythmic <- annotations[annotations$gene_id %in% JTK_RUV_rhythmic, ]
+
+# bruh ENSMUSG00000097971 is not in ENCODE??? maybe due to version issue (lncRNA)
+table(annotations$gene_id %in% JTK_RUV_rhythmic)
+JTK_RUV_rhythmic_list[!(JTK_RUV_rhythmic_list %in% annotations$gene_id)]
+
+JTK_noRUV_rhythmic <- JTK_rhythmic_list[!(JTK_rhythmic_list %in% JTK_RUV_rhythmic_list)]
+JTK_noRUV_rhythmic <- annotations[annotations$gene_id %in% JTK_noRUV_rhythmic, ]
+
+```
+
+```{r}
+# Both rhythmic
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Lypla1", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Lypla1", ]$gene_id)
+## huhhh, dryR different from JTK
+
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Prex2", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Prex2", ]$gene_id)
+
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Sulf1", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Sulf1", ]$gene_id)
+
+```
+
+```{r}
+# Rhythmic with RUV only
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Adhfe1", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Adhfe1", ]$gene_id)
+## huhhh, dryR different from JTK
+
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Tcf24", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Tcf24", ]$gene_id)
+
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Arfgef1", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Arfgef1", ]$gene_id)
+
+```
+
+
+```{r}
+# Rhythmic with noRUV only
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Eif4e2", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Eif4e2", ]$gene_id)
+## huhhh, dryR different from JTK
+
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Kcnj13", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Kcnj13", ]$gene_id)
+
+dry_plot(drylm_result_noRUV, annotations[annotations$gene_name == "Kcnt2", ]$gene_id)
+dry_plot(drylm_result_RUV, annotations[annotations$gene_name == "Kcnt2", ]$gene_id)
+```
+
 
 
