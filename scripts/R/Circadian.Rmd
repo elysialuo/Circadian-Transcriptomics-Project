@@ -525,14 +525,6 @@ BiocManager::install("RUVSeq")
 library(RUVSeq)
 ```
 
-```{r}
-## filtered, unnormalised
-boxplot(count_data_dryseq_filtered[,1:40])
-plotRLE(count_data_dryseq_filtered[,1:40], outlint=FALSE)
-
-## filtered, log2 cpm normalised
-boxplot(dryseq_filtered_norm_logcpm[,1:40])
-```
 seems pretty normalised after log2 cpm only?! doesn't justify the need for RUV! or does PCA help justify???
 
 ```{r}
@@ -568,8 +560,23 @@ dryseq_filtered_norm_logcpm_RUVcount_k10 <- RUVs_output_k10$normalizedCounts
 How valid is mixing C and KO in covariance analysis?
 
 ```{r}
+### Diagnostic plot for the normalisation steps
 
-boxplot(RUVs_output_prior$normalizedCounts[,1:40])
+par(mfrow = c(2,2))
+
+## filtered, unnormalised
+plotRLE(count_data_dryseq_filtered, outline=FALSE, exprs_logged = FALSE,
+        ylim=c(-0.9, 0.9), main = 'Unnormalised (filtered)')
+
+## filtered, TMM normalised
+plotRLE(dryseq_filtered_norm_logcpm, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM normalised (filtered)')
+
+## filtered, TMM & RUV normalised
+plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)')
+
+
 ```
 
 ```{r}
@@ -1157,7 +1164,7 @@ JTK_output
 
 1. JTK: 
 Non-rhythmic      Rythmic 
-       12778         2768 
+       12778         2768
        
 
 lol ADJ.P means “p-value adjusted for the discrete null distribution of the JTK test” here
