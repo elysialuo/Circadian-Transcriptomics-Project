@@ -1,0 +1,452 @@
+---
+title: "Aviram pipeline analysis"
+author: "Elysia Luo"
+date: "2026-02-05"
+output: html_document
+---
+
+```{r}
+mamba_folder <- "/Users/elysialuo/miniforge3"
+env_name <- "circadian"
+.libPaths(paste(mamba_folder, "envs", env_name, "lib/R/library", sep = "/"))
+
+library(tidyverse)
+library(dryR)
+library(stringr)
+library(ggplot2)
+library(ggpubr)
+
+library(MASS)
+library(janitor)
+library(naniar)
+library(patchwork)
+library(scales)
+library(cluster)
+
+library(RColorBrewer)
+library(ggrepel)
+
+library(GEOquery)
+library(stringr)
+library(tidyr)
+
+library(AnnotationHub)
+library(AnnotationDbi)
+library(ensembldb)
+
+library(limma)
+library(edgeR)
+library(RUVSeq)
+
+library(limorhyde)
+library(annotate)
+library(data.table)
+library(org.Mm.eg.db)
+library(foreach)
+
+library(VennDiagram)
+
+library('org.Mm.eg.db')
+library(GEOquery)
+library(stringr)
+library(tidyr)
+```
+
+```{r}
+getwd()
+```
+
+```{r}
+ah <- AnnotationHub()
+
+# search for id of desired dataset
+dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
+dbResult[1]
+
+# load mouse transcript dataset
+MouseEnsDb <- ah[[dbResult$ah_id]]
+MouseEnsDb
+
+# output data of interest in form of data.frame
+annotations <- genes(MouseEnsDb, return.type = "data.frame")
+annotations
+```
+
+
+```{r}
+# read in raw count matrix from Aviram
+gse <- getGEO(filename = "../../data/Aviram_raw_data/GSE171975_series_matrix.txt", GSEMatrix = TRUE, getGPL = FALSE)
+
+metadata <- pData(gse) |> 
+  dplyr::mutate("time point:ch1" = gsub("\\D", "", `time point:ch1`)) |> 
+  dplyr::rename(genotype = "genotype:ch1", time = "time point:ch1") |>
+  dplyr::select(title, geo_accession, genotype, time) |> 
+  dplyr::filter(genotype != "Bmal1-/-") 
+
+metadata <- metadata[order(as.integer(metadata$time)),]
+metadata <- metadata[order(metadata$genotype, decreasing = TRUE),]
+
+raw_count_WT <- read_csv("../../data/Aviram_raw_data/Aviram_WT_raw.csv") |> dplyr::rename(gene_name = ...1)
+raw_count_Per <- read_csv("../../data/Aviram_raw_data/Aviram_PerKO_raw.csv") |> dplyr::rename(gene_name = ...1) 
+
+raw_count <- full_join(raw_count_WT, raw_count_Per) |> replace_na_with(0) |> column_to_rownames("gene_name") 
+
+raw_count <- raw_count[,metadata$title]
+
+```
+
+*requires second thought!! should i use full-join or inner-join?*
+- Treating NA → 0 assumes it’s biological, which can bias downstream normalization.
+
+
+### Normalisation
+
+```{r}
+# 1. Convert to CPM
+
+# Compute CPM
+raw_count_cpm <- raw_count |>
+  dplyr::mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
+
+# Filter for at least CPM >= 1 in one sample
+raw_count_cpm_filtered <- dplyr::filter(raw_count_cpm, apply(raw_count_cpm, 1, max) >= 1)
+raw_count_cpm_filtered
+```
+
+```{r}
+# 2. TMM normalisation
+
+# Filter raw count based on cpm
+raw_count_filtered <- raw_count[rownames(raw_count) %in% rownames(raw_count_cpm_filtered),]
+nrow(raw_count_filtered)
+
+# Normalise library size of filtered raw count
+raw_count_filtered_norm <- DGEList(counts=raw_count_filtered) |> normLibSizes()
+str(raw_count_filtered_norm)
+raw_count_filtered_norm$samples
+
+# log2 cpm with normalised library size
+raw_filtered_norm_logcpm <- cpm(raw_count_filtered_norm, log=TRUE)
+raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE, prior.count=2)
+
+```
+
+
+```{r}
+cov <- sd(raw_count_filtered_norm$samples$lib.size) / mean(raw_count_filtered_norm$samples$lib.size) * 100
+cov
+```
+
+Aviram's count matrix seems already filtered???
+
+coefficient of variance = 22.2% => ok!!
+
+
+```{r}
+### RUV
+x <- str_c(metadata$genotype, str_pad(metadata$time, 2, pad="0"), sep="_")
+
+differences <- makeGroups(x)  # -1 assigned to missing sample (PerKO20 and PerKO8)
+controls <- rownames(raw_filtered_norm_logcpm_prior)
+
+# k=2, prior
+RUVs_output_prior <- RUVs(raw_filtered_norm_logcpm_prior, controls, k=2, differences, isLog=TRUE)
+raw_filtered_norm_logcpm_prior_RUVcount_k2 <- RUVs_output_prior$normalizedCounts
+as.data.frame(raw_filtered_norm_logcpm_prior)
+as.data.frame(raw_filtered_norm_logcpm_prior_RUVcount_k2)
+W1 <- RUVs_output_prior$W[,1]
+W2 <- RUVs_output_prior$W[,2]
+
+```
+
+```{r}
+par(mfrow = c(2,2))
+
+## filtered, unnormalised
+plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
+        ylim=c(-0.9, 0.9), main = 'Unnormalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+## filtered, TMM normalised
+plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+## filtered, TMM & RUV normalised
+plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+```
+
+```{r}
+# PCA plot: CPM filtered raw count
+pca_test_raw <- prcomp(t(raw_count_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "title"), metadata, by = "title")
+pca_df_raw$lightdark <- "light"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20", "24", "40", "44")] <- "dark"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = lightdark, shape = genotype, label = time)) +
+  geom_point(size = 2)  +
+  geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: Aviram unnormalised, filtered",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+```
+
+```{r}
+## PCA plot: TMM_log_cpm normalised
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "title"), metadata, by = "title")
+pca_df_TMM$lightdark <- "light"
+pca_df_TMM$lightdark[pca_df_TMM$time %in% c("0", "16", "20", "24", "40", "44")] <- "dark"
+
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = lightdark, shape = genotype, label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: Aviram TMM-normalised only",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
+
+```{r}
+## PCA plot: RUV normalised, k=2, prior
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "title"), metadata, by = "title")
+pca_df_RUV$lightdark <- "light"
+pca_df_RUV$lightdark[pca_df_RUV$time %in% c("0", "16", "20", "24", "40", "44")] <- "dark"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype, label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: Aviram TMM + RUV (k=2, prior)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+
+```
+
+ehhh still cannot separate perDKO
+
+
+
+```{r}
+# Limorhyde
+
+period = 24
+qvalRhyCutoff = 0.15
+qvalDrCutoff = 0.1
+
+### should i use unRUV matrix???? yes
+y = raw_filtered_norm_logcpm_prior #_RUVcount_k2
+
+metadata_lmr <- metadata |> dplyr::select(title, genotype, time) |> 
+  dplyr::mutate(time = as.integer(time), cond = factor(genotype)) |> 
+  rownames_to_column("sample_alias")
+
+
+metadata_lmr <- cbind(metadata_lmr, limorhyde(metadata_lmr$time, 'time_'), W1, W2) |> as.data.table()
+
+
+
+
+```
+
+```{r}
+metadata_lmr$time
+```
+
+```{r}
+condNow <- "WT"
+
+design = model.matrix(~ time_cos + time_sin, data = metadata_lmr[cond == condNow, ])
+fit = lmFit(y[, metadata_lmr$cond == condNow], design)
+fit = eBayes(fit, trend = TRUE)
+rhyNow = data.table(topTable(fit, coef = 2:3, number = Inf), keep.rownames = TRUE)
+setnames(rhyNow, 'rn', 'gene_name')
+rhyNow[, cond := condNow]
+
+rhyLimmaSummary = rhyNow[, .(P.Value = min(P.Value)), by = gene_name]
+rhyLimmaSummary[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(rhyLimmaSummary, 'adj.P.Val')
+
+rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]
+```
+
+```{r}
+# Extract coefficients from your limma fit
+coefs = coef(fit)[, c("(Intercept)", "time_cos", "time_sin")]
+
+# Compute (log2 *relative*) amplitude for each gene
+amplitude_lmr = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2)
+mean = coefs[, "(Intercept)"]
+## amplitude_lmr_rel = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2) - mean
+
+cbind(amplitude_lmr, coefs[, "(Intercept)"])
+
+hist(amplitude_lmr, ylim = c(0,100))
+```
+
+```{r}
+as.data.frame(raw_filtered_norm_logcpm_prior[amplitude_lmr > 1,])
+amplitude_lmr[amplitude_lmr > 1]
+sum(amplitude_lmr > 0.8)
+
+```
+
+### JTK
+```{r}
+library(dataPreparation)
+metadata
+table(metadata$time[metadata$genotype == "WT"])
+
+# log-TMM & RUV normalised matrix, control only
+RUVs_output_prior$normalizedCounts[,1:48]
+
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,1:48])
+# JTK_matrix_RUV[rowSums(JTK_matrix_RUV)>0,]
+# JTK_matrix_RUV[raw_count_WT$gene_name, ]
+
+JTK_matrix_RUV <- JTK_matrix_RUV |> rownames_to_column('Probe')
+
+write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Aviram_JTK/Aviram_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Aviram_JTK/Aviram_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+
+
+```
+12377 => 11398 after filtering out the zeros in WT
+original matrix: 11727
+
+--- running JTK cycle ---
+
+```{r}
+JTK_output_RUV <- read.table(file = 'JTK_Cycle/Aviram_JTK/JTK.Aviram_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('gene_name' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_name]
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, .after = AMP)
+
+JTK_output_RUV$Rhythmicity_lmrAMP <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.3] <- 'Rhythmic'
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_RUV$Rhythmicity_lmrAMP)
+
+
+```
+
+AMP > 0.3:
+Non-rhythmic     Rhythmic 
+       10827         1550 
+       
+huh why so much more than Bignon's???
+       
+
+### Limorhyde x Limma DE analysis
+
+```{r}
+# with interaction
+
+design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr)
+
+qr(design)$rank  # check if W1/2 are colinear with cond
+cor(metadata_lmr[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
+
+
+fit = lmFit(y, design)
+fit = eBayes(fit, trend = TRUE)
+deLimma = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(deLimma, 'rn', 'gene_name')
+
+# deLimma = deLimma[!(gene_id %in% drLimma[adj.P.Val <= qvalDrCutoff]$gene_id)] ## don't ignore differentially rhythmic genes
+deLimma[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(deLimma, 'adj.P.Val')
+
+deLimma
+
+deLimma$diffExpressed <- 'NO'
+deLimma$diffExpressed[deLimma$logFC>0.8 & deLimma$adj.P.Val<0.05] <- 'UP'
+deLimma$diffExpressed[deLimma$logFC<(-0.8) & deLimma$adj.P.Val<0.05] <- 'DOWN'
+table(deLimma$diffExpressed)
+```
+logFC > ±0.8:
+ DOWN    NO    UP 
+  582 11514   281 
+
+
+
+## Rhythmicity vs DE
+
+```{r}
+JTK_output_RUV
+
+deLimma
+
+JTK_deLimma <- left_join(deLimma, JTK_output_RUV, by = "gene_name") |> 
+  dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
+  dplyr::mutate(diffExpressed_fac = factor(diffExpressed)) |> 
+  dplyr::relocate(Rhythmicity_fac, .after = "gene_name") |> 
+  dplyr::relocate(diffExpressed_fac, .after = "gene_name")
+
+
+table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+```
+
+
+
+```{r}
+table <- table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+
+DEratio <- (table[1, ] + table[3,]) / colSums(table)
+DEratio
+
+```
+
+DEratio:
+Non-rhythmic     Rhythmic 
+  0.06686986   0.08967742 
+
+
+```{r}
+volcano_data_rhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
+volcano_data_nonrhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
+
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50)
+  
+
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Non-rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50)
+
+```
+
+Significantly more down-regulation
+
+
+
+
+

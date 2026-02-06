@@ -475,7 +475,7 @@ count_data_dryseq_filtered_norm$samples
 
 # log2 cpm with normalised library size
 dryseq_filtered_norm_logcpm <- cpm(count_data_dryseq_filtered_norm, log=TRUE)
-dryseq_filtered_norm_logcpm_prior <- cpm(count_data_dryseq_filtered_norm, log=TRUE, prior.count=3)
+dryseq_filtered_norm_logcpm_prior <- cpm(count_data_dryseq_filtered_norm, log=TRUE, prior.count=2)  ### Changed to 2 (default) 5/2/22026, no particular reason not to use the default...
 
 ```
 
