@@ -255,13 +255,8 @@ metadata_lmr <- metadata |> dplyr::select(title, genotype, time) |>
 metadata_lmr <- cbind(metadata_lmr, limorhyde(metadata_lmr$time, 'time_'), W1, W2) |> as.data.table()
 
 
-
-
 ```
 
-```{r}
-metadata_lmr$time
-```
 
 ```{r}
 condNow <- "WT"
@@ -408,13 +403,17 @@ table <- table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
 
 DEratio <- (table[1, ] + table[3,]) / colSums(table)
 DEratio
-
 ```
 
 DEratio:
+(AMP > 0.3)
 Non-rhythmic     Rhythmic 
   0.06686986   0.08967742 
 
+
+(AMP > 0.5)
+Non-rhythmic     Rhythmic 
+   0.0663631    0.1467181 
 
 ```{r}
 volcano_data_rhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
@@ -444,9 +443,65 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 
 ```
 
-Significantly more down-regulation
+Significantly more down-regulation! 
 
 
+```{r}
+### Plot genes (using limorhyde's version now, to be modifie)
 
+metadata_dt <- as.data.table(metadata)
+
+
+geneSymbolsNow = c("Per1", "Per2", "Per3", "Cry1", "Cry2")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+  
+df = data.table(t(y[geneSymbolsNow, ]))
+df[, title := colnames(y[geneSymbolsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("WT", "PerDKO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+
+## This shows the log2 value!, hence the AMP ~ relative AMP
+```
+
+
+```{r}
+geneSymbolsNow = c("Arntl", "Clock", "Npas2", "Nr1d1","Dbp", "Actb")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+  
+df = data.table(t(y[geneSymbolsNow, ]))
+df[, title := colnames(y[geneSymbolsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("WT", "PerDKO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+```
+
+There's no Kcnj15 in these samples!!
 
 
