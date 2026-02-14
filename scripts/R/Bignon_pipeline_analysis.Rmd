@@ -46,6 +46,7 @@ library(foreach)
 library(VennDiagram)
 library(plotly)
 library('org.Mm.eg.db')
+
 ```
 
 ```{r}
@@ -102,7 +103,7 @@ metadata <- metadata_all |>
 ### Normalisation
 
 ```{r}
-# 1. Convert to CPM
+# 1. Convert to CPM & filter
 
 # Compute CPM
 raw_count_cpm <- as.data.frame(raw_count) |>
@@ -459,10 +460,10 @@ JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$am
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
 table(JTK_output_RUV$Rhythmicity_lmrAMP)
 
-# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
-# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
-# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
-# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
+JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
 
 sum(JTK_output_RUV$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic')
 
@@ -730,6 +731,19 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ```
 
 
+### Annotation of rhythmic genes
+
+```{r}
+DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
+                                   JTK_deLimma$amp_lmr > 0.58 & 
+                                   abs(JTK_deLimma_mean$logFC) > 1.0 & 
+                                   JTK_deLimma_mean$adj.P.Val < 0.05]
+
+DE_rhythmic_genes_annot <- left_join(DE_rhythmic_genes, annotations[match(DE_rhythmic_genes$gene_id, annotations$gene_id),])
+
+writex
+
+```
 
 
 
@@ -765,7 +779,51 @@ var_nonrhythmic_ko
 var(mean_wt)
 var(mean_ko)
 
+as.data.frame(raw_filtered_norm_logcpm_prior_RUVcount_k2)
+fit$sigma
 ```
+
+```{r}
+### Variance analysis attempt!!
+
+y_var_C = raw_filtered_norm_logcpm_prior_RUVcount_k2[, filter(metadata_lmr, cond == "C")$experiment_accession]
+y_var_KO = raw_filtered_norm_logcpm_prior_RUVcount_k2[, filter(metadata_lmr, cond == "KO")$experiment_accession]
+
+design_var_C = model.matrix(~ time_cos + time_sin, data = metadata_lmr[experiment_accession %in% filter(metadata_lmr, cond == "C")$experiment_accession])
+design_var_KO = model.matrix(~ time_cos + time_sin, data = metadata_lmr[experiment_accession %in% filter(metadata_lmr, cond == "KO")$experiment_accession])
+
+
+
+fit_C = lmFit(y_var_C, design_var_C)
+fit_C = eBayes(fit_C, trend = TRUE)
+varLimma_C = data.table(topTable(fit_C, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(varLimma_C, 'rn', 'gene_id')
+
+fit_KO = lmFit(y_var_KO, design_var_KO)
+fit_KO = eBayes(fit_KO, trend = TRUE)
+varLimma_KO = data.table(topTable(fit_KO, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(varLimma_KO, 'rn', 'gene_id')
+
+
+fit_C$sigma
+fit_KO$sigma
+
+c(fit_C$sigma, fit_KO$sigma)
+
+```
+
+```{r}
+sigma <- as.data.frame()
+```
+
+
+```{r}
+hist(fit_C$sigma)
+```
+```{r}
+hist(fit_KO$sigma)
+```
+
 
 Not really change in variance??
 
@@ -806,7 +864,7 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
 cor(JTK_deLimma$logFC, JTK_deLimma$amp_lmr)
 
 ```
-Doesn't really have a correl ation between FC and rhythmicity => do no bias for more DE with more rhythmicity!
+Doesn't really have a correlation between FC and rhythmicity => do no have bias for more DE with more rhythmicity!
 
 ```{r}
 # # the outlier...
@@ -867,7 +925,8 @@ threshold_result <- data.frame(
   ratio = NA,
   rhythmic_DE = NA,
   DE = NA,
-  rhythmic = NA
+  rhythmic = NA,
+  log_rhythmic_DE = NA
 )
 
 
@@ -885,13 +944,14 @@ for (logFC_threshold in logFC_threshold_list){
     else{
       DE_ratio <- N_rhythmic_DE/N_rhythmic
     }
-    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic))
+    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
   }
 }
 
 threshold_result <- drop_na(threshold_result)
+threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
 
-threshold_result[threshold_result$logFC == 0.8,]
+threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
 
 ```
 
@@ -937,7 +997,6 @@ for (difference_threshold in difference_threshold_list){
 
 threshold_result_abs <- drop_na(threshold_result_abs)
 
-threshold_result_abs[threshold_result_abs$logFC == 0.8,]
 
 
 ```
@@ -971,10 +1030,10 @@ What does this linear relationship mean?? does it suggest the DE is quite random
 ```{r}
 
 
-fig <- plot_ly(threshold_result, x = ~logFC, y = ~AMP, z = ~ratio, color = ~AMP, size = I(30))
+fig <- plot_ly(threshold_result, x = ~logFC, y = ~AMP, z = ~ratio, color = ~rhythmic_DE, size = I(30), colors = rainbow(5))
 fig <- fig %>% add_markers()
 fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
-  scene = list(xaxis = list(title = 'log2 Fold Change',
+  scene = list(xaxis = list(title = 'log2 Fold Change Magnitude',
                                                 range = c(0, 3.5)),
                                    yaxis = list(title = 'Amplitude (relative)',
                                                 range = c(0, 1.5)),
@@ -986,13 +1045,31 @@ fig
 
 ```
 
+```{r}
+
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
+                                                range = c(0, 3.5)),
+                                   yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.5)),
+                                   zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9)),
+               aspectmode = "cube"))
+
+colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
+
+
+```
+
 
 ```{r}
 
 fig <- plot_ly(threshold_result_abs, x = ~difference, y = ~AMP_abs, z = ~ratio, color = ~AMP_abs, size = I(30))
 fig <- fig %>% add_markers()
 fig <- fig %>% layout(title = list(text="(Absolute) DE ratio for various differences and absolute AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
-  scene = list(xaxis = list(title = 'Absolute difference',
+  scene = list(xaxis = list(title = 'Absolute Difference Magnitude',
                                                 range = c(0, 1100)),
                                    yaxis = list(title = 'Amplitude (absolute)',
                                                 range = c(0, 300)),

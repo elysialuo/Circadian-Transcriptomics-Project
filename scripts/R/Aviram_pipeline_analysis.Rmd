@@ -50,6 +50,8 @@ library('org.Mm.eg.db')
 library(GEOquery)
 library(stringr)
 library(tidyr)
+library(plotly)
+library("RColorBrewer")
 ```
 
 ```{r}
@@ -219,8 +221,8 @@ ggplot(pca_df_TMM, aes(PC1, PC2, color = lightdark, shape = genotype, label = ti
 pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
 pca_df_RUV <- as.data.frame(pca_test$x)
 pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "title"), metadata, by = "title")
-pca_df_RUV$lightdark <- "light"
-pca_df_RUV$lightdark[pca_df_RUV$time %in% c("0", "16", "20", "24", "40", "44")] <- "dark"
+pca_df_RUV$lightdark <- "'light'"
+pca_df_RUV$lightdark[pca_df_RUV$time %in% c("0", "16", "20", "24", "40", "44")] <- "'dark'"
 
 ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype, label = time)) +
   geom_point(size = 2) +
@@ -233,7 +235,7 @@ ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype, label = ti
 
 ```
 
-ehhh still cannot separate perDKO
+ehhh still cannot separate perDKO --> *actually it makes sense!! bcuz it's in DD and the mutant don't have functional clock anymore!!*
 
 
 
@@ -282,7 +284,9 @@ coefs = coef(fit)[, c("(Intercept)", "time_cos", "time_sin")]
 # Compute (log2 *relative*) amplitude for each gene
 amplitude_lmr = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2)
 mean = coefs[, "(Intercept)"]
-## amplitude_lmr_rel = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2) - mean
+
+# Compute (absolute) amplitude
+amplitude_lmr_abs = 2^(mean + amplitude_lmr) - 2^mean
 
 cbind(amplitude_lmr, coefs[, "(Intercept)"])
 
@@ -329,12 +333,19 @@ JTK_output_RUV <- read.table(file = 'JTK_Cycle/Aviram_JTK/JTK.Aviram_JTK_RUV_run
 # Lable as rythmic & non-rhythmic using limorhyde's amplitude
 
 JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_name]
-JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, .after = AMP)
+JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_name]
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
 
 JTK_output_RUV$Rhythmicity_lmrAMP <- 'Non-rhythmic'
 JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.3] <- 'Rhythmic'
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
 table(JTK_output_RUV$Rhythmicity_lmrAMP)
+
+# nonsense threshold for absolute values...
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
 
 
 ```
@@ -343,7 +354,7 @@ AMP > 0.3:
 Non-rhythmic     Rhythmic 
        10827         1550 
        
-huh why so much more than Bignon's???
+huh why so much more than Bignon's??? --> *probably due to longer experiment duration*
        
 
 ### Limorhyde x Limma DE analysis
@@ -361,6 +372,10 @@ fit = lmFit(y, design)
 fit = eBayes(fit, trend = TRUE)
 deLimma = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
 setnames(deLimma, 'rn', 'gene_name')
+
+# record mean level of WT and KO!
+mean_wt <- fit$coefficients[,1]
+mean_ko <- fit$coefficients[,1] + fit$coefficients[,2]
 
 # deLimma = deLimma[!(gene_id %in% drLimma[adj.P.Val <= qvalDrCutoff]$gene_id)] ## don't ignore differentially rhythmic genes
 deLimma[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
@@ -427,7 +442,8 @@ ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffE
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
   ggtitle("Rhythmic genes") +
   xlim(-5, 5) +
-  ylim(-1, 50)
+  ylim(-1, 50) +
+  geom_label_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 1.8 | -log10(adj.P.Val) > 25), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
   
 
 ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
@@ -439,11 +455,83 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
   ggtitle("Non-rhythmic genes") +
   xlim(-5, 5) +
-  ylim(-1, 50)
+  ylim(-1, 50) +
+  geom_label_repel(data = dplyr::filter(volcano_data_nonrhythmic, logFC < -2 | logFC > 1.2 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
 
 ```
 
 Significantly more down-regulation! 
+
+
+```{r}
+JTK_deLimma
+ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
+  geom_point(alpha = 0.5) +
+  theme_minimal() +
+  xlab("Rhythmic amplitude (from Limorhyde)") +
+  ylab("log2 Fold Change (DE)") +
+  ggtitle("DE vs rhythmic amplitude")
+
+
+cor(JTK_deLimma$logFC, JTK_deLimma$amp_lmr)
+```
+
+**significantly more down-skewed!
+
+
+```{r}
+JTK_deLimma_mean <- JTK_deLimma |>
+  left_join(rownames_to_column(as.data.frame(mean_wt), "gene_name")) |>
+  left_join(rownames_to_column(as.data.frame(mean_ko), "gene_name")) |>
+  mutate(abs_diff = 2^mean_ko - 2^mean_wt) |> 
+  dplyr::relocate(mean_wt, mean_ko, abs_diff, .after = gene_name)
+mean_wt[geneSymbolsNow]
+mean_ko[geneSymbolsNow]
+```
+
+
+```{r}
+ggplot(JTK_deLimma[JTK_deLimma$Rhythmicity_fac == "Rhythmic", ], aes(x = amp_lmr, y = logFC, color = Rhythmicity_fac)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = c(
+    "Non-rhythmic" = "transparent",
+    "Rhythmic" = "royalblue"
+  )) +
+  theme_minimal(base_size = 14) +
+  xlab("Rhythmic absolute amplitude") +
+  ylab("log2 Fold Change") +
+  xlim(0, 3) +
+  ggtitle("logFC vs rhythmic amplitude by rhythmicity") +
+  theme(
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  ) +
+  geom_label_repel(data = dplyr::filter(JTK_deLimma, (amp_lmr > 1.3 | abs(logFC) > 2.5) & amp_lmr > 0.3), aes(, label = gene_name), 
+            hjust=0, vjust=0, color = "black", size = 2)
+
+
+ggplot(JTK_deLimma_mean, aes(x = amp_lmr_abs, y = abs_diff)) +
+  geom_point(alpha = 0.6, color = "coral") +
+  # scale_color_manual(values = c(
+  #   "Non-rhythmic" = "transparent",
+  #   "Rhythmic" = "royalblue"
+  # )) +
+  theme_minimal(base_size = 14) +
+  xlab("Absolute amplitude") +
+  ylab("Absolute difference") +
+  ggtitle("Absolute difference vs absolute amplitude") +
+  theme(
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  ) +
+  ylim(-5000,5000) +
+  geom_label_repel(data = dplyr::filter(JTK_deLimma_mean, amp_lmr_abs > 500), aes(, label = gene_name), 
+            hjust=0, vjust=0, color = "black", size = 3)
+```
+
+
+
+
 
 
 ```{r}
@@ -505,3 +593,148 @@ ggplot(df) +
 There's no Kcnj15 in these samples!!
 
 
+
+
+
+### 3D plot!
+
+```{r}
+
+AMP_threshold_list <- seq(0, 2, by=0.05)
+logFC_threshold_list <- seq(0, 5, by=0.1)
+
+
+threshold_result <- data.frame(
+  AMP = NA,
+  logFC = NA,
+  ratio = NA,
+  rhythmic_DE = NA,
+  DE = NA,
+  rhythmic = NA,
+  log_rhythmic_DE = NA
+)
+
+
+# 3d threshold plot data
+for (logFC_threshold in logFC_threshold_list){
+  for (AMP_threshold in AMP_threshold_list){
+    N_rhythmic_DE <- nrow(JTK_deLimma[abs(JTK_deLimma$logFC) > logFC_threshold & JTK_deLimma$adj.P.Val < 0.05 & JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > AMP_threshold])
+    N_rhythmic <- nrow(JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > AMP_threshold])
+    # print(c(AMP_threshold, N_rhythmic))
+    N_DE <- nrow(JTK_deLimma[abs(JTK_deLimma$logFC) > logFC_threshold & JTK_deLimma$adj.P.Val < 0.05])
+    
+    if (N_rhythmic == 0){
+      DE_ratio = NA
+    } 
+    else{
+      DE_ratio <- N_rhythmic_DE/N_rhythmic
+    }
+    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
+  }
+}
+
+threshold_result <- drop_na(threshold_result)
+threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
+
+
+threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
+```
+
+```{r}
+### Relaative 3D plot
+
+fig <- plot_ly(threshold_result, x = ~logFC, y = ~AMP, z = ~ratio, color = ~rhythmic_DE, size = I(30), colors = rainbow(10))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change',
+                                                range = c(0, 3.5)),
+                                   yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.0)),
+                                   zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9))))
+
+fig
+
+
+```
+
+```{r}
+### Relative 3D plot (log-count coloured)
+
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
+                                                range = c(0, 2.5)),
+               yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.0)),
+               zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9)),
+               aspectmode = "cube"))
+
+colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
+
+
+
+```
+
+
+```{r}
+AMP_abs_threshold_list <- seq(0, 300, by=10)
+difference_threshold_list <- seq(0, 1100, by=20)
+
+
+threshold_result_abs <- data.frame(
+  AMP_abs = NA,
+  difference = NA,
+  ratio = NA,
+  rhythmic_DE = NA,
+  DE = NA,
+  rhythmic = NA
+)
+
+
+# 3d threshold plot data
+for (difference_threshold in difference_threshold_list){
+  for (AMP_abs_threshold in AMP_abs_threshold_list){
+    N_rhythmic_DE <- nrow(JTK_deLimma_mean[abs(JTK_deLimma_mean$abs_diff) > difference_threshold & 
+                                             JTK_deLimma_mean$adj.P.Val < 0.05 & 
+                                             JTK_deLimma_mean$BH.Q < 0.05 & 
+                                             JTK_deLimma_mean$amp_lmr_abs > AMP_abs_threshold])
+    N_rhythmic <- nrow(JTK_deLimma_mean[JTK_deLimma_mean$BH.Q < 0.05 & 
+                                          JTK_deLimma_mean$amp_lmr_abs > AMP_abs_threshold])
+    # print(c(AMP_threshold, N_rhythmic))
+    N_DE <- nrow(JTK_deLimma_mean[abs(JTK_deLimma_mean$abs_diff) > difference_threshold & 
+                                    JTK_deLimma_mean$adj.P.Val < 0.05])
+    
+    if (N_rhythmic == 0){
+      DE_ratio = NA
+    } 
+    else{
+      DE_ratio <- N_rhythmic_DE/N_rhythmic
+    }
+    threshold_result_abs <- rbind(threshold_result_abs, c(AMP_abs = AMP_abs_threshold, difference = difference_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic))
+  }
+}
+
+threshold_result_abs <- drop_na(threshold_result_abs)
+
+```
+
+
+```{r}
+
+fig <- plot_ly(threshold_result_abs, x = ~difference, y = ~AMP_abs, z = ~ratio, color = ~difference, size = I(30))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="(Absolute) DE ratio for various differences and absolute AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'Absolute difference',
+                                                range = c(0, 1100)),
+                                   yaxis = list(title = 'Amplitude (absolute)',
+                                                range = c(0, 300)),
+                                   zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 1))))
+
+fig
+
+
+```
