@@ -296,7 +296,7 @@ hist(amplitude_lmr, ylim = c(0,100))
 ```{r}
 as.data.frame(raw_filtered_norm_logcpm_prior[amplitude_lmr > 1,])
 amplitude_lmr[amplitude_lmr > 1]
-sum(amplitude_lmr > 0.8)
+sum(amplitude_lmr > 0.58)
 
 ```
 
@@ -336,10 +336,12 @@ JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_name]
 JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_name]
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
 
-JTK_output_RUV$Rhythmicity_lmrAMP <- 'Non-rhythmic'
-JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.3] <- 'Rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
 table(JTK_output_RUV$Rhythmicity_lmrAMP)
+
 
 # nonsense threshold for absolute values...
 # JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
@@ -350,10 +352,14 @@ table(JTK_output_RUV$Rhythmicity_lmrAMP)
 
 ```
 
-AMP > 0.3:
+rAMP > 0.3:
 Non-rhythmic     Rhythmic 
        10827         1550 
        
+rAMP > 0.58:
+Non-rhythmic     Rhythmic 
+       12040          337
+
 huh why so much more than Bignon's??? --> *probably due to longer experiment duration*
        
 
@@ -384,15 +390,17 @@ setorderv(deLimma, 'adj.P.Val')
 deLimma
 
 deLimma$diffExpressed <- 'NO'
-deLimma$diffExpressed[deLimma$logFC>0.8 & deLimma$adj.P.Val<0.05] <- 'UP'
-deLimma$diffExpressed[deLimma$logFC<(-0.8) & deLimma$adj.P.Val<0.05] <- 'DOWN'
+deLimma$diffExpressed[deLimma$logFC>1 & deLimma$adj.P.Val<0.05] <- 'UP'
+deLimma$diffExpressed[deLimma$logFC<(-1) & deLimma$adj.P.Val<0.05] <- 'DOWN'
 table(deLimma$diffExpressed)
 ```
 logFC > ±0.8:
  DOWN    NO    UP 
   582 11514   281 
 
-
+logFC > ±1:
+ DOWN    NO    UP 
+  309 11946   122 
 
 ## Rhythmicity vs DE
 
@@ -407,10 +415,15 @@ JTK_deLimma <- left_join(deLimma, JTK_output_RUV, by = "gene_name") |>
   dplyr::relocate(Rhythmicity_fac, .after = "gene_name") |> 
   dplyr::relocate(diffExpressed_fac, .after = "gene_name")
 
-
 table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
 ```
 
+p>0.1, p<0.05            
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN        26          260       23
+         NO        3755         7896      295
+         UP          27           76       19
 
 
 ```{r}
@@ -429,6 +442,9 @@ Non-rhythmic     Rhythmic
 (AMP > 0.5)
 Non-rhythmic     Rhythmic 
    0.0663631    0.1467181 
+   
+ Ambiguous Non-rhythmic     Rhythmic 
+  0.01391807   0.04081633   0.12462908
 
 ```{r}
 volcano_data_rhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
@@ -461,6 +477,26 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ```
 
 Significantly more down-regulation! 
+
+
+### Annotation of rhythmic genes
+
+```{r}
+DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
+                                   JTK_deLimma$amp_lmr > 0.58 & 
+                                   abs(JTK_deLimma$logFC) > 1.0 & 
+                                   JTK_deLimma$adj.P.Val < 0.05]
+
+DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_name, annotations$gene_name),], DE_rhythmic_genes) |>
+  arrange(desc(abs(logFC))) |> as.matrix()
+
+write.table(DE_rhythmic_genes_annot, file = "../../results/Aviram_DE_rhythmic_genes_annot.tsv", sep = "\t", row.names = FALSE)
+
+sum(annotations$gene_name == "Aim1l")
+
+
+```
+
 
 
 ```{r}

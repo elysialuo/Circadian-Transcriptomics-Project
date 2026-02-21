@@ -1,6 +1,6 @@
-setwd("/Users/elysialuo/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")  ## mac air
+setwd("/Users/elysialuo/Circadian-Transcriptomics/scripts/R/JTK_Cycle/Bignon_JTK/")  ## mac air
 #setwd("/Users/elou/Desktop/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")  ## mac pro
-source("JTK_CYCLE.R")
+source("../JTK_CYCLE.R")
 
 project <- "Bignon_QC_JTK_RUV_run"
 

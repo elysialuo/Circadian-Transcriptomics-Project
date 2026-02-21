@@ -137,9 +137,9 @@ raw_count_filtered_norm <- DGEList(counts=raw_count_filtered) |> normLibSizes()
 str(raw_count_filtered_norm)
 raw_count_filtered_norm$samples
 
-# log2 cpm with normalised library size
+# log2 cpm with normalised library size                     (**need to check this prior.count=3 again!!**)
 raw_filtered_norm_logcpm <- cpm(raw_count_filtered_norm, log=TRUE)
-raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE, prior.count=3)
+raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE) #, prior.count=3)
 
 ```
 
@@ -450,20 +450,21 @@ JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_id]
 JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_id]
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
 
-JTK_output_RUV$Rhythmicity <- 'Non-rhythmic'
-JTK_output_RUV$Rhythmicity[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$AMP > 0.5] <- 'Rhythmic'
-JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity, .before = BH.Q)
-table(JTK_output_RUV$Rhythmicity)
+# JTK_output_RUV$Rhythmicity <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$AMP > 0.3] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity)
 
-JTK_output_RUV$Rhythmicity_lmrAMP <- 'Non-rhythmic'
-JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.5] <- 'Rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
 table(JTK_output_RUV$Rhythmicity_lmrAMP)
 
-JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
-JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
-JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
-table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
 
 sum(JTK_output_RUV$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic')
 
@@ -484,6 +485,10 @@ Non-rhythmic     Rhythmic
 
 There seems to be more 'rhythmic genes' with amplitude calculated from amp_lmr
 
+
+limorhyde 0.05 (vs 0.1) & 0.58 filter:
+   Ambiguous Non-rhythmic     Rhythmic 
+        5127        10372          171
 
 
 ```{r}
@@ -584,8 +589,8 @@ setorderv(deLimma, 'adj.P.Val')
 deLimma
 
 deLimma$diffExpressed <- 'NO'
-deLimma$diffExpressed[deLimma$logFC>0.8 & deLimma$adj.P.Val<0.05] <- 'UP'
-deLimma$diffExpressed[deLimma$logFC<(-0.8) & deLimma$adj.P.Val<0.05] <- 'DOWN'
+deLimma$diffExpressed[deLimma$logFC>1 & deLimma$adj.P.Val<0.05] <- 'UP'
+deLimma$diffExpressed[deLimma$logFC<(-1) & deLimma$adj.P.Val<0.05] <- 'DOWN'
 table(deLimma$diffExpressed)
 ```
 
@@ -646,7 +651,7 @@ deLimma
 
 JTK_deLimma <- left_join(deLimma, JTK_output_RUV, by = "gene_id") |> 
   dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
-  dplyr::mutate(Rhythmicity_abs_fac = factor(Rhythmicity_lmrAMP_abs)) |>
+  # dplyr::mutate(Rhythmicity_abs_fac = factor(Rhythmicity_lmrAMP_abs)) |>
   dplyr::mutate(diffExpressed_fac = factor(diffExpressed)) |> 
   dplyr::relocate(Rhythmicity_fac, .after = "gene_id") |> 
   dplyr::relocate(diffExpressed_fac, .after = "gene_id") |> 
@@ -679,6 +684,14 @@ diffExpressed Non-rhythmic Rhythmic
 Applying AMP threshold seems to make a bigger proportion of rhythmic genes to be DE!?
 
 
+logFC > 1, rAMP > 0.58 (p < 0.05, p > 0.1):
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN        37           66       24
+         NO        5054        10270      117
+         UP          36           36       30
+
+
 ```{r}
 table <- table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
 
@@ -690,11 +703,17 @@ DEratio:
 Non-rhythmic     Rhythmic 
   0.01462363   0.16245487
 
+
+logFC > 1, rAMP > 0.58 (p < 0.05, p > 0.1):
+Ambiguous Non-rhythmic     Rhythmic 
+ 0.014238346  0.009834169  0.315789474 
+
 ```{r}
 # Check for NA values (seems all to be in LAG)
 table(which(is.na(JTK_deLimma), arr.ind=TRUE)[,2])
 
 sum(is.na(JTK_deLimma$LAG))
+sum(is.na(JTK_deLimma$gene_name))
 ```
 
 
@@ -736,13 +755,16 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ```{r}
 DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
                                    JTK_deLimma$amp_lmr > 0.58 & 
-                                   abs(JTK_deLimma_mean$logFC) > 1.0 & 
-                                   JTK_deLimma_mean$adj.P.Val < 0.05]
+                                   abs(JTK_deLimma$logFC) > 1.0 & 
+                                   JTK_deLimma$adj.P.Val < 0.05]
 
-DE_rhythmic_genes_annot <- left_join(DE_rhythmic_genes, annotations[match(DE_rhythmic_genes$gene_id, annotations$gene_id),])
+DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_id, annotations$gene_id),], DE_rhythmic_genes) |>
+  arrange(desc(abs(logFC))) |> as.matrix()
 
-writex
+write.table(DE_rhythmic_genes_annot, file = "../../results/Bignon_DE_rhythmic_genes_annot.tsv", sep = "\t", row.names = FALSE)
 
+
+sum(annotations$gene_id == "ENSMUSG00000121375")
 ```
 
 

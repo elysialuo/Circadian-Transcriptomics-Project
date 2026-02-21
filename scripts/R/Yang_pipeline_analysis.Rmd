@@ -1,0 +1,435 @@
+---
+title: "Yang Pipeline Analysis"
+author: "Elysia Luo"
+date: "2026-02-21"
+output: html_document
+---
+
+```{r}
+mamba_folder <- "/Users/elysialuo/miniforge3"
+env_name <- "circadian"
+.libPaths(paste(mamba_folder, "envs", env_name, "lib/R/library", sep = "/"))
+
+library(tidyverse)
+library(dryR)
+library(stringr)
+library(ggplot2)
+library(ggpubr)
+
+library(MASS)
+library(janitor)
+library(naniar)
+library(patchwork)
+library(scales)
+library(cluster)
+
+library(RColorBrewer)
+library(ggrepel)
+
+library(GEOquery)
+library(stringr)
+library(tidyr)
+
+library(AnnotationHub)
+library(AnnotationDbi)
+library(ensembldb)
+
+library(limma)
+library(edgeR)
+library(RUVSeq)
+
+library(limorhyde)
+library(annotate)
+library(data.table)
+library(org.Mm.eg.db)
+library(foreach)
+
+library(VennDiagram)
+
+library('org.Mm.eg.db')
+library(GEOquery)
+library(stringr)
+library(tidyr)
+library(plotly)
+library("RColorBrewer")
+```
+
+
+```{r}
+getwd()
+```
+
+```{r}
+ah <- AnnotationHub()
+
+# search for id of desired dataset
+
+dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
+dbResult[3]
+str(dbResult)
+
+# load mouse transcript dataset
+MouseEnsDb <- ah[[dbResult$ah_id]]
+str(MouseEnsDb)
+
+# output data of interest in form of data.frame
+annotations <- genes(MouseEnsDb, return.type = "data.frame")
+annotations
+
+# subset(ah, species == "Mus musculus")
+
+# dbResult <- query(ah, c("OrgDb", "org.Mm.eg.db"))
+# dbResult
+# str(dbResult)
+# 
+# annotations <- genes(MouseOrgDb, return.type = "data.frame")
+```
+
+
+```{r}
+# read in raw count matrix from Aviram
+gse <- getGEO(filename = "../../data/Yang_raw_data/GSE70497_series_matrix.txt", GSEMatrix = TRUE, getGPL = FALSE)
+
+metadata <- pData(gse) |> 
+  dplyr::mutate("sample collection time:ch1" = gsub("\\D", "", `sample collection time:ch1`)) |> 
+  dplyr::mutate("title" = gsub("mouse ", "", title)) |>
+  dplyr::rename(genotype = "genotype/variation:ch1", time = "sample collection time:ch1") |>
+  dplyr::mutate("time" = str_pad(time, 2, pad="0")) |>
+  dplyr::select(title, geo_accession, genotype, time, description) |>
+  dplyr::mutate("title" = paste(    ## BRUH THE NAMING IS SO BAD
+    ifelse(genotype == "WT", "WT", "KO"),
+    "_CT",
+    time,
+    "_",
+    description,
+    sep = ""))
+
+metadata <- metadata[order(as.integer(metadata$time)),]
+metadata <- metadata[order(metadata$genotype, decreasing = TRUE),]
+
+raw_count <- read.table("../../data/Yang_raw_data/GSE70497_FINAL_master_list_of_genes_counts_MIN.Guangrui_WT_v_KO_timecourse.txt", header = TRUE) |> 
+  dplyr::mutate("id" = gsub("gene:", "", `id`)) |>
+  dplyr::select(-geneCoordinate, -geneSymbol) |> column_to_rownames("id")
+
+colnames(raw_count) <- metadata[match(colnames(raw_count), metadata$title), ]$geo_accession  # change rownames from title to accession number
+
+
+```
+
+
+Pre-filtered count matrix
+
+
+### Normalisation
+
+```{r}
+# 1. Convert to CPM
+
+# Compute CPM
+raw_count_cpm <- raw_count |>
+  dplyr::mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
+
+# Filter for at least CPM >= 1 in one sample
+raw_count_cpm_filtered <- dplyr::filter(raw_count_cpm, apply(raw_count_cpm, 1, max) >= 1)
+raw_count_cpm_filtered
+
+```
+
+
+```{r}
+colSums(is.na(raw_count))
+```
+
+
+```{r}
+# 2. TMM normalisation
+
+# Filter raw count based on cpm
+raw_count_filtered <- raw_count[rownames(raw_count) %in% rownames(raw_count_cpm_filtered),]
+nrow(raw_count_filtered)
+
+# Normalise library size of filtered raw count
+raw_count_filtered_norm <- DGEList(counts=raw_count_filtered) |> normLibSizes()
+str(raw_count_filtered_norm)
+raw_count_filtered_norm$samples
+
+# log2 cpm with normalised library size
+raw_filtered_norm_logcpm <- cpm(raw_count_filtered_norm, log=TRUE)
+raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE, prior.count=2)
+
+```
+
+```{r}
+cov <- sd(raw_count_filtered_norm$samples$lib.size) / mean(raw_count_filtered_norm$samples$lib.size) * 100
+cov
+```
+
+WOWWW lib size so consistent!!
+
+
+```{r}
+### RUV
+x <- str_c(metadata$genotype, str_pad(metadata$time, 2, pad="0"), sep="_")
+
+differences <- makeGroups(x)  # -1 assigned to missing sample (PerKO20 and PerKO8)
+controls <- rownames(raw_filtered_norm_logcpm_prior)
+
+# k=2, prior
+RUVs_output_prior <- RUVs(raw_filtered_norm_logcpm_prior, controls, k=2, differences, isLog=TRUE)
+raw_filtered_norm_logcpm_prior_RUVcount_k2 <- RUVs_output_prior$normalizedCounts
+as.data.frame(raw_filtered_norm_logcpm_prior)
+as.data.frame(raw_filtered_norm_logcpm_prior_RUVcount_k2)
+W1 <- RUVs_output_prior$W[,1]
+W2 <- RUVs_output_prior$W[,2]
+
+```
+
+```{r}
+par(mfrow = c(2,2))
+
+## filtered, unnormalised
+plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
+        ylim=c(-0.9, 0.9), main = 'Unnormalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+## filtered, TMM normalised
+plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+## filtered, TMM & RUV normalised
+plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+```
+
+```{r}
+as.data.frame(raw_filtered_norm_logcpm_prior)
+```
+
+
+```{r}
+# PCA plot: CPM filtered raw count
+pca_test_raw <- prcomp(t(raw_count_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "geo_accession"), metadata, by = "geo_accession")
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype, shape = time)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (raw count)",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: TMM_log_cpm normalised
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "geo_accession"), metadata, by = "geo_accession")
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = genotype, shape = time)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM normalised)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: RUV normalised, k=2, prior
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "geo_accession"), metadata, by = "geo_accession")
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = time)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+```
+
+
+Bmal1KO can't cluster as expected, WT separates timepoints?
+
+
+
+```{r}
+# Limorhyde
+
+period = 24
+qvalRhyCutoff = 0.15
+qvalDrCutoff = 0.1
+
+### should i use unRUV matrix???? yes
+y = raw_filtered_norm_logcpm_prior #_RUVcount_k2
+
+metadata_lmr <- metadata |> dplyr::select(title, genotype, time) |> 
+  dplyr::mutate(time = as.integer(time), cond = factor(genotype)) |> 
+  rownames_to_column("geo_accession")
+
+
+metadata_lmr <- cbind(metadata_lmr, limorhyde(metadata_lmr$time, 'time_'), W1, W2) |> as.data.table()
+
+
+```
+
+
+```{r}
+condNow <- "Bmal1 KO"
+
+design = model.matrix(~ time_cos + time_sin, data = metadata_lmr[cond == condNow, ])
+fit = lmFit(y[, metadata_lmr$cond == condNow], design)
+fit = eBayes(fit, trend = TRUE)
+rhyNow = data.table(topTable(fit, coef = 2:3, number = Inf), keep.rownames = TRUE)
+setnames(rhyNow, 'rn', 'gene_id')
+rhyNow[, cond := condNow]
+
+rhyLimmaSummary = rhyNow[, .(P.Value = min(P.Value)), by = gene_id]
+rhyLimmaSummary[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(rhyLimmaSummary, 'adj.P.Val')
+
+rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]
+
+
+# Extract coefficients from your limma fit
+coefs = coef(fit)[, c("(Intercept)", "time_cos", "time_sin")]
+
+# Compute (log2 *relative*) amplitude for each gene
+amplitude_lmr = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2)
+mean = coefs[, "(Intercept)"]
+
+# Compute (absolute) amplitude
+amplitude_lmr_abs = 2^(mean + amplitude_lmr) - 2^mean
+
+cbind(amplitude_lmr, coefs[, "(Intercept)"])
+
+hist(amplitude_lmr, ylim = c(0,100))
+```
+
+```{r}
+as.data.frame(raw_filtered_norm_logcpm_prior[amplitude_lmr > 1,])
+amplitude_lmr[amplitude_lmr > 1]
+sum(amplitude_lmr > 0.58)
+```
+
+
+
+### Plot to check
+
+```{r}
+
+geneSymbolsNow = c("Per1", "Per2", "Per3", "Cry1", "Cry2", "Arntl")
+#, "Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Kcnj15"
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, geo_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(geo_accession, genotype, time)], by = 'geo_accession')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Circadian time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+```
+
+```{r}
+
+geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0", "Kcnj15")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, geo_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(geo_accession, genotype, time)], by = 'geo_accession')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Circadian time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+```
+
+*Why is the KO still quite rhythmic....???*
+
+What's wrpmg with Kcnj15...
+
+
+
+### JTK
+```{r}
+library(dataPreparation)
+metadata
+table(metadata$time[metadata$genotype == "WT"])
+
+# log-TMM & RUV normalised matrix, control only
+RUVs_output_prior$normalizedCounts[, metadata[metadata$genotype == "WT", ]$geo_accession]
+
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[, metadata[metadata$genotype == "WT", ]$geo_accession])
+# JTK_matrix_RUV[rowSums(JTK_matrix_RUV)>0,]
+# JTK_matrix_RUV[raw_count_WT$gene_name, ]
+
+JTK_matrix_RUV <- JTK_matrix_RUV |> rownames_to_column('Probe')
+
+write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Yang_JTK/Yang_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Yang_JTK/Yang_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+```
+
+--- running JTK cycle ---
+
+```{r}
+JTK_output_RUV <- read.table(file = 'JTK_Cycle/Yang_JTK/JTK.Yang_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_id]
+JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_id]
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
+
+JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_RUV$Rhythmicity_lmrAMP)
+
+# nonsense threshold for absolute values...
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
+
+
+```
+
+   Ambiguous Non-rhythmic     Rhythmic 
+        5825         6973          603
+        
+
+bruhh why so many rhythic genes......
+
+
+
+
