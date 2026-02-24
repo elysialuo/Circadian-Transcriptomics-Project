@@ -32,3 +32,15 @@ diffExpressed Ambiguous Non-rhythmic Rhythmic
   0.03195041   0.01102601   0.19000000
 
 
+**Yang (post-natal)**
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN         1           10        3
+         NO        5815         6937      596
+         UP           9           26        4
+
+   Ambiguous Non-rhythmic     Rhythmic 
+ 0.001716738  0.005162771  0.011608624
+
+
+

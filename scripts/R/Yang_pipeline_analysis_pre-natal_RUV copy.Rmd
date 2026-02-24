@@ -1,7 +1,7 @@
 ---
-title: "Weger_pipeline_analysis"
+title: "Yang Pipeline Analysis"
 author: "Elysia Luo"
-date: "2026-02-16"
+date: "2026-02-21"
 output: html_document
 ---
 
@@ -63,44 +63,61 @@ getwd()
 ah <- AnnotationHub()
 
 # search for id of desired dataset
+
 dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
-dbResult[1]
+dbResult[3]
+str(dbResult)
 
 # load mouse transcript dataset
 MouseEnsDb <- ah[[dbResult$ah_id]]
-MouseEnsDb
+str(MouseEnsDb)
 
 # output data of interest in form of data.frame
 annotations <- genes(MouseEnsDb, return.type = "data.frame")
 annotations
+
+# subset(ah, species == "Mus musculus")
+
+# dbResult <- query(ah, c("OrgDb", "org.Mm.eg.db"))
+# dbResult
+# str(dbResult)
+# 
+# annotations <- genes(MouseOrgDb, return.type = "data.frame")
 ```
 
 
 ```{r}
 # read in raw count matrix from Aviram
-gse <- getGEO(filename = "../../data/Weger_raw_data/GSE135898_series_matrix.txt", GSEMatrix = TRUE, getGPL = FALSE)
+gse <- getGEO(filename = "../../data/Yang_raw_data/GSE70497_series_matrix.txt", GSEMatrix = TRUE, getGPL = FALSE)
 
 metadata <- pData(gse) |> 
-  dplyr::mutate("zeitgeber time:ch1" = gsub("\\D", "", `zeitgeber time:ch1`)) |> 
-  dplyr::mutate("title" = gsub("Liver, ", "", title)) |>
-  dplyr::mutate("title" = gsub("_1", "1", title)) |>  # title clean up
-  dplyr::rename(genotype = "genotype:ch1", time = "zeitgeber time:ch1", feeding = "feeding regimen:ch1") |>
-  dplyr::select(title, geo_accession, genotype, feeding, time) |> 
-  dplyr::filter(genotype == "Cry1/2_dKO" | genotype == "Cry1/2_WT") |>  # select for Cry mutant
-  dplyr::filter(feeding == "AL")
+  dplyr::mutate("sample collection time:ch1" = gsub("\\D", "", `sample collection time:ch1`)) |> 
+  dplyr::mutate("title" = gsub("mouse ", "", title)) |>
+  dplyr::rename(genotype = "genotype/variation:ch1", time = "sample collection time:ch1") |>
+  dplyr::mutate("time" = str_pad(time, 2, pad="0")) |>
+  dplyr::select(title, geo_accession, genotype, time, description) |>
+  dplyr::mutate("title" = paste(    ## BRUH THE NAMING IS SO BAD
+    ifelse(genotype == "WT", "WT", "KO"),
+    "_CT",
+    time,
+    "_",
+    description,
+    sep = ""))
 
 metadata <- metadata[order(as.integer(metadata$time)),]
-metadata <- metadata[order(metadata$feeding),]
 metadata <- metadata[order(metadata$genotype, decreasing = TRUE),]
 
-raw_count <- read.table("../../data/Weger_raw_data/GSE135898_counts_v4.txt") 
+raw_count <- read.table("../../data/Yang_raw_data/GSE70497_FINAL_master_list_of_genes_counts_MIN.Guangrui_WT_v_KO_timecourse.txt", header = TRUE) |> 
+  dplyr::mutate("id" = gsub("gene:", "", `id`)) |>
+  dplyr::select(-geneCoordinate, -geneSymbol) |> column_to_rownames("id")
 
-colnames(raw_count) <- gsub("0_", "00", colnames(raw_count))  # title clean up
-
-raw_count <- raw_count[,metadata$title]  # select raw count for AL and Cry
 colnames(raw_count) <- metadata[match(colnames(raw_count), metadata$title), ]$geo_accession  # change rownames from title to accession number
 
+
 ```
+
+
+Pre-filtered count matrix
 
 
 ### Normalisation
@@ -115,7 +132,14 @@ raw_count_cpm <- raw_count |>
 # Filter for at least CPM >= 1 in one sample
 raw_count_cpm_filtered <- dplyr::filter(raw_count_cpm, apply(raw_count_cpm, 1, max) >= 1)
 raw_count_cpm_filtered
+
 ```
+
+
+```{r}
+colSums(is.na(raw_count))
+```
+
 
 ```{r}
 # 2. TMM normalisation
@@ -139,6 +163,8 @@ raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE, prior.c
 cov <- sd(raw_count_filtered_norm$samples$lib.size) / mean(raw_count_filtered_norm$samples$lib.size) * 100
 cov
 ```
+
+WOWWW lib size so consistent!!
 
 
 ```{r}
@@ -173,6 +199,10 @@ plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
 plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
         ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)', xlab = "Samples", ylab = "Relative log")
 
+```
+
+```{r}
+as.data.frame(raw_filtered_norm_logcpm_prior)
 ```
 
 
@@ -216,11 +246,11 @@ ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = time)) +
   labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior)",
        x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
-
 ```
 
-Due to low replicate number probably????
-What's wrong with Cry zt20.....
+
+Bmal1KO can't cluster as expected, WT separates timepoints?
+
 
 
 ```{r}
@@ -245,7 +275,7 @@ metadata_lmr <- cbind(metadata_lmr, limorhyde(metadata_lmr$time, 'time_'), W1, W
 
 
 ```{r}
-condNow <- "Cry1/2_WT"
+condNow <- "Bmal1 KO"
 
 design = model.matrix(~ time_cos + time_sin, data = metadata_lmr[cond == condNow, ])
 fit = lmFit(y[, metadata_lmr$cond == condNow], design)
@@ -282,39 +312,9 @@ amplitude_lmr[amplitude_lmr > 1]
 sum(amplitude_lmr > 0.58)
 ```
 
-sum(amplitude_lmr > 0.58) = 1122
-
-ehm why so many???
 
 
 ### Plot to check
-
-```{r}
-metadata_dt <- as.data.table(metadata)
-
-geneIdsNow = c(rhyLimmaSummary$gene_id[1L])  #, deLimma$gene_id[1L]
-geneSymbolsNow = annotations[match(geneIdsNow, annotations$gene_id),]$gene_name
-
-df = data.table(t(y[geneIdsNow, ]))
-setnames(df, geneSymbolsNow)
-df[, geo_accession := colnames(y[geneIdsNow, ])]
-
-df = merge(df, metadata_dt[, .(geo_accession, genotype, time)], by = 'geo_accession')
-df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
-          value.name = 'expr')
-df[, symbol := factor(symbol, geneSymbolsNow)]
-df[, time := as.integer(time)]
-df[, genotype := factor(genotype, levels = c("Cry1/2_WT", "Cry1/2_dKO"))]
-
-ggplot(df) +
-  facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
-  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
-  scale_shape(solid = FALSE, guide = 'none') +
-  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
-```
-
 
 ```{r}
 
@@ -332,23 +332,21 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
-df[, genotype := factor(genotype, levels = c("Cry1/2_WT", "Cry1/2_dKO"))]
+df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
   geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
-  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  labs(x = 'Circadian time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
-
-
 
 ```
 
 ```{r}
 
-geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0")
+geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0", "Kcnj15")
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 
@@ -361,49 +359,49 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
-df[, genotype := factor(genotype, levels = c("Cry1/2_WT", "Cry1/2_dKO"))]
+df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
   geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
-  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  labs(x = 'Circadian time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 
 ```
 
-"ENSMUSG00000062609" "Kcnj15" not detected
+*Why is the KO still quite rhythmic....???*
 
-WHY IS ActB flustuating in WT....... Oh wait is it expected???
+What's wrpmg with Kcnj15...
+
 
 
 ### JTK
 ```{r}
 library(dataPreparation)
 metadata
-table(metadata$time[metadata$genotype == "Cry1/2_WT"])
+table(metadata$time[metadata$genotype == "WT"])
 
 # log-TMM & RUV normalised matrix, control only
-RUVs_output_prior$normalizedCounts[,1:12]
+RUVs_output_prior$normalizedCounts[, metadata[metadata$genotype == "WT", ]$geo_accession]
 
-JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,1:12])
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[, metadata[metadata$genotype == "WT", ]$geo_accession])
 # JTK_matrix_RUV[rowSums(JTK_matrix_RUV)>0,]
 # JTK_matrix_RUV[raw_count_WT$gene_name, ]
 
 JTK_matrix_RUV <- JTK_matrix_RUV |> rownames_to_column('Probe')
 
-write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Weger_JTK/Weger_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Yang_JTK/Yang_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
 
-write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Weger_JTK/Weger_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Yang_JTK/Yang_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
 
 ```
-
 
 --- running JTK cycle ---
 
 ```{r}
-JTK_output_RUV <- read.table(file = 'JTK_Cycle/Weger_JTK/JTK.Weger_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+JTK_output_RUV <- read.table(file = 'JTK_Cycle/Yang_JTK/JTK.Yang_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
 
 # Lable as rythmic & non-rhythmic using limorhyde's amplitude
 
@@ -426,15 +424,11 @@ table(JTK_output_RUV$Rhythmicity_lmrAMP)
 
 ```
 
-rAMP > 0.58:
-Non-rhythmic     Rhythmic 
-       13978          200
-
-
    Ambiguous Non-rhythmic     Rhythmic 
-        2097        11881          200 
+        5825         6973          603
+        
 
-*Why so few after filtering..... is it because of low replicate number -> many p value not small enough....*
+bruhh why so many rhythic genes......
 
 
 ### Limorhyde x Limma DE analysis
@@ -442,10 +436,6 @@ Non-rhythmic     Rhythmic
 ```{r}
 # with interaction
 
-design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr)
-
-qr(design)$rank  # check if W1/2 are colinear with cond
-cor(metadata_lmr[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
 
 
 fit = lmFit(y, design)
@@ -468,11 +458,6 @@ deLimma$diffExpressed[deLimma$logFC>1 & deLimma$adj.P.Val<0.05] <- 'UP'
 deLimma$diffExpressed[deLimma$logFC<(-1) & deLimma$adj.P.Val<0.05] <- 'DOWN'
 table(deLimma$diffExpressed)
 ```
-  DOWN    NO    UP 
-  128   13942   108 
-
-
-
 
 ## Rhythmicity vs DE
 
@@ -493,20 +478,10 @@ table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
 ```
 
              Rhythmicity_lmrAMP
-diffExpressed Non-rhythmic Rhythmic
-         DOWN          109       19
-         NO          13780      162
-         UP             89       19
-
-
-             Rhythmicity_lmrAMP
 diffExpressed Ambiguous Non-rhythmic Rhythmic
-         DOWN        43           66       19
-         NO        2030        11750      162
-         UP          24           65       19
-
-*very few rhythmic genes*
-
+         DOWN         1           10        3
+         NO        5815         6937      596
+         UP           9           26        4
 
 ```{r}
 table <- table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
@@ -527,26 +502,25 @@ ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffE
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
   ggtitle("Rhythmic genes") +
-  xlim(-5, 5) +
-  ylim(-1, 15) +
-  geom_label_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 1.8 | -log10(adj.P.Val) > 25), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
+  xlim(-4, 4) +
+  ylim(-1, 10) +
+  geom_text(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 1 | -log10(adj.P.Val) > 25), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
   
 
 ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ), col = diffExpressed_fac)) +
-  geom_vline(xintercept = c(-1, 1), col='gray', linetype='dashed') +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
   ggtitle("Non-rhythmic genes") +
   xlim(-5, 5) +
-  ylim(-1, 15) +
-  geom_label_repel(data = dplyr::filter(volcano_data_nonrhythmic, logFC < -2 | logFC > 1.2 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
-
+  ylim(-1, 10) +
+  geom_text(data = dplyr::filter(volcano_data_nonrhythmic, abs(logFC) > 1 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
 ```
 
-*huh p value squashed....*
+HUH why is the p values here also squashed???
 
 
 ### Annotation of rhythmic genes
@@ -557,16 +531,14 @@ DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 &
                                    abs(JTK_deLimma$logFC) > 1.0 & 
                                    JTK_deLimma$adj.P.Val < 0.05]
 
-DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_id, annotations$gene_id),], DE_rhythmic_genes) |>
+DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_name, annotations$gene_name),], DE_rhythmic_genes) |>
   arrange(desc(abs(logFC))) |> as.matrix()
 
-write.table(DE_rhythmic_genes_annot, file = "../../results/Weger_DE_rhythmic_genes_annot.tsv", sep = "\t", row.names = FALSE)
+write.table(DE_rhythmic_genes_annot, file = "../../results/Yang_DE_rhythmic_genes_annot.tsv", sep = "\t", row.names = FALSE)
 
 
-sum(annotations$gene_id == "ENSMUSG00000121375")
+
 ```
-
-
 
 ```{r}
 JTK_deLimma
@@ -580,6 +552,10 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
 
 cor(JTK_deLimma$logFC, JTK_deLimma$amp_lmr)
 ```
+
+fold change is sqaushed... why???
+and there are more rhythmic genes tooo
+
 
 ```{r}
 ggplot(JTK_deLimma[JTK_deLimma$Rhythmicity_fac == "Rhythmic", ], aes(x = amp_lmr, y = logFC, color = Rhythmicity_fac)) +
@@ -599,101 +575,7 @@ ggplot(JTK_deLimma[JTK_deLimma$Rhythmicity_fac == "Rhythmic", ], aes(x = amp_lmr
   ) # +
   # geom_label_repel(data = dplyr::filter(JTK_deLimma, (amp_lmr > 1.3 | abs(logFC) > 2.5) & amp_lmr > 0.3), aes(, label = gene_name), 
   #           hjust=0, vjust=0, color = "black", size = 2)
-
-
-ggplot(JTK_deLimma_mean, aes(x = amp_lmr_abs, y = abs_diff)) +
-  geom_point(alpha = 0.6, color = "coral") +
-  # scale_color_manual(values = c(
-  #   "Non-rhythmic" = "transparent",
-  #   "Rhythmic" = "royalblue"
-  # )) +
-  theme_minimal(base_size = 14) +
-  xlab("Absolute amplitude") +
-  ylab("Absolute difference") +
-  ggtitle("Absolute difference vs absolute amplitude") +
-  theme(
-    legend.title = element_text(face = "bold"),
-    legend.position = "right"
-  ) +
-  ylim(-5000,5000) #+
-  # geom_label_repel(data = dplyr::filter(JTK_deLimma_mean, amp_lmr_abs > 500), aes(, label = gene_name), 
-  #           hjust=0, vjust=0, color = "black", size = 3)
 ```
-
-
-
-
-
-### 3D plot!
-
-```{r}
-
-AMP_threshold_list <- seq(0, 2, by=0.05)
-logFC_threshold_list <- seq(0, 5, by=0.1)
-
-
-threshold_result <- data.frame(
-  AMP = NA,
-  logFC = NA,
-  ratio = NA,
-  rhythmic_DE = NA,
-  DE = NA,
-  rhythmic = NA,
-  log_rhythmic_DE = NA
-)
-
-
-# 3d threshold plot data
-for (logFC_threshold in logFC_threshold_list){
-  for (AMP_threshold in AMP_threshold_list){
-    N_rhythmic_DE <- nrow(JTK_deLimma[abs(JTK_deLimma$logFC) > logFC_threshold & JTK_deLimma$adj.P.Val < 0.05 & JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > AMP_threshold])
-    N_rhythmic <- nrow(JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > AMP_threshold])
-    # print(c(AMP_threshold, N_rhythmic))
-    N_DE <- nrow(JTK_deLimma[abs(JTK_deLimma$logFC) > logFC_threshold & JTK_deLimma$adj.P.Val < 0.05])
-    
-    if (N_rhythmic == 0){
-      DE_ratio = NA
-    } 
-    else{
-      DE_ratio <- N_rhythmic_DE/N_rhythmic
-    }
-    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
-  }
-}
-
-threshold_result <- drop_na(threshold_result)
-threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
-
-
-threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
-```
-
-```{r}
-### Relative 3D plot (log-count coloured)
-
-fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
-fig <- fig %>% add_markers()
-fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
-  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
-                                                range = c(0, 2.5)),
-               yaxis = list(title = 'Amplitude (relative)',
-                                                range = c(0, 1.0)),
-               zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
-                                                range = c(0, 0.9)),
-               aspectmode = "cube"))
-
-colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
-
-
-```
-
-
-*number quite small overall*
-where is the exponential decay at low rAMP threshold????
-
-
-
-
 
 
 
