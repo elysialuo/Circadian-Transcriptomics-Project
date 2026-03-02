@@ -373,7 +373,7 @@ ggplot(df) +
 
 *Why is the KO still quite rhythmic....???*
 
-What's wrpmg with Kcnj15...
+What's wrong with Kcnj15...
 
 
 
@@ -436,6 +436,10 @@ bruhh why so many rhythic genes......
 ```{r}
 # with interaction
 
+design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr)
+
+qr(design)$rank  # check if W1/2 are colinear with cond
+cor(metadata_lmr[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
 
 
 fit = lmFit(y, design)
@@ -517,7 +521,7 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
   ggtitle("Non-rhythmic genes") +
   xlim(-5, 5) +
   ylim(-1, 10) +
-  geom_text(data = dplyr::filter(volcano_data_nonrhythmic, abs(logFC) > 1 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
+  geom_label_repel(data = dplyr::filter(volcano_data_nonrhythmic, abs(logFC) > 1 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
 ```
 
 HUH why is the p values here also squashed???

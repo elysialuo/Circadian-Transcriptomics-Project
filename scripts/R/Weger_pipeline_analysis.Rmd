@@ -399,7 +399,6 @@ write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Weger_JTK/Weger_JTK_RUV_a
 
 ```
 
-
 --- running JTK cycle ---
 
 ```{r}
@@ -408,7 +407,8 @@ JTK_output_RUV <- read.table(file = 'JTK_Cycle/Weger_JTK/JTK.Weger_JTK_RUV_run.t
 # Lable as rythmic & non-rhythmic using limorhyde's amplitude
 
 JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_id]
-JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_id]
+JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_ab
+s[JTK_output_RUV$gene_id]
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
 
 JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'

@@ -1,0 +1,767 @@
+---
+title: "Mehta Pipeline Analysis"
+author: "Elysia Luo"
+date: "2026-02-28"
+output: html_document
+---
+
+```{r}
+mamba_folder <- "/Users/elysialuo/miniforge3"
+env_name <- "circadian"
+.libPaths(paste(mamba_folder, "envs", env_name, "lib/R/library", sep = "/"))
+
+library(tidyverse)
+library(dryR)
+library(stringr)
+library(ggplot2)
+library(ggpubr)
+
+library(MASS)
+library(janitor)
+library(naniar)
+library(patchwork)
+library(scales)
+library(cluster)
+
+library(RColorBrewer)
+library(ggrepel)
+
+library(GEOquery)
+library(stringr)
+library(tidyr)
+
+library(AnnotationHub)
+library(AnnotationDbi)
+library(ensembldb)
+
+library(limma)
+library(edgeR)
+library(RUVSeq)
+
+library(limorhyde)
+library(annotate)
+library(data.table)
+library(org.Mm.eg.db)
+library(foreach)
+
+library(VennDiagram)
+
+library('org.At.tair.db')
+library(GEOquery)
+library(stringr)
+library(tidyr)
+library(plotly)
+library("RColorBrewer")
+```
+
+```{r}
+getwd()
+```
+
+
+```{r}
+ah <- AnnotationHub()
+
+ah["AH121945"]
+
+# search for id of desired dataset
+dbResult <- query(ah, c("org.At.tair.db.sqlite","Arabidopsis")) 
+
+
+# load mouse transcript dataset
+AtEnsDb <- ah[[dbResult$ah_id]]
+# class(AtEnsDb)
+# keytypes(AtEnsDb)
+# columns(AtEnsDb)
+# head( keys(AtEnsDb, 'ENTREZID'))
+# mapIds(AtEnsDb, keys=head( keys(AtEnsDb, 'ENTREZID')), column='GENENAME', keytype='ENTREZID')
+# AtEnsDb[[1]]
+
+# output data of interest in form of data.frame
+annotations <- AnnotationDbi::select(AtEnsDb, keys = keys(AtEnsDb), columns = c("SYMBOL", "GENENAME", "ENTREZID"))
+annotations
+```
+
+```{r}
+# read in raw count matrix 
+raw_count = read.csv("../../data/Mehta_raw_data/Mehta_raw_count.csv") |> column_to_rownames("Gene")
+```
+
+
+```{r}
+# make metadata matrix
+
+metadata <- as.data.frame(colnames(raw_count)) |>
+  dplyr::mutate("title" = `colnames(raw_count)`) |>  
+  separate_wider_delim(cols = `colnames(raw_count)`, delim = "_", names = c("time", "genotype", "replicate")) |>
+  mutate(time = str_pad(str_remove(time, "ZT"), 2, pad="0")) |>
+  arrange(genotype, time) |> 
+  dplyr::relocate(title, .before = time)
+
+metadata
+
+raw_count <- raw_count[,metadata_all$title]   ### sort raw count matrix
+```
+
+    genotype
+time lhycca1 prr7prr9 toc1 wt
+  01       4        4    4  4
+  03       4        4    4  4
+  05       4        4    3  4
+  07       4        4    4  4
+  09       4        4    4  4
+  11       4        3    4  4
+  13       4        4    4  4
+  15       4        4    4  4
+  17       4        4    4  3
+  19       4        4    4  4
+  21       3        4    3  4
+  23       4        4    4  4
+  
+  some only have 3 replicates
+
+
+### Normalisation
+
+```{r}
+# 1. Convert to CPM
+
+# Compute CPM
+raw_count_cpm <- raw_count |>
+  dplyr::mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
+
+# Filter for at least CPM >= 1 in one sample
+raw_count_cpm_filtered <- dplyr::filter(raw_count_cpm, apply(raw_count_cpm, 1, max) >= 1)
+raw_count_cpm_filtered
+
+```
+
+```{r}
+# 2. TMM normalisation
+
+# Filter raw count based on cpm
+raw_count_filtered <- raw_count[rownames(raw_count) %in% rownames(raw_count_cpm_filtered),]
+nrow(raw_count_filtered)
+
+# Normalise library size of filtered raw count
+raw_count_filtered_norm <- DGEList(counts=raw_count_filtered) |> normLibSizes()
+str(raw_count_filtered_norm)
+raw_count_filtered_norm$samples
+
+# log2 cpm with normalised library size
+raw_filtered_norm_logcpm <- cpm(raw_count_filtered_norm, log=TRUE)
+raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE, prior.count=2)
+
+```
+
+```{r}
+cov <- sd(raw_count_filtered_norm$samples$lib.size) / mean(raw_count_filtered_norm$samples$lib.size) * 100
+cov
+```
+
+Ok-ish library size
+
+
+```{r}
+### RUV
+x <- str_c(metadata$genotype, str_pad(metadata$time, 2, pad="0"), sep="_")
+
+differences <- makeGroups(x)  # -1 assigned to missing sample (PerKO20 and PerKO8)
+controls <- rownames(raw_filtered_norm_logcpm_prior)
+
+# k=2, prior
+RUVs_output_prior <- RUVs(raw_filtered_norm_logcpm_prior, controls, k=2, differences, isLog=TRUE)
+raw_filtered_norm_logcpm_prior_RUVcount_k2 <- RUVs_output_prior$normalizedCounts
+as.data.frame(raw_filtered_norm_logcpm_prior)
+as.data.frame(raw_filtered_norm_logcpm_prior_RUVcount_k2)
+W1 <- RUVs_output_prior$W[,1]
+W2 <- RUVs_output_prior$W[,2]
+
+```
+
+```{r}
+#par(mfrow = c(2,2))
+
+## filtered, unnormalised
+plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
+        ylim=c(-0.9, 0.9), main = 'Unnormalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+## filtered, TMM normalised
+plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+## filtered, TMM & RUV normalised
+plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+
+```
+
+```{r}
+# PCA plot: CPM filtered raw count
+pca_test_raw <- prcomp(t(raw_count_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "title"), metadata, by = "title")
+pca_df_raw$lightdark <- "dark"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (raw count)",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: TMM_log_cpm normalised
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "title"), metadata, by = "title")
+pca_df_TMM$lightdark <- "dark"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM normalised)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: RUV normalised, k=2, prior
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "title"), metadata, by = "title")
+pca_df_RUV$lightdark <- "dark"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
+
+```{r}
+# lhycca1 vs wt! (RUN THE WHOLE CHUNK)
+
+# PCA plot: CPM filtered raw count
+raw_count_filtered_lhycca1 <- raw_count_filtered[, metadata[metadata$genotype == "wt" | metadata$genotype == "lhycca1", ]$title]
+raw_count_filtered_lhycca1_filtered <- dplyr::filter(raw_count_filtered_lhycca1, rowSums(raw_count_filtered_lhycca1) > 0)  # Filter away genes with row sum = 0
+
+pca_test_raw <- prcomp(t(raw_count_filtered_lhycca1_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "title"), metadata, by = "title")
+pca_df_raw$lightdark <- "dark"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA:  timepoint & genotype (raw count, lhycca1 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: TMM_log_cpm normalised
+raw_filtered_norm_logcpm_prior_lhycca1 <- raw_filtered_norm_logcpm_prior[, metadata[metadata$genotype == "wt" | metadata$genotype == "lhycca1", ]$title] |> as.data.frame()
+raw_filtered_norm_logcpm_prior_lhycca1_filtered <- dplyr::filter(raw_filtered_norm_logcpm_prior_lhycca1, rowSums(raw_filtered_norm_logcpm_prior_lhycca1) > 0)  # Filter away genes with row sum = 0
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_lhycca1_filtered), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "title"), metadata, by = "title")
+pca_df_TMM$lightdark <- "dark"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM normalised, lhycca1 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: RUV normalised, k=2, prior
+raw_filtered_norm_logcpm_prior_RUVcount_k2_lhycca1 <- raw_filtered_norm_logcpm_prior_RUVcount_k2[, metadata[metadata$genotype == "wt" | metadata$genotype == "lhycca1", ]$title] |> as.data.frame()
+raw_filtered_norm_logcpm_prior_RUVcount_k2_lhycca1_filtered <- dplyr::filter(raw_filtered_norm_logcpm_prior_RUVcount_k2_lhycca1, rowSums(raw_filtered_norm_logcpm_prior_RUVcount_k2_lhycca1) > 0)  # Filter away genes with row sum = 0
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2_lhycca1), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "title"), metadata, by = "title")
+pca_df_RUV$lightdark <- "dark"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior, lhycca1 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
+
+```{r}
+# prr7prr9 vs wt! (RUN THE WHOLE CHUNK)
+
+# PCA plot: CPM filtered raw count
+raw_count_filtered_prr7prr9 <- raw_count_filtered[, metadata[metadata$genotype == "wt" | metadata$genotype == "prr7prr9", ]$title]
+raw_count_filtered_prr7prr9_filtered <- dplyr::filter(raw_count_filtered_prr7prr9, rowSums(raw_count_filtered_prr7prr9) > 0)  # Filter away genes with row sum = 0
+
+pca_test_raw <- prcomp(t(raw_count_filtered_prr7prr9_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "title"), metadata, by = "title")
+pca_df_raw$lightdark <- "dark"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA:  timepoint & genotype (raw count, prr7prr9 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: TMM_log_cpm normalised
+raw_filtered_norm_logcpm_prior_prr7prr9 <- raw_filtered_norm_logcpm_prior[, metadata[metadata$genotype == "wt" | metadata$genotype == "prr7prr9", ]$title] |> as.data.frame()
+raw_filtered_norm_logcpm_prior_prr7prr9_filtered <- dplyr::filter(raw_filtered_norm_logcpm_prior_prr7prr9, rowSums(raw_filtered_norm_logcpm_prior_prr7prr9) > 0)  # Filter away genes with row sum = 0
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_prr7prr9_filtered), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "title"), metadata, by = "title")
+pca_df_TMM$lightdark <- "dark"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM normalised, prr7prr9 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: RUV normalised, k=2, prior
+raw_filtered_norm_logcpm_prior_RUVcount_k2_prr7prr9 <- raw_filtered_norm_logcpm_prior_RUVcount_k2[, metadata[metadata$genotype == "wt" | metadata$genotype == "prr7prr9", ]$title] |> as.data.frame()
+raw_filtered_norm_logcpm_prior_RUVcount_k2_prr7prr9_filtered <- dplyr::filter(raw_filtered_norm_logcpm_prior_RUVcount_k2_prr7prr9, rowSums(raw_filtered_norm_logcpm_prior_RUVcount_k2_prr7prr9) > 0)  # Filter away genes with row sum = 0
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2_prr7prr9), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "title"), metadata, by = "title")
+pca_df_RUV$lightdark <- "dark"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior, prr7prr9 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
+
+```{r}
+# toc1 vs wt! (RUN THE WHOLE CHUNK)
+
+# PCA plot: CPM filtered raw count
+raw_count_filtered_toc1 <- raw_count_filtered[, metadata[metadata$genotype == "wt" | metadata$genotype == "toc1", ]$title]
+raw_count_filtered_toc1_filtered <- dplyr::filter(raw_count_filtered_toc1, rowSums(raw_count_filtered_toc1) > 0)  # Filter away genes with row sum = 0
+
+pca_test_raw <- prcomp(t(raw_count_filtered_toc1_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "title"), metadata, by = "title")
+pca_df_raw$lightdark <- "dark"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA:  timepoint & genotype (raw count, toc1 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: TMM_log_cpm normalised
+raw_filtered_norm_logcpm_prior_toc1 <- raw_filtered_norm_logcpm_prior[, metadata[metadata$genotype == "wt" | metadata$genotype == "toc1", ]$title] |> as.data.frame()
+raw_filtered_norm_logcpm_prior_toc1_filtered <- dplyr::filter(raw_filtered_norm_logcpm_prior_toc1, rowSums(raw_filtered_norm_logcpm_prior_toc1) > 0)  # Filter away genes with row sum = 0
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_toc1_filtered), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "title"), metadata, by = "title")
+pca_df_TMM$lightdark <- "dark"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM normalised, toc1 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+
+## PCA plot: RUV normalised, k=2, prior
+raw_filtered_norm_logcpm_prior_RUVcount_k2_toc1 <- raw_filtered_norm_logcpm_prior_RUVcount_k2[, metadata[metadata$genotype == "wt" | metadata$genotype == "toc1", ]$title] |> as.data.frame()
+raw_filtered_norm_logcpm_prior_RUVcount_k2_toc1_filtered <- dplyr::filter(raw_filtered_norm_logcpm_prior_RUVcount_k2_toc1, rowSums(raw_filtered_norm_logcpm_prior_RUVcount_k2_toc1) > 0)  # Filter away genes with row sum = 0
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2_toc1), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "title"), metadata, by = "title")
+pca_df_RUV$lightdark <- "dark"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("01", "03", "05", "07", "09", "11")] <- "light"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = lightdark, label = time)) +
+  geom_point(size = 2) +
+  #geom_text(hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_classic() +
+  labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior, toc1 vs wt)",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+```
+
+Pretty good i think - not much variances to be corrected by RUV and improvement rather subtle but acceptable!
+
+
+```{r}
+# Limorhyde
+
+period = 24
+qvalRhyCutoff = 0.15
+qvalDrCutoff = 0.1
+
+### should i use unRUV matrix???? yes
+y = raw_filtered_norm_logcpm_prior #_RUVcount_k2
+
+metadata_lmr <- metadata |> dplyr::select(title, genotype, time) |> 
+  dplyr::mutate(time = as.integer(time), cond = factor(genotype, levels = c("wt", "lhycca1", "prr7prr9", "toc1"))) |> 
+  rownames_to_column("sample_alias")
+
+
+metadata_lmr <- cbind(metadata_lmr, limorhyde(metadata_lmr$time, 'time_'), W1, W2) |> as.data.table()
+```
+
+```{r}
+condNow <- "wt"
+
+design = model.matrix(~ time_cos + time_sin, data = metadata_lmr[cond == condNow, ])
+fit = lmFit(y[, metadata_lmr$cond == condNow], design)
+fit = eBayes(fit, trend = TRUE)
+rhyNow = data.table(topTable(fit, coef = 2:3, number = Inf), keep.rownames = TRUE)
+setnames(rhyNow, 'rn', 'TAIR')
+rhyNow[, cond := condNow]
+
+rhyLimmaSummary = rhyNow[, .(P.Value = min(P.Value)), by = TAIR]
+rhyLimmaSummary[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(rhyLimmaSummary, 'adj.P.Val')
+
+rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]
+
+
+# Extract coefficients from your limma fit
+coefs = coef(fit)[, c("(Intercept)", "time_cos", "time_sin")]
+
+# Compute (log2 *relative*) amplitude for each gene
+amplitude_lmr = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2)
+mean = coefs[, "(Intercept)"]
+
+# Compute (absolute) amplitude
+amplitude_lmr_abs = 2^(mean + amplitude_lmr) - 2^mean
+
+cbind(amplitude_lmr, coefs[, "(Intercept)"])
+
+hist(amplitude_lmr, ylim = c(0,500))
+```
+four genotypes pooled - reasonable longer tail!
+
+
+### JTK
+```{r}
+metadata
+metadata$title[metadata$genotype == "wt"]
+RUVs_output_prior$normalizedCounts[,metadata$title[metadata$genotype == "wt"]]
+
+# log-TMM & RUV normalised matrix, control only
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,metadata$title[metadata$genotype == "wt"]])
+# JTK_matrix_RUV[rowSums(JTK_matrix_RUV)>0,]
+# JTK_matrix_RUV[raw_count_WT$gene_name, ]
+
+JTK_matrix_RUV <- JTK_matrix_RUV |> rownames_to_column('Probe')
+
+write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Mehta_JTK/Mehta_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Mehta_JTK/Mehta_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+```
+
+--- running JTK cycle ---
+
+```{r}
+JTK_output_RUV <- read.table(file = 'JTK_Cycle/Mehta_JTK/JTK.Mehta_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('TAIR' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$TAIR]
+JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$TAIR]
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
+
+JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_RUV$Rhythmicity_lmrAMP)
+
+# nonsense threshold for absolute values...
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
+
+
+```
+
+   Ambiguous Non-rhythmic     Rhythmic 
+        4842         8504         4276
+
+WHAT IS THIS?????? cuz 2 hr interval????????
+
+_____________________________________________________________________________
+
+## a. lhycca1
+
+
+```{r}
+y_lhycca1 <- y[, metadata[metadata$genotype == "wt" | metadata$genotype == "lhycca1", ]$title]
+metadata_lhycca1 <- metadata |> dplyr::filter(genotype %in% c("lhycca1", "wt"))
+metadata_lmr_lhycca1 <- metadata_lmr |> 
+  dplyr::filter(genotype %in% c("lhycca1", "wt")) |> 
+  dplyr::mutate(cond = droplevels(cond))
+
+```
+
+```{r}
+metadata_dt <- as.data.table(metadata_lhycca1)
+
+geneIdsNow = c(deLimma_lhycca1$TAIR[1L:10L])  # requires later deLimma chunk ran
+geneSymbolsNow = annotations[match(geneIdsNow, annotations$TAIR),]$SYMBOL
+geneIdsNow <- geneIdsNow[!is.na(geneSymbolsNow)]
+geneSymbolsNow <- geneSymbolsNow[!is.na(geneSymbolsNow)]
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "lhycca1"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+deLimma_lhycca1
+```
+
+```{r}
+geneIdsNow
+```
+
+
+```{r}
+geneSymbolsNow = c("LHY", "CCA1", "PRR9", "PRR7", "PRR5", "TOC1")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$SYMBOL),]$TAIR
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "lhycca1"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+```
+
+HUHHHHHHHHH?????????? why LHY & CCA1 still rhythmic - check KO method 
+
+```{r}
+geneSymbolsNow = c("ELF3", "ELF4", "LUX", "ACT2", "ACT8", "GAPC2")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$SYMBOL),]$TAIR
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "lhycca1"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+```
+
+
+### Limorhyde x Limma DE analysis
+
+```{r}
+# with interaction
+
+design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr_lhycca1)
+colnames(design)
+
+qr(design)$rank  # check if W1/2 are colinear with cond
+cor(metadata_lmr_lhycca1[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
+
+
+fit = lmFit(y_lhycca1, design)
+fit = eBayes(fit, trend = TRUE)
+deLimma_lhycca1 = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(deLimma_lhycca1, 'rn', 'TAIR')
+
+# record mean level of WT and KO!
+mean_wt <- fit$coefficients[,1]
+mean_ko <- fit$coefficients[,1] + fit$coefficients[,2]
+
+deLimma_lhycca1[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(deLimma_lhycca1, 'adj.P.Val')
+
+deLimma_lhycca1
+
+deLimma_lhycca1$diffExpressed <- 'NO'
+deLimma_lhycca1$diffExpressed[deLimma_lhycca1$logFC>1 & deLimma_lhycca1$adj.P.Val<0.05] <- 'UP'
+deLimma_lhycca1$diffExpressed[deLimma_lhycca1$logFC<(-1) & deLimma_lhycca1$adj.P.Val<0.05] <- 'DOWN'
+table(deLimma_lhycca1$diffExpressed)
+```
+
+ DOWN    NO    UP 
+  110 17351   161 
+  
+really not a lot lol
+
+
+## Rhythmicity vs DE
+
+```{r}
+JTK_output_RUV
+
+deLimma
+
+JTK_deLimma_lhycca1 <- left_join(deLimma_lhycca1, JTK_output_RUV, by = "TAIR") |> 
+  dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
+  dplyr::mutate(diffExpressed_fac = factor(diffExpressed)) |> 
+  dplyr::relocate(Rhythmicity_fac, .after = "TAIR") |> 
+  dplyr::relocate(diffExpressed_fac, .after = "TAIR")
+
+table(JTK_deLimma_lhycca1[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+```
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN        20           36       54
+         NO        4793         8408     4150
+         UP          29           60       72
+
+```{r}
+table <- table(JTK_deLimma_lhycca1[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+
+DEratio <- (table[1, ] + table[3,]) / colSums(table)
+DEratio
+```
+
+
+   Ambiguous Non-rhythmic     Rhythmic 
+  0.01011979   0.01128881   0.02946679 
+
+
+```{r}
+volcano_data_rhythmic <- JTK_deLimma_lhycca1 |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
+volcano_data_nonrhythmic <- JTK_deLimma_lhycca1 |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
+
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50) #+
+  # geom_label_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 1.8 | -log10(adj.P.Val) > 25), aes(, label = SYMBOL), hjust=0, vjust=0, color = "black", size = 2.5)
+  
+
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Non-rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50) #+
+  # geom_label_repel(data = dplyr::filter(volcano_data_nonrhythmic, logFC < -2 | logFC > 1.2 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
+
+```
+
+### Annotation of DE-rhythmic genes
+
+```{r}
+DE_rhythmic_genes_lhycca1 <- JTK_deLimma_lhycca1[JTK_deLimma_lhycca1$BH.Q < 0.05 & 
+                                   JTK_deLimma_lhycca1$amp_lmr > 0.58 & 
+                                   abs(JTK_deLimma_lhycca1$logFC) > 1.0 & 
+                                   JTK_deLimma_lhycca1$adj.P.Val < 0.05]
+
+DE_rhythmic_genes_annot_lhycca1 <- right_join(annotations[match(DE_rhythmic_genes_lhycca1$TAIR, annotations$TAIR),], DE_rhythmic_genes_lhycca1) |>
+  arrange(desc(abs(logFC))) |> as.matrix()
+
+write.table(DE_rhythmic_genes_annot_lhycca1, file = "../../results/Mehta_DE_rhythmic_genes_annot_lhycca1.tsv", sep = "\t", row.names = FALSE)
+
+sum(rownames(y) %in% annotations$TAIR)
+length(rownames(y))
+
+```
+
+????? why so many NA genes...
+
+
+## b. prr7prr9
+
+
+
+
+
+## c. toc1
+

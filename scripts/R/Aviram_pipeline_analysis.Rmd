@@ -94,7 +94,7 @@ raw_count_Per <- read_csv("../../data/Aviram_raw_data/Aviram_PerKO_raw.csv") |> 
 raw_count <- full_join(raw_count_WT, raw_count_Per) |> replace_na_with(0) |> column_to_rownames("gene_name") 
 
 raw_count <- raw_count[,metadata$title]
-
+table(metadata[,3:4])
 ```
 
 *requires second thought!! should i use full-join or inner-join?*
@@ -240,6 +240,20 @@ ehhh still cannot separate perDKO --> *actually it makes sense!! bcuz it's in DD
 
 
 ```{r}
+geneSymbolsNow
+geneIdsNow
+
+
+as.matrix(raw_count_filtered["Per1", ])
+raw_filtered_norm_logcpm_prior["Per1", ]
+RUVs_output_prior$normalizedCounts["Per1", ]
+
+```
+"ENSMUSG00000020893" "ENSMUSG00000055866" "ENSMUSG00000028957" "ENSMUSG00000020038" "ENSMUSG00000068742"
+"Per1" "Per2" "Per3" "Cry1" "Cry2"
+
+
+```{r}
 # Limorhyde
 
 period = 24
@@ -317,10 +331,7 @@ JTK_matrix_RUV <- JTK_matrix_RUV |> rownames_to_column('Probe')
 
 write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Aviram_JTK/Aviram_JTK_RUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
 
-write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Aviram_JTK/Aviram_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
-
-
-
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Aviram_JTK/Aviram_JTK_RUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE
 ```
 12377 => 11398 after filtering out the zeros in WT
 original matrix: 11727
@@ -436,7 +447,7 @@ DEratio
 DEratio:
 (AMP > 0.3)
 Non-rhythmic     Rhythmic 
-  0.06686986   0.08967742 
+  0.06686986   0.08967742
 
 
 (AMP > 0.5)
@@ -479,7 +490,7 @@ ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 Significantly more down-regulation! 
 
 
-### Annotation of rhythmic genes
+### Annotation of DE-rhythmic genes
 
 ```{r}
 DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
@@ -493,7 +504,6 @@ DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_n
 write.table(DE_rhythmic_genes_annot, file = "../../results/Aviram_DE_rhythmic_genes_annot.tsv", sep = "\t", row.names = FALSE)
 
 sum(annotations$gene_name == "Aim1l")
-
 
 ```
 
