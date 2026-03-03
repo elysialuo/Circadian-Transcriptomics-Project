@@ -536,7 +536,7 @@ WHAT IS THIS?????? cuz 2 hr interval????????
 
 _____________________________________________________________________________
 
-## a. lhycca1
+# a. lhycca1
 
 
 ```{r}
@@ -678,7 +678,7 @@ really not a lot lol
 ```{r}
 JTK_output_RUV
 
-deLimma
+deLimma_lhycca1
 
 JTK_deLimma_lhycca1 <- left_join(deLimma_lhycca1, JTK_output_RUV, by = "TAIR") |> 
   dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
@@ -686,6 +686,10 @@ JTK_deLimma_lhycca1 <- left_join(deLimma_lhycca1, JTK_output_RUV, by = "TAIR") |
   dplyr::relocate(Rhythmicity_fac, .after = "TAIR") |> 
   dplyr::relocate(diffExpressed_fac, .after = "TAIR")
 
+JTK_deLimma_lhycca1$DE <- JTK_deLimma_lhycca1$diffExpressed != "NO"
+lhycca1_table <- table(JTK_deLimma_lhycca1[, c('DE', 'Rhythmicity_lmrAMP')])
+lhycca1_table[,2:3]
+chisq.test(lhycca1_table[,2:3])
 table(JTK_deLimma_lhycca1[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
 ```
              Rhythmicity_lmrAMP
@@ -693,6 +697,12 @@ diffExpressed Ambiguous Non-rhythmic Rhythmic
          DOWN        20           36       54
          NO        4793         8408     4150
          UP          29           60       72
+
+	Pearson's Chi-squared test with Yates' continuity correction
+
+data:  lhycca1_table[, 2:3]
+X-squared = 54.022, df = 1, p-value = 1.982e-13
+
 
 ```{r}
 table <- table(JTK_deLimma_lhycca1[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
@@ -704,6 +714,8 @@ DEratio
 
    Ambiguous Non-rhythmic     Rhythmic 
   0.01011979   0.01128881   0.02946679 
+  
+  
 
 
 ```{r}
@@ -747,21 +759,796 @@ DE_rhythmic_genes_lhycca1 <- JTK_deLimma_lhycca1[JTK_deLimma_lhycca1$BH.Q < 0.05
 DE_rhythmic_genes_annot_lhycca1 <- right_join(annotations[match(DE_rhythmic_genes_lhycca1$TAIR, annotations$TAIR),], DE_rhythmic_genes_lhycca1) |>
   arrange(desc(abs(logFC))) |> as.matrix()
 
-write.table(DE_rhythmic_genes_annot_lhycca1, file = "../../results/Mehta_DE_rhythmic_genes_annot_lhycca1.tsv", sep = "\t", row.names = FALSE)
+write.table(DE_rhythmic_genes_annot_lhycca1, file = "../../results/Mehta_results/Mehta_DE_rhythmic_genes_annot_lhycca1.tsv", sep = "\t", row.names = FALSE)
 
-sum(rownames(y) %in% annotations$TAIR)
+sum(!rownames(y) %in% annotations$TAIR)
+sum(!DE_rhythmic_genes_lhycca1$TAIR %in% annotations$TAIR)
 length(rownames(y))
 
 ```
 
-????? why so many NA genes...
+????? why so many NA genes... (ok only 2 are not mapped, others are mapped but many don't have SYMBOL/genename)
 
 
-## b. prr7prr9
+```{r}
+JTK_deLimma_lhycca1
+ggplot(JTK_deLimma_lhycca1, aes(x = amp_lmr, y = logFC)) +
+  geom_point(alpha = 0.5) +
+  theme_minimal() +
+  xlab("Rhythmic amplitude (from Limorhyde)") +
+  ylab("log2 Fold Change (DE)") +
+  ggtitle("DE vs rhythmic amplitude")
+
+
+cor(JTK_deLimma_lhycca1$logFC, JTK_deLimma_lhycca1$amp_lmr)
+```
+
+```{r}
+ggplot(JTK_deLimma_lhycca1[JTK_deLimma_lhycca1$Rhythmicity_fac == "Rhythmic", ], aes(x = amp_lmr, y = logFC, color = Rhythmicity_fac)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = c(
+    "Non-rhythmic" = "transparent",
+    "Rhythmic" = "royalblue"
+  )) +
+  theme_minimal(base_size = 14) +
+  xlab("Rhythmic absolute amplitude") +
+  ylab("log2 Fold Change") +
+  xlim(0, 3) +
+  ggtitle("logFC vs rhythmic amplitude by rhythmicity") +
+  theme(
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  ) # +
+  # geom_label_repel(data = dplyr::filter(JTK_deLimma_lhycca1, (amp_lmr > 1.3 | abs(logFC) > 2.5) & amp_lmr > 0.3), aes(, label = gene_name), 
+  #           hjust=0, vjust=0, color = "black", size = 2)
+```
+
+Seems not as obvious trend...
+
+
+### 3D plot!
+
+```{r}
+
+AMP_threshold_list <- seq(0, 2, by=0.05)
+logFC_threshold_list <- seq(0, 5, by=0.1)
+
+
+threshold_result <- data.frame(
+  AMP = NA,
+  logFC = NA,
+  ratio = NA,
+  rhythmic_DE = NA,
+  DE = NA,
+  rhythmic = NA,
+  log_rhythmic_DE = NA
+)
+
+
+# 3d threshold plot data
+for (logFC_threshold in logFC_threshold_list){
+  for (AMP_threshold in AMP_threshold_list){
+    N_rhythmic_DE <- nrow(JTK_deLimma_lhycca1[abs(JTK_deLimma_lhycca1$logFC) > logFC_threshold & JTK_deLimma_lhycca1$adj.P.Val < 0.05 & JTK_deLimma_lhycca1$BH.Q < 0.05 & JTK_deLimma_lhycca1$amp_lmr > AMP_threshold])
+    N_rhythmic <- nrow(JTK_deLimma_lhycca1[JTK_deLimma_lhycca1$BH.Q < 0.05 & JTK_deLimma_lhycca1$amp_lmr > AMP_threshold])
+    # print(c(AMP_threshold, N_rhythmic))
+    N_DE <- nrow(JTK_deLimma_lhycca1[abs(JTK_deLimma_lhycca1$logFC) > logFC_threshold & JTK_deLimma_lhycca1$adj.P.Val < 0.05])
+    
+    if (N_rhythmic == 0){
+      DE_ratio = NA
+    } 
+    else{
+      DE_ratio <- N_rhythmic_DE/N_rhythmic
+    }
+    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
+  }
+}
+
+threshold_result <- drop_na(threshold_result)
+threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
+
+
+threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
+```
+```{r}
+### Relative 3D plot (log-count coloured)
+
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="lhycca1: Relative DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
+                                                range = c(0, 2.5)),
+               yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.0)),
+               zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9)),
+               aspectmode = "cube"))
+
+colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
+
+
+```
+So smooth and subtle??????
+
+
+__________________________________________________
+
+# b. prr7prr9
+
+
+```{r}
+y_prr7prr9 <- y[, metadata[metadata$genotype == "wt" | metadata$genotype == "prr7prr9", ]$title]
+metadata_prr7prr9 <- metadata |> dplyr::filter(genotype %in% c("prr7prr9", "wt"))
+metadata_lmr_prr7prr9 <- metadata_lmr |> 
+  dplyr::filter(genotype %in% c("prr7prr9", "wt")) |> 
+  dplyr::mutate(cond = droplevels(cond))
+
+```
+
+```{r}
+metadata_dt <- as.data.table(metadata_prr7prr9)
+
+geneIdsNow = c(deLimma_prr7prr9$TAIR[1L:10L])  # requires later deLimma chunk ran
+geneSymbolsNow = annotations[match(geneIdsNow, annotations$TAIR),]$SYMBOL
+geneIdsNow <- geneIdsNow[!is.na(geneSymbolsNow)]
+geneSymbolsNow <- geneSymbolsNow[!is.na(geneSymbolsNow)]
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "prr7prr9"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+deLimma_prr7prr9
+```
+
+```{r}
+geneIdsNow
+```
+
+
+```{r}
+geneSymbolsNow = c("LHY", "CCA1", "PRR9", "PRR7", "PRR5", "TOC1")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$SYMBOL),]$TAIR
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "prr7prr9"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+```
+
+HUHHHHHHHHH?????????? why LHY & CCA1 still rhythmic - check KO method 
+
+```{r}
+geneSymbolsNow = c("ELF3", "ELF4", "LUX", "ACT2", "ACT8", "GAPC2")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$SYMBOL),]$TAIR
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "prr7prr9"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+```
+
+Is the oscillation of ACT8 & GAPC2 normal?
+
+
+### Limorhyde x Limma DE analysis
+
+```{r}
+# with interaction
+
+design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr_prr7prr9)
+colnames(design)
+
+qr(design)$rank  # check if W1/2 are colinear with cond
+cor(metadata_lmr_prr7prr9[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
+
+
+fit = lmFit(y_prr7prr9, design)
+fit = eBayes(fit, trend = TRUE)
+deLimma_prr7prr9 = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(deLimma_prr7prr9, 'rn', 'TAIR')
+
+# record mean level of WT and KO!
+mean_wt <- fit$coefficients[,1]
+mean_ko <- fit$coefficients[,1] + fit$coefficients[,2]
+
+deLimma_prr7prr9[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(deLimma_prr7prr9, 'adj.P.Val')
+
+deLimma_prr7prr9
+
+deLimma_prr7prr9$diffExpressed <- 'NO'
+deLimma_prr7prr9$diffExpressed[deLimma_prr7prr9$logFC>1 & deLimma_prr7prr9$adj.P.Val<0.05] <- 'UP'
+deLimma_prr7prr9$diffExpressed[deLimma_prr7prr9$logFC<(-1) & deLimma_prr7prr9$adj.P.Val<0.05] <- 'DOWN'
+table(deLimma_prr7prr9$diffExpressed)
+```
+
+ DOWN    NO    UP 
+  237 17209   176 
+  
+really not a lot too
+
+
+## Rhythmicity vs DE
+
+```{r}
+JTK_output_RUV
+
+deLimma_prr7prr9
+
+JTK_deLimma_prr7prr9 <- left_join(deLimma_prr7prr9, JTK_output_RUV, by = "TAIR") |> 
+  dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
+  dplyr::mutate(diffExpressed_fac = factor(diffExpressed)) |> 
+  dplyr::relocate(Rhythmicity_fac, .after = "TAIR") |> 
+  dplyr::relocate(diffExpressed_fac, .after = "TAIR")
+
+JTK_deLimma_prr7prr9$DE <- JTK_deLimma_prr7prr9$diffExpressed != "NO"
+prr7prr9_table <- table(JTK_deLimma_prr7prr9[, c('DE', 'Rhythmicity_lmrAMP')])
+prr7prr9_table[,2:3]
+chisq.test(prr7prr9_table[,2:3])
+table(JTK_deLimma_prr7prr9[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+```
+       Rhythmicity_lmrAMP
+DE      Non-rhythmic Rhythmic
+  FALSE         8416     4006
+  TRUE            88      270
+
+	Pearson's Chi-squared test with Yates' continuity correction
+
+data:  prr7prr9_table[, 2:3]
+X-squared = 289.34, df = 1, p-value < 2.2e-16
+
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN        48           66      123
+         NO        4787         8416     4006
+         UP           7           22      147
+
+```{r}
+table <- table(JTK_deLimma_prr7prr9[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+
+DEratio <- (table[1, ] + table[3,]) / colSums(table)
+DEratio
+```
+
+
+   Ambiguous Non-rhythmic     Rhythmic 
+  0.01135894   0.01034807   0.06314312 
+
+
+```{r}
+volcano_data_rhythmic <- JTK_deLimma_prr7prr9 |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
+volcano_data_nonrhythmic <- JTK_deLimma_prr7prr9 |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
+
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50) #+
+  # geom_label_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 1.8 | -log10(adj.P.Val) > 25), aes(, label = SYMBOL), hjust=0, vjust=0, color = "black", size = 2.5)
+  
+
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Non-rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50) #+
+  # geom_label_repel(data = dplyr::filter(volcano_data_nonrhythmic, logFC < -2 | logFC > 1.2 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
+
+```
+
+### Annotation of DE-rhythmic genes
+
+```{r}
+DE_rhythmic_genes_prr7prr9 <- JTK_deLimma_prr7prr9[JTK_deLimma_prr7prr9$BH.Q < 0.05 & 
+                                   JTK_deLimma_prr7prr9$amp_lmr > 0.58 & 
+                                   abs(JTK_deLimma_prr7prr9$logFC) > 1.0 & 
+                                   JTK_deLimma_prr7prr9$adj.P.Val < 0.05]
+
+DE_rhythmic_genes_annot_prr7prr9 <- right_join(annotations[match(DE_rhythmic_genes_prr7prr9$TAIR, annotations$TAIR),], DE_rhythmic_genes_prr7prr9) |>
+  arrange(desc(abs(logFC))) |> as.matrix()
+
+write.table(DE_rhythmic_genes_annot_prr7prr9, file = "../../results/Mehta_results/Mehta_DE_rhythmic_genes_annot_prr7prr9.tsv", sep = "\t", row.names = FALSE)
+
+sum(!rownames(y) %in% annotations$TAIR)
+sum(!DE_rhythmic_genes_prr7prr9$TAIR %in% annotations$TAIR)
+length(rownames(y))
+
+```
+
+????? why so many NA genes... (ok only 2 are not mapped, others are mapped but many don't have SYMBOL/genename)
+
+
+```{r}
+JTK_deLimma_prr7prr9
+ggplot(JTK_deLimma_prr7prr9, aes(x = amp_lmr, y = logFC)) +
+  geom_point(alpha = 0.5) +
+  theme_minimal() +
+  xlab("Rhythmic amplitude (from Limorhyde)") +
+  ylab("log2 Fold Change (DE)") +
+  ggtitle("DE vs rhythmic amplitude")
+
+
+cor(JTK_deLimma_prr7prr9$logFC, JTK_deLimma_prr7prr9$amp_lmr)
+```
+
+```{r}
+ggplot(JTK_deLimma_prr7prr9[JTK_deLimma_prr7prr9$Rhythmicity_fac == "Rhythmic", ], aes(x = amp_lmr, y = logFC, color = Rhythmicity_fac)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = c(
+    "Non-rhythmic" = "transparent",
+    "Rhythmic" = "royalblue"
+  )) +
+  theme_minimal(base_size = 14) +
+  xlab("Rhythmic absolute amplitude") +
+  ylab("log2 Fold Change") +
+  xlim(0, 3) +
+  ggtitle("logFC vs rhythmic amplitude by rhythmicity") +
+  theme(
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  ) # +
+  # geom_label_repel(data = dplyr::filter(JTK_deLimma_prr7prr9, (amp_lmr > 1.3 | abs(logFC) > 2.5) & amp_lmr > 0.3), aes(, label = gene_name), 
+  #           hjust=0, vjust=0, color = "black", size = 2)
+```
+
+Seems not as obvious trend...
+
+
+### 3D plot!
+
+```{r}
+
+AMP_threshold_list <- seq(0, 2, by=0.05)
+logFC_threshold_list <- seq(0, 5, by=0.1)
+
+
+threshold_result <- data.frame(
+  AMP = NA,
+  logFC = NA,
+  ratio = NA,
+  rhythmic_DE = NA,
+  DE = NA,
+  rhythmic = NA,
+  log_rhythmic_DE = NA
+)
+
+
+# 3d threshold plot data
+for (logFC_threshold in logFC_threshold_list){
+  for (AMP_threshold in AMP_threshold_list){
+    N_rhythmic_DE <- nrow(JTK_deLimma_prr7prr9[abs(JTK_deLimma_prr7prr9$logFC) > logFC_threshold & JTK_deLimma_prr7prr9$adj.P.Val < 0.05 & JTK_deLimma_prr7prr9$BH.Q < 0.05 & JTK_deLimma_prr7prr9$amp_lmr > AMP_threshold])
+    N_rhythmic <- nrow(JTK_deLimma_prr7prr9[JTK_deLimma_prr7prr9$BH.Q < 0.05 & JTK_deLimma_prr7prr9$amp_lmr > AMP_threshold])
+    # print(c(AMP_threshold, N_rhythmic))
+    N_DE <- nrow(JTK_deLimma_prr7prr9[abs(JTK_deLimma_prr7prr9$logFC) > logFC_threshold & JTK_deLimma_prr7prr9$adj.P.Val < 0.05])
+    
+    if (N_rhythmic == 0){
+      DE_ratio = NA
+    } 
+    else{
+      DE_ratio <- N_rhythmic_DE/N_rhythmic
+    }
+    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
+  }
+}
+
+threshold_result <- drop_na(threshold_result)
+threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
+
+
+threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
+```
+```{r}
+### Relative 3D plot (log-count coloured)
+
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="prr7prr9: Relative DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
+                                                range = c(0, 2.5)),
+               yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.0)),
+               zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9)),
+               aspectmode = "cube"))
+
+colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
+
+
+```
 
 
 
 
+__________________________________________________
 
-## c. toc1
+# c. toc1
 
+
+```{r}
+y_toc1 <- y[, metadata[metadata$genotype == "wt" | metadata$genotype == "toc1", ]$title]
+metadata_toc1 <- metadata |> dplyr::filter(genotype %in% c("toc1", "wt"))
+metadata_lmr_toc1 <- metadata_lmr |> 
+  dplyr::filter(genotype %in% c("toc1", "wt")) |> 
+  dplyr::mutate(cond = droplevels(cond))
+
+```
+
+```{r}
+metadata_dt <- as.data.table(metadata_toc1)
+
+geneIdsNow = c(deLimma_toc1$TAIR[1L:10L])  # requires later deLimma chunk ran
+geneSymbolsNow = annotations[match(geneIdsNow, annotations$TAIR),]$SYMBOL
+geneIdsNow <- geneIdsNow[!is.na(geneSymbolsNow)]
+geneSymbolsNow <- geneSymbolsNow[!is.na(geneSymbolsNow)]
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "toc1"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+deLimma_toc1
+```
+
+```{r}
+geneIdsNow
+```
+
+
+```{r}
+geneSymbolsNow = c("LHY", "CCA1", "PRR9", "PRR7", "PRR5", "TOC1")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$SYMBOL),]$TAIR
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "toc1"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+```
+
+HUHHHHHHHHH?????????? why TOC1 still rhythmic - check KO method 
+
+```{r}
+geneSymbolsNow = c("ELF3", "ELF4", "LUX", "ACT2", "ACT8", "GAPC2")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$SYMBOL),]$TAIR
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, title := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(title, genotype, time)], by = 'title')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype, levels = c("wt", "toc1"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+```
+
+Is the oscillation of ACT8 & GAPC2 normal?
+
+
+### Limorhyde x Limma DE analysis
+
+```{r}
+# with interaction
+
+design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr_toc1)
+colnames(design)
+
+qr(design)$rank  # check if W1/2 are colinear with cond
+cor(metadata_lmr_toc1[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
+
+
+fit = lmFit(y_toc1, design)
+fit = eBayes(fit, trend = TRUE)
+deLimma_toc1 = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(deLimma_toc1, 'rn', 'TAIR')
+
+# record mean level of WT and KO!
+mean_wt <- fit$coefficients[,1]
+mean_ko <- fit$coefficients[,1] + fit$coefficients[,2]
+
+deLimma_toc1[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(deLimma_toc1, 'adj.P.Val')
+
+deLimma_toc1
+
+deLimma_toc1$diffExpressed <- 'NO'
+deLimma_toc1$diffExpressed[deLimma_toc1$logFC>1 & deLimma_toc1$adj.P.Val<0.05] <- 'UP'
+deLimma_toc1$diffExpressed[deLimma_toc1$logFC<(-1) & deLimma_toc1$adj.P.Val<0.05] <- 'DOWN'
+table(deLimma_toc1$diffExpressed)
+```
+
+ DOWN    NO    UP 
+  113 17419    90
+  
+really not a lot too
+
+
+## Rhythmicity vs DE
+
+```{r}
+JTK_output_RUV
+
+deLimma_toc1
+
+JTK_deLimma_toc1 <- left_join(deLimma_toc1, JTK_output_RUV, by = "TAIR") |> 
+  dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
+  dplyr::mutate(diffExpressed_fac = factor(diffExpressed)) |> 
+  dplyr::relocate(Rhythmicity_fac, .after = "TAIR") |> 
+  dplyr::relocate(diffExpressed_fac, .after = "TAIR")
+
+JTK_deLimma_toc1$DE <- JTK_deLimma_toc1$diffExpressed != "NO"
+toc1_table <- table(JTK_deLimma_toc1[, c('DE', 'Rhythmicity_lmrAMP')])
+toc1_table[,2:3]
+chisq.test(toc1_table[,2:3])
+table(JTK_deLimma_toc1[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+```
+
+       Rhythmicity_lmrAMP
+DE      Non-rhythmic Rhythmic
+  FALSE         8425     4191
+  TRUE            79       85
+
+	Pearson's Chi-squared test with Yates' continuity correction
+
+data:  toc1_table[, 2:3]
+X-squared = 24.354, df = 1, p-value = 8.016e-07
+
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN        26           47       40
+         NO        4803         8425     4191
+         UP          13           32       45
+
+
+```{r}
+table <- table(JTK_deLimma_toc1[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+
+DEratio <- (table[1, ] + table[3,]) / colSums(table)
+DEratio
+```
+
+
+   Ambiguous Non-rhythmic     Rhythmic 
+ 0.008054523  0.009289746  0.019878391
+
+
+```{r}
+volcano_data_rhythmic <- JTK_deLimma_toc1 |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
+volcano_data_nonrhythmic <- JTK_deLimma_toc1 |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
+
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50) #+
+  # geom_label_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 1.8 | -log10(adj.P.Val) > 25), aes(, label = SYMBOL), hjust=0, vjust=0, color = "black", size = 2.5)
+  
+
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Non-rhythmic genes") +
+  xlim(-5, 5) +
+  ylim(-1, 50) #+
+  # geom_label_repel(data = dplyr::filter(volcano_data_nonrhythmic, logFC < -2 | logFC > 1.2 | -log10(adj.P.Val) > 35), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
+
+```
+
+### Annotation of DE-rhythmic genes
+
+```{r}
+DE_rhythmic_genes_toc1 <- JTK_deLimma_toc1[JTK_deLimma_toc1$BH.Q < 0.05 & 
+                                   JTK_deLimma_toc1$amp_lmr > 0.58 & 
+                                   abs(JTK_deLimma_toc1$logFC) > 1.0 & 
+                                   JTK_deLimma_toc1$adj.P.Val < 0.05]
+
+DE_rhythmic_genes_annot_toc1 <- right_join(annotations[match(DE_rhythmic_genes_toc1$TAIR, annotations$TAIR),], DE_rhythmic_genes_toc1) |>
+  arrange(desc(abs(logFC))) |> as.matrix()
+
+write.table(DE_rhythmic_genes_annot_toc1, file = "../../results/Mehta_results/Mehta_DE_rhythmic_genes_annot_toc1.tsv", sep = "\t", row.names = FALSE)
+
+sum(!rownames(y) %in% annotations$TAIR)
+sum(!DE_rhythmic_genes_toc1$TAIR %in% annotations$TAIR)
+length(rownames(y))
+
+```
+
+????? why so many NA genes... (ok only 2 are not mapped, others are mapped but many don't have SYMBOL/genename)
+
+
+```{r}
+JTK_deLimma_toc1
+ggplot(JTK_deLimma_toc1, aes(x = amp_lmr, y = logFC)) +
+  geom_point(alpha = 0.5) +
+  theme_minimal() +
+  xlab("Rhythmic amplitude (from Limorhyde)") +
+  ylab("log2 Fold Change (DE)") +
+  ggtitle("DE vs rhythmic amplitude")
+
+
+cor(JTK_deLimma_toc1$logFC, JTK_deLimma_toc1$amp_lmr)
+```
+
+```{r}
+ggplot(JTK_deLimma_toc1[JTK_deLimma_toc1$Rhythmicity_fac == "Rhythmic", ], aes(x = amp_lmr, y = logFC, color = Rhythmicity_fac)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = c(
+    "Non-rhythmic" = "transparent",
+    "Rhythmic" = "royalblue"
+  )) +
+  theme_minimal(base_size = 14) +
+  xlab("Rhythmic absolute amplitude") +
+  ylab("log2 Fold Change") +
+  xlim(0, 3) +
+  ggtitle("logFC vs rhythmic amplitude by rhythmicity") +
+  theme(
+    legend.title = element_text(face = "bold"),
+    legend.position = "right"
+  ) # +
+  # geom_label_repel(data = dplyr::filter(JTK_deLimma_toc1, (amp_lmr > 1.3 | abs(logFC) > 2.5) & amp_lmr > 0.3), aes(, label = gene_name), 
+  #           hjust=0, vjust=0, color = "black", size = 2)
+```
+
+Seems not as obvious trend...
+
+
+### 3D plot!
+
+```{r}
+
+AMP_threshold_list <- seq(0, 2, by=0.05)
+logFC_threshold_list <- seq(0, 5, by=0.1)
+
+
+threshold_result <- data.frame(
+  AMP = NA,
+  logFC = NA,
+  ratio = NA,
+  rhythmic_DE = NA,
+  DE = NA,
+  rhythmic = NA,
+  log_rhythmic_DE = NA
+)
+
+
+# 3d threshold plot data
+for (logFC_threshold in logFC_threshold_list){
+  for (AMP_threshold in AMP_threshold_list){
+    N_rhythmic_DE <- nrow(JTK_deLimma_toc1[abs(JTK_deLimma_toc1$logFC) > logFC_threshold & JTK_deLimma_toc1$adj.P.Val < 0.05 & JTK_deLimma_toc1$BH.Q < 0.05 & JTK_deLimma_toc1$amp_lmr > AMP_threshold])
+    N_rhythmic <- nrow(JTK_deLimma_toc1[JTK_deLimma_toc1$BH.Q < 0.05 & JTK_deLimma_toc1$amp_lmr > AMP_threshold])
+    # print(c(AMP_threshold, N_rhythmic))
+    N_DE <- nrow(JTK_deLimma_toc1[abs(JTK_deLimma_toc1$logFC) > logFC_threshold & JTK_deLimma_toc1$adj.P.Val < 0.05])
+    
+    if (N_rhythmic == 0){
+      DE_ratio = NA
+    } 
+    else{
+      DE_ratio <- N_rhythmic_DE/N_rhythmic
+    }
+    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
+  }
+}
+
+threshold_result <- drop_na(threshold_result)
+threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
+
+
+threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
+```
+```{r}
+### Relative 3D plot (log-count coloured)
+
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="toc1: Relative DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
+                                                range = c(0, 2.5)),
+               yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.0)),
+               zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9)),
+               aspectmode = "cube"))
+
+colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
+
+
+```
+
+*????????????????? no increase?????????????????????*
