@@ -54,6 +54,22 @@ getwd()
 ```
 
 ```{r}
+ah <- AnnotationHub()
+
+# search for id of desired dataset
+dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
+dbResult[1]
+
+# load mouse transcript dataset
+MouseEnsDb <- ah[[dbResult$ah_id]]
+MouseEnsDb
+
+# output data of interest in form of data.frame
+annotations <- genes(MouseEnsDb, return.type = "data.frame")
+annotations
+```
+
+```{r}
 # read in raw count matrix from Nextflow pipeline
 raw_count_assay <- read_rds("../../data/Bignon_QC_raw_data/salmon.merged.gene_counts.rds")
 raw_count <- assays(raw_count_assay)$counts
@@ -423,7 +439,7 @@ annotations[annotations$gene_id %in% names(amplitude_lmr[amplitude_lmr > 0.8]),]
 [31] "ENSMUSG00000110496" "ENSMUSG00000111497" "ENSMUSG00000114452" "ENSMUSG00000121375"
 
 
-### c. JTK
+### c. JTK (rhythmic)
 
 ```{r}
 # log-TMM & RUV normalised matrix, control only
@@ -560,6 +576,54 @@ venn.diagram(
 )
 ```
 
+
+### JTK (non-rhythmic)
+
+```{r}
+# log-TMM & RUV normalised matrix, control only
+RUVs_output_prior$normalizedCounts[,31:60]
+
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,31:60])
+JTK_matrix_RUV <- rownames_to_column(JTK_matrix_RUV, 'Probe')
+
+
+write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_RUV_nonrhythmic_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_RUV_nonrhythmic_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+str(RUVs_output_prior$normalizedCounts)
+```
+
+--- running JTK cycle ---
+
+```{r}
+JTK_output_RUV <- read.table(file = 'JTK_Cycle/Bignon_JTK/JTK.Bignon_QC_JTK_RUV_nonrhythmic_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_id]
+JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_id]
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
+
+# JTK_output_RUV$Rhythmicity <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$AMP > 0.3] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity)
+
+JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
+JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_RUV$Rhythmicity_lmrAMP)
+
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
+# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
+
+sum(JTK_output_RUV$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic')
+
+```
 
 
 ### Limorhyde x Limma DE analysis
