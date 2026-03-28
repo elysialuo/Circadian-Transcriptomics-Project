@@ -1029,10 +1029,6 @@ mean_rhythm_result_grouped_level_sig_filtered <- mean_result_sig_filtered |> dpl
 
 ```
 
-```{r}
-
-```
-
 
 ```{r}
 ggplot(data = mean_rhythm_result_grouped_level_sig_filtered,

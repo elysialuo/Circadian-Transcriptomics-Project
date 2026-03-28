@@ -100,7 +100,7 @@ metadata <- as.data.frame(colnames(raw_count)) |>
 
 metadata
 
-raw_count <- raw_count[,metadata_all$title]   ### sort raw count matrix
+raw_count <- raw_count[,metadata$title]   ### sort raw count matrix
 ```
 
     genotype

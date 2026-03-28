@@ -44,6 +44,7 @@ library(org.Mm.eg.db)
 library(foreach)
 
 library(VennDiagram)
+library(grid)
 library(plotly)
 library('org.Mm.eg.db')
 
@@ -178,20 +179,23 @@ W2 <- RUVs_output_prior$W[,2]
 
 
 ```{r}
-par(mfrow = c(2,2))
+pdf("../../results/Plots/Bignon_RLE.svg", width = 9, height = 2.5)
+
+par(mfrow = c(1,3))
 
 ## filtered, unnormalised
 plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
-        ylim=c(-0.9, 0.9), main = 'Unnormalised (filtered)', xlab = "Samples", ylab = "Relative log")
+        ylim=c(-0.9, 0.9), main = 'Unnormalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
 
 ## filtered, TMM normalised
 plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
-        ylim=c(-0.9, 0.9), main = 'TMM normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+        ylim=c(-0.9, 0.9), main = 'TMM normalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
 
 ## filtered, TMM & RUV normalised
 plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
-        ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+        ylim=c(-0.9, 0.9), main = 'TMM & RUV normalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
 
+dev.off()
 ```
 
 
@@ -311,8 +315,15 @@ plot_models_rhythm(drylm_result_RUV, "./")
 # plot a feature of interest
 dry_plot(drylm_result_RUV, "ENSMUSG00000000001")
 
+## add in ambiguous classification (group 0)
+rhythm_result_raw <- drylm_result_RUV$parameters |> dplyr::select(chosen_model) |> rownames_to_column('gene_id')
+rhythm_result <- mutate(rhythm_result_raw,chosen_model = replace(chosen_model, drylm_result_RUV$parameters[,'chosen_model_BICW']<0.65, 0))
 
+table(column_to_rownames(rhythm_result, 'gene_id'))
 
+# Group for result with model 0-5
+rhythm_result_raw_grouped <- rhythm_result_raw |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic'))
+rhythm_result_grouped <- rhythm_result |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic')) |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(0), true='ambiguous', false=grouped_chosen_model)) 
 ```
 
 ### b. Limorhyde
@@ -439,7 +450,7 @@ annotations[annotations$gene_id %in% names(amplitude_lmr[amplitude_lmr > 0.8]),]
 [31] "ENSMUSG00000110496" "ENSMUSG00000111497" "ENSMUSG00000114452" "ENSMUSG00000121375"
 
 
-### c. JTK (rhythmic)
+### c. JTK (WT)
 
 ```{r}
 # log-TMM & RUV normalised matrix, control only
@@ -509,7 +520,7 @@ limorhyde 0.05 (vs 0.1) & 0.58 filter:
 
 ```{r}
 ## Visualise overlap (my QC vs Bignon QC)
-JTK_output_bignon <- read.table(file = 'JTK_Cycle/JTK.Bignon_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+JTK_output_bignon <- read.table(file = 'JTK_Cycle/Bignon_JTK/JTK.Bignon_JTK_RUV_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
 JTK_output_bignon$Rhythmicity <- 'Non-rhythmic'
 JTK_output_bignon$Rhythmicity[JTK_output_bignon$BH.Q < 0.05 & JTK_output_bignon$AMP > 0.3] <- 'Rhythmic'
 JTK_output_bignon <- dplyr::relocate(JTK_output_bignon, Rhythmicity, .before = BH.Q)
@@ -549,7 +560,7 @@ Non-rhythmic     Rhythmic
 
 ```{r}
 ## Visualise overlap (my QC VS Bignon no RUV QC)
-JTK_output_bignon <- read.table(file = 'JTK_Cycle/JTK.Bignon_JTK_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+JTK_output_bignon <- read.table(file = 'JTK_Cycle/Bignon_JTK/JTK.Bignon_JTK_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
 JTK_output_bignon$Rhythmicity <- 'Non-rhythmic'
 JTK_output_bignon$Rhythmicity[JTK_output_bignon$BH.Q < 0.05 & JTK_output_bignon$AMP > 0.3] <- 'Rhythmic'
 JTK_output_bignon <- dplyr::relocate(JTK_output_bignon, Rhythmicity, .before = BH.Q)
@@ -577,53 +588,203 @@ venn.diagram(
 ```
 
 
-### JTK (non-rhythmic)
+#### Venn diagram comparison between dryR (ambiguous filtered) & JTK (ambituous filtered)
+```{r}
+## rhythmic (ambiguous filtered)
+dryR_rhythmic_list <- rhythm_result_grouped$gene_id[rhythm_result_grouped$grouped_chosen_model == 'rhythmic']
+JTK_rhythmic_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity == 'Rhythmic'] 
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("DryR", "JTK_Cycle")
+
+venn.diagram(
+  x = vlist,
+  category.names = c("DryR", "JTK_Cycle"),
+  filename = "VennDiagram/dryR_vs_JTK_rhythmic_filtered.png",
+  output = TRUE,
+  main = "dryR vs JTK_Cycle (Rhythmic genes, ambiguous filtered)", # Title
+  fill = c("lightgreen", "lightcoral"), # Circle fill colors
+  cat.col = "black", # Category label colors
+  cex = 1.2 # Size of text
+)
+
+## rhythmic (unfiltered)
+dryR_rhythmic_list <- rhythm_result_raw_grouped$gene_id[rhythm_result_raw_grouped$grouped_chosen_model == 'rhythmic']
+JTK_rhythmic_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity == 'Rhythmic'] 
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("DryR", "JTK_Cycle")
+myCol <- brewer.pal(3, "Pastel2")
+
+venn.plot <- venn.diagram(
+  x = vlist,
+  filename = NULL,
+  output = FALSE,
+  #main = "dryR vs JTK_Cycle (Rhythmic genes, ambiguous unfiltered)", # Title
+
+  # Output features
+  imagetype="svg" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol[1:2],
+  
+  # Numbers
+  cex = 1,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 1,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, -10),
+  cat.dist = c(0.03, 0.03),
+  cat.fontfamily = "sans",
+  cat.col = myCol[1:2],
+  rotation.degree = 1,
+  
+  # The --3 label
+  # scaled = FALSE,
+  ext.pos = c(180.5, 180.5),
+  ext.dist = c(-0.17, 0.015),
+  ext.length = c(0.7, 0.7),
+  ext.lwd = 2
+)
+
+
+pdf("VennDiagram/dryR_vs_JTK_rhythmic_unfiltered.pdf", width = 4, height = 4)
+grid::grid.newpage()
+grid::grid.draw(venn.plot)
+dev.off()
+```
+
+
+### JTK (mutant)
 
 ```{r}
 # log-TMM & RUV normalised matrix, control only
 RUVs_output_prior$normalizedCounts[,31:60]
 
-JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,31:60])
-JTK_matrix_RUV <- rownames_to_column(JTK_matrix_RUV, 'Probe')
+JTK_matrix_RUV_mut <- as.data.frame(RUVs_output_prior$normalizedCounts[,31:60]) |>
+  rownames_to_column('Probe')
 
 
-write.table(JTK_matrix_RUV, file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_RUV_nonrhythmic_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+write.table(JTK_matrix_RUV_mut, file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_RUV_mut_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
 
-write.table(JTK_matrix_RUV['Probe'], file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_RUV_nonrhythmic_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+write.table(JTK_matrix_RUV_mut['Probe'], file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_RUV_mut_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
 
 str(RUVs_output_prior$normalizedCounts)
+metadata
 ```
 
 --- running JTK cycle ---
 
 ```{r}
-JTK_output_RUV <- read.table(file = 'JTK_Cycle/Bignon_JTK/JTK.Bignon_QC_JTK_RUV_nonrhythmic_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+JTK_output_RUV_mut <- read.table(file = 'JTK_Cycle/Bignon_JTK/JTK.Bignon_QC_JTK_RUV_mut_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
 
 # Lable as rythmic & non-rhythmic using limorhyde's amplitude
 
-JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_id]
-JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_id]
-JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
+JTK_output_RUV_mut$amp_lmr <- amplitude_lmr[JTK_output_RUV_mut$gene_id]
+JTK_output_RUV_mut$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV_mut$gene_id]
+JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, amp_lmr, amp_lmr_abs, .after = AMP)
 
-# JTK_output_RUV$Rhythmicity <- 'Non-rhythmic'
-# JTK_output_RUV$Rhythmicity[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$AMP > 0.3] <- 'Rhythmic'
-# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity, .before = BH.Q)
-# table(JTK_output_RUV$Rhythmicity)
+# JTK_output_RUV_mut$Rhythmicity <- 'Non-rhythmic'
+# JTK_output_RUV_mut$Rhythmicity[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$AMP > 0.3] <- 'Rhythmic'
+# JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, Rhythmicity, .before = BH.Q)
+# table(JTK_output_RUV_mut$Rhythmicity)
 
-JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
-JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
-JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
-JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
-table(JTK_output_RUV$Rhythmicity_lmrAMP)
+JTK_output_RUV_mut$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_RUV_mut$Rhythmicity_lmrAMP[JTK_output_RUV_mut$BH.Q > 0.1 & JTK_output_RUV_mut$amp_lmr < 0.58] <- 'Non-rhythmic'
+JTK_output_RUV_mut$Rhythmicity_lmrAMP[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$amp_lmr > 0.58] <- 'Rhythmic'
+JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_RUV_mut$Rhythmicity_lmrAMP)
 
-# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
-# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
-# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
-# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
+# JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
+# JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$amp_lmr_abs > 0.2] <- 'Rhythmic'
+# JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, Rhythmicity_lmrAMP_abs, .before = BH.Q)
+# table(JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs)
 
-sum(JTK_output_RUV$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic')
+sum(JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV_mut$Rhythmicity_lmrAMP == 'Rhythmic')
 
 ```
+
+```{r}
+## Visualise overlap (WT vs mutant rhythmic genes)
+
+JTK_RUV_rhythmic_list_wt <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity == 'Rhythmic'] 
+JTK_RUV_rhythmic_list_mut <- JTK_output_RUV_mut$gene_id[JTK_output_RUV_mut$Rhythmicity == 'Rhythmic'] 
+
+length(JTK_RUV_rhythmic_list_wt)
+length(JTK_RUV_rhythmic_list_mut)
+
+vlist <- list(JTK_RUV_rhythmic_list_wt, JTK_RUV_rhythmic_list_mut)
+names(vlist) <- c("JTK_RUV_wt", "JTK_RUV_mut")
+myCol <- brewer.pal(3, "Pastel2")
+
+venn.plot <- venn.diagram(
+  x = vlist,
+  category.names = c("WT", "Bmal1 KO"),
+  filename = NULL,
+  output = FALSE,
+  # main = "Bignon: WT vs Mutant rhythmic genes", # Title
+  
+  # Output features
+  imagetype="svg" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol[1:2],
+  
+  # Numbers
+  cex = 1.5,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 1.5,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 25),
+  cat.dist = c(0.03, 0.035),
+  cat.fontfamily = "sans",
+  cat.col = myCol[1:2],
+  rotation.degree = 1,
+  
+  # The --3 label
+  # scaled = FALSE,
+  ext.pos = 181.5,
+  ext.dist = -0.035,
+  ext.length = 0.84,
+  ext.lwd = 2
+)
+
+
+pdf("Bignon_JTK_RUV_WTvsMut.pdf", width = 4, height = 4)
+grid::grid.newpage()
+grid::grid.draw(venn.plot)
+dev.off()
+```
+
+I would say it's systemic effect
 
 
 ### Limorhyde x Limma DE analysis
@@ -639,6 +800,7 @@ cor(metadata_lmr[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is e
 
 fit = lmFit(y, design)
 fit = eBayes(fit, trend = TRUE)
+plotSA(fit)
 deLimma = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
 setnames(deLimma, 'rn', 'gene_id')
 
@@ -781,36 +943,79 @@ sum(is.na(JTK_deLimma$gene_name))
 ```
 
 
+
+
 ```{r}
 volcano_data_rhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
 volcano_data_nonrhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
 
 ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
-  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_vline(xintercept = c(-1, 1), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07", "black"), 
                      labels = c("Downregulated", "Not significant", "Upregulated", "black")) +
-  ggtitle("Rhythmic genes") +
-  xlim(-5, 5) +
-  ylim(-1, 50) +
-  geom_text(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 2 | -log10(adj.P.Val) > 30), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
-  
+  ggtitle("Volcano plot of rhythmic genes in wild type") +
+  labs(colour = "Differential expression")+ 
+  xlim(-6, 6) +
+  ylim(-1, 55) +
+  labs(
+    x = expression(log[2]~fold~change),
+    y = expression(-log[10]~adjusted~p~value),
+    colour = NULL) +
+  geom_text_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 2 | -log10(adj.P.Val) > 30), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5) + 
+  theme_bw(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  )
+
+ggsave(
+  filename = "../../results/Plots/Bignon_volcano_plot_rhythmic.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
+
 
 ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ), col = diffExpressed_fac)) +
-  geom_vline(xintercept = c(-0.8, 0.8), col='gray', linetype='dashed') +
+  geom_vline(xintercept = c(-1, 1), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
                      labels = c("Downregulated", "Not significant", "Upregulated")) +
-  ggtitle("Non-rhythmic genes") +
-  xlim(-5, 5) +
-  ylim(-1, 50) +
-  geom_text(data = dplyr::filter(volcano_data_nonrhythmic, abs(logFC) > 2 | -log10(adj.P.Val) > 30), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5)
+  ggtitle("Volcano plot of non-rhythmic genes in wild type") +
+  labs(colour = "Differential expression")+ 
+  xlim(-6, 6) +
+  ylim(-1, 55) +
+  labs(
+    x = expression(log[2]~fold~change),
+    y = expression(-log[10]~adjusted~p~value),
+    colour = NULL) +
+  geom_text_repel(data = dplyr::filter(volcano_data_nonrhythmic, abs(logFC) > 2.5 | -log10(adj.P.Val) > 40), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_bw(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  )
 
-
-
+ggsave(
+  filename = "../../results/Plots/Bignon_volcano_plot_nonrhythmic.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
 ```
 
 
@@ -939,18 +1144,61 @@ Average of absolute change in mean level is higher in rhythmic > non-rhythmic
 ```{r}
 # plotting logFC vs amp
 JTK_deLimma
+JTK_deLimma$DE_col <- ifelse(JTK_deLimma$diffExpressed_fac == "NO", "Not DE", "DE")
 ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
+  geom_vline(xintercept = c(0.58), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-1, 1), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(0), col='black', lwd = 0.2) +
   geom_point(alpha = 0.5) +
   theme_minimal() +
-  xlab("Rhythmic amplitude (from Limorhyde)") +
-  ylab("log2 Fold Change (DE)") +
-  ggtitle("DE vs rhythmic amplitude")
+  xlab("log2 relative amplitude") +
+  ylab("log2 Fold Change") +
+  ggtitle("DE vs rhythmic amplitude") +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  )
 
+ggsave(
+  filename = "../../results/Plots/Bignon_DE_amp.svg",
+  plot = get_last_plot(),
+  width = 7, 
+  height = 5, 
+  units = "in"
+)
 
 cor(JTK_deLimma$logFC, JTK_deLimma$amp_lmr)
 
 ```
 Doesn't really have a correlation between FC and rhythmicity => do no have bias for more DE with more rhythmicity!
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+JTK_deLimma$amp_bin <- cut(JTK_deLimma$AMP, breaks = 4)
+
+JTK_deLimma$amp_bin <- cut(
+  JTK_deLimma$AMP,
+  breaks = quantile(JTK_deLimma$AMP, probs = seq(0,1,0.25)),
+  include.lowest = TRUE
+)
+
+ggplot(JTK_deLimma, aes(x = amp_bin, y = logFC)) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(x = "Amplitude bins", y = "log2 Fold Change")
+```
+
 
 ```{r}
 # # the outlier...
@@ -1090,11 +1338,54 @@ threshold_result_abs <- drop_na(threshold_result_abs)
 
 
 ```{r}
-amp_plot <- threshold_result[threshold_result$logFC == 0.5,]
+plot_df <- threshold_result |>
+  filter(
+    abs(logFC - 0.3) < 1e-6 |
+    abs(logFC - 0.5) < 1e-6 |
+    abs(logFC - 0.7) < 1e-6 |
+    abs(logFC - 1) < 1e-6
+  ) |>
+  mutate(logFC_label = paste0("|logFC| ≥ ", round(logFC, 2)))
 
-ggplot(amp_plot) +
-  geom_point(mapping = aes(x = AMP, y = ratio))
+plot_df
+
+ggplot(plot_df, aes(x = AMP, y = ratio, color = log_rhythmic_DE)) +
+  geom_point(size = 1) +
+  facet_wrap(~ logFC_label, ncol = 2, nrow = 2) +
+  labs(
+    x = "Relative amplitude threshold",
+    y = "Proportion of rhythmic genes that are DE",
+    color = "# rhythmic DE genes"
+  ) +
+  ylim(0, 0.9) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank(),
+    legend.title.align = 0.5
+  ) +
+  scale_color_viridis_c(
+    breaks = c(0, 1, 2, 3),
+    labels = c("1", "10", "100", "1000"),
+    values = scales::rescale(c(0, 1, 2, 3)),
+    limits = c(0, 3)
+  )
+
+ggsave(
+  filename = "../../results/Plots/Bignon_AMP_threshold_fixedFC.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
 ```
+
 
 *But I wonder what's the point of having very high proportion when the denominator is just like 5...*
 
@@ -1144,9 +1435,9 @@ fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC a
                                                 range = c(0, 0.9)),
                aspectmode = "cube"))
 
-colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
+fig <- colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
 
-
+htmlwidgets::saveWidget(fig, "../../results/Plots/AMP_FC_threshold_3D.html", selfcontained = TRUE)
 ```
 
 
@@ -1260,4 +1551,8 @@ JTK_deLimma[JTK_deLimma$gene_id %in% geneIdsNow, ]
 ```
 
 
+```{r}
+JTK_deLimma[JTK_deLimma$gene_name == "Actb",]
+JTK_deLimma[JTK_deLimma$gene_name == "Kcnj15",]
+```
 

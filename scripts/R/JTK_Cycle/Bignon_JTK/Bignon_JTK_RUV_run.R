@@ -32,6 +32,6 @@ st <- system.time({
 })
 print(st)
 
-save(results,file=paste("JTK",project,"rda",sep="."))
-write.table(results,file=paste("JTK",project,"txt",sep="."),row.names=F,col.names=T,quote=F,sep="\t")
+save(results,file=paste("Bignon_JTK/JTK",project,"rda",sep="."))
+write.table(results,file=paste("Bignon_JTK/JTK",project,"txt",sep="."),row.names=F,col.names=T,quote=F,sep="\t")
 
