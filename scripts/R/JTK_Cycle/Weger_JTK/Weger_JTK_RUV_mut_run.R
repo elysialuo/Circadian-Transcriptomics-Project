@@ -2,11 +2,11 @@ setwd("/Users/elysialuo/Circadian-Transcriptomics/scripts/R/JTK_Cycle/Weger_JTK/
 # setwd("/Users/elou/Desktop/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")
 source("../JTK_CYCLE.R")
 
-project <- "Weger_JTK_RUV_run"
+project <- "Weger_JTK_RUV_mut_run"
 
 options(stringsAsFactors=FALSE)
-annot <- read.delim("Weger_JTK_RUV_annot.txt")
-data <- read.delim("Weger_JTK_RUV_data.txt")
+annot <- read.delim("Weger_JTK_RUV_mut_annot.txt")
+data <- read.delim("Weger_JTK_RUV_mut_data.txt")
 
 rownames(data) <- data[,1]
 data <- data[,-1]

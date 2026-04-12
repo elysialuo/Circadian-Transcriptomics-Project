@@ -1,5 +1,5 @@
-#setwd("/Users/elysialuo/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")
-setwd("/Users/elou/Desktop/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")
+setwd("/Users/elysialuo/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")
+#setwd("/Users/elou/Desktop/Circadian-Transcriptomics/scripts/R/JTK_Cycle/")
 source("JTK_CYCLE.R")
 
 project <- "Bignon_JTK_RUV_run"

@@ -114,6 +114,8 @@ raw_count <- read.table("../../data/Yang_raw_data/GSE70497_FINAL_master_list_of_
 colnames(raw_count) <- metadata[match(colnames(raw_count), metadata$title), ]$geo_accession  # change rownames from title to accession number
 
 
+test <- pData(gse)
+test$
 ```
 
 
@@ -130,7 +132,7 @@ raw_count_cpm <- raw_count |>
   dplyr::mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
 
 # Filter for at least CPM >= 1 in one sample
-raw_count_cpm_filtered <- dplyr::filter(raw_count_cpm, apply(raw_count_cpm, 1, max) >= 1)
+raw_count_cpm_filtered <- raw_count_cpm_filtered <- raw_count_cpm[rowSums(raw_count_cpm >= 1) >= 2, ]
 raw_count_cpm_filtered
 
 ```
@@ -185,20 +187,23 @@ W2 <- RUVs_output_prior$W[,2]
 ```
 
 ```{r}
-par(mfrow = c(2,2))
+pdf("../../results/Plots/Yang_RLE.pdf", width = 9, height = 2.5)
+
+par(mfrow = c(1,3))
 
 ## filtered, unnormalised
 plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
-        ylim=c(-0.9, 0.9), main = 'Unnormalised (filtered)', xlab = "Samples", ylab = "Relative log")
+        ylim=c(-0.9, 0.9), main = 'Unnormalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
 
 ## filtered, TMM normalised
 plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
-        ylim=c(-0.9, 0.9), main = 'TMM normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+        ylim=c(-0.9, 0.9), main = 'TMM normalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
 
 ## filtered, TMM & RUV normalised
 plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
-        ylim=c(-0.9, 0.9), main = 'TMM + RUV normalised (filtered)', xlab = "Samples", ylab = "Relative log")
+        ylim=c(-0.9, 0.9), main = 'TMM & RUV normalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
 
+dev.off()
 ```
 
 ```{r}
