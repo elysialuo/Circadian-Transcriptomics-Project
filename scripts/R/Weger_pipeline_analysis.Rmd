@@ -192,42 +192,97 @@ dev.off()
 # PCA plot: CPM filtered raw count
 pca_test_raw <- prcomp(t(raw_count_filtered), center=TRUE, scale=TRUE)
 pca_df_raw <- as.data.frame(pca_test_raw$x)
-pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "geo_accession"), metadata, by = "geo_accession")
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "geo_accession"), metadata, by = "geo_accession")|> dplyr::mutate(genotype = ifelse(genotype == "Cry1/2_WT", "WT", "CryDKO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "CryDKO")))
+pca_df_raw$lightdark <- "light"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
-ggplot(pca_df_raw, aes(PC1, PC2, color = genotype, shape = time)) +
+ggplot(pca_df_raw, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
   geom_point(size = 2) +
-  theme_classic() +
-  labs(title = "PCA: timepoint & genotype (raw count)",
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  ) + 
+  labs(title = "PCA: Weger unnormalised, filtered",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
 
+ggsave(
+  filename = "../../results/Plots/Weger_volcano_PCA_raw.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
 
 ## PCA plot: TMM_log_cpm normalised
 
 pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
 pca_df_TMM <- as.data.frame(pca_test$x)
-pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "geo_accession"), metadata, by = "geo_accession")
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "geo_accession"), metadata, by = "geo_accession") |> dplyr::mutate(genotype = ifelse(genotype == "Cry1/2_WT", "WT", "CryDKO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "CryDKO")))
+pca_df_TMM$lightdark <- "light"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
-ggplot(pca_df_TMM, aes(PC1, PC2, color = genotype, shape = time)) +
+ggplot(pca_df_TMM, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
   geom_point(size = 2) +
-  theme_classic() +
-  labs(title = "PCA: timepoint & genotype (TMM normalised)",
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  ) + 
+  labs(title = "PCA: Weger TMM normalised, filtered",
        x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
 
+ggsave(
+  filename = "../../results/Plots/Weger_volcano_PCA_TMM.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
 
 ## PCA plot: RUV normalised, k=2, prior
 
 pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
 pca_df_RUV <- as.data.frame(pca_test$x)
-pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "geo_accession"), metadata, by = "geo_accession")
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "geo_accession"), metadata, by = "geo_accession") |> dplyr::mutate(genotype = ifelse(genotype == "Cry1/2_WT", "WT", "CryDKO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "CryDKO")))
+pca_df_RUV$lightdark <- "light"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
-ggplot(pca_df_RUV, aes(PC1, PC2, color = genotype, shape = time)) +
+ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
   geom_point(size = 2) +
-  theme_classic() +
-  labs(title = "PCA: timepoint & genotype (TMM + RUV, k=2, prior)",
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  ) + 
+  labs(title = "PCA: Weger TMM & RUV normalised (k=2), filtered ",
        x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+ggsave(
+  filename = "../../results/Plots/Weger_volcano_PCA_RUV.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
 
 ```
 
@@ -913,6 +968,12 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
   xlab("log2 relative amplitude") +
   ylab("log2 Fold Change") +
   ggtitle("DE vs rhythmic amplitude") +
+  geom_text_repel(
+    data = dplyr::filter(JTK_deLimma, abs(logFC) > 1.3 & amp_lmr > 0.7), 
+    aes(, label = gene_name), 
+    hjust=0, vjust=0, 
+    color = "red", 
+    size = 2.5) + 
   theme(
     panel.grid = element_blank(),
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),

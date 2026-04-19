@@ -140,8 +140,7 @@ library(tidyr)
 
 ```{r}
 # Read in meta data
-
-gse <- getGEO(filename = "../../Count data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
+gse <- getGEO(filename = "../../Data/Bignon_raw_data/GSE216252_series_matrix.txt.gz", GSEMatrix = TRUE,
     getGPL = FALSE)
 
 meta <- gse[[1]]
@@ -703,7 +702,7 @@ cos <- c(1, 0.5, -0.5, -1, -0.5, 0.5) |> rep(2, each=5)
 design <- model.matrix(~ genotype + sin + cos + W1 + W2) 
 fit <- lmFit(y, design)
 fit <- eBayes(fit, trend=TRUE)
-fit_RUVnorm <- lmFit(y_normalised, design)
+fit_RUVnorm <- lmFit(y, design)
 fit_RUVnorm <- eBayes(fit_RUVnorm, trend=TRUE)
 
 fit$p.value
@@ -715,7 +714,7 @@ summary(results_adj)
 summary(results_RUVnorm)
 
 
-mean_result_level<- as.data.frame(fit$coefficients[,1:2]) |> mutate(mean_WT = `(Intercept)`, mean_KO = `(Intercept)` + genotypeKO, FC = genotypeKO/`(Intercept)`, log2FC = log(genotypeKO/`(Intercept)`, base=2)) |> dplyr::select(-c(`(Intercept)`, genotypeKO))
+mean_result_level<- as.data.frame(fit$coefficients[,1:2]) |> mutate(mean_WT = `(Intercept)`, mean_KO = `(Intercept)` + genotypeKO, FC = genotypeKO-`(Intercept)`, log2FC = log(genotypeKO/`(Intercept)`, base=2)) |> dplyr::select(-c(`(Intercept)`, genotypeKO))
 
 ## is this the correct way to calculate fold_change??????????????
 

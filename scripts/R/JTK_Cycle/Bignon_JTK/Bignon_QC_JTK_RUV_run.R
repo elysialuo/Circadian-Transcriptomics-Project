@@ -12,7 +12,7 @@ rownames(data) <- data[,1]
 data <- data[,-1]
 jtkdist(6, 5)  # 13 total time points, 2 replicates per time point
 
-periods <- 6  # looking for rhythms between 20-28 hours (i.e. between 5 and 7 time points per cycle).
+periods <- 6  # looking for rhythms of 24 hours (i.e. between 5 and 7 time points per cycle).
 jtk.init(periods,4)  # 4 is the number of hours between time points
 
 cat("JTK analysis started on",date(),"\n")
