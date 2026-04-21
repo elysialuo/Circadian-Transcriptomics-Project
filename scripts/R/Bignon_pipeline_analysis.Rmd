@@ -228,7 +228,7 @@ pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "experiment_accession"), 
 pca_df_raw$lightdark <- "light"
 pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
-ggplot(pca_df_raw, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
+ggplot(pca_df_raw, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
   geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
   theme_bw() +
@@ -240,9 +240,10 @@ ggplot(pca_df_raw, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label 
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
     legend.key = element_blank()
   ) + 
-  labs(title = "PCA: Bignon unnormalised, filtered",
+  labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
-       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
+       color = 'Light condition:Genotype') 
 
 ggsave(
   filename = "../../results/Plots/Bignon_volcano_PCA_raw.svg",
@@ -264,7 +265,7 @@ pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "experiment_accession"), 
 pca_df_TMM$lightdark <- "light"
 pca_df_TMM$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
-ggplot(pca_df_TMM, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
+ggplot(pca_df_TMM, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
   geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
   theme_bw() +
@@ -276,9 +277,10 @@ ggplot(pca_df_TMM, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label 
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
     legend.key = element_blank()
   ) + 
-  labs(title = "PCA: Bignon TMM normalised, filtered",
-       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
-       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+  labs(title = "",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
+       color = 'Light condition:Genotype') 
 
 ggsave(
   filename = "../../results/Plots/Bignon_volcano_PCA_TMM.svg",
@@ -300,7 +302,7 @@ pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "experiment_accession"), 
 pca_df_RUV$lightdark <- "light"
 pca_df_RUV$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
-ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
+ggplot(pca_df_RUV, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
   geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
   theme_bw() +
@@ -312,9 +314,10 @@ ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label 
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
     legend.key = element_blank()
   ) + 
-  labs(title = "PCA: Bignon TMM & RUV normalised (k=2), filtered ",
-       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
-       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+  labs(title = "",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
+       color = 'Light condition:Genotype') 
 
 ggsave(
   filename = "../../results/Plots/Bignon_volcano_PCA_RUV.svg",
@@ -395,7 +398,7 @@ table(column_to_rownames(rhythm_result, 'gene_id'))
 # Group for result with model 0-5
 rhythm_result_raw_grouped <- rhythm_result_raw |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic'))
 rhythm_result_grouped <- rhythm_result |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5), true='rhythmic', false='non-rhythmic')) |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(0), true='ambiguous', false=grouped_chosen_model)) 
-rhythm_result_grouped_AMPfiltered <- rhythm_result_raw_grouped |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5) & relamp_C > 0.58, true='rhythmic', false='non-rhythmic'))
+rhythm_result_grouped_AMPfiltered <- rhythm_result_raw_grouped |> dplyr::mutate(grouped_chosen_model = if_else(chosen_model %in% c(2,4,5) & relamp_C > 0.29, true='rhythmic', false='non-rhythmic'))
 
 table(rhythm_result_grouped_AMPfiltered$grouped_chosen_model)
 table(rhythm_result_grouped$grouped_chosen_model)
@@ -410,6 +413,15 @@ non-rhythmic     rhythmic
 
 non-rhythmic     rhythmic 
         6776         7018
+-----
+non-rhythmic     rhythmic 
+       13293          296 
+
+   ambiguous non-rhythmic     rhythmic 
+        3900         4702         4987 
+
+non-rhythmic     rhythmic 
+        6618         6971 
 
 
 ### b. Limorhyde
@@ -419,7 +431,6 @@ non-rhythmic     rhythmic
 
 period = 24
 qvalRhyCutoff = 0.15
-qvalDrCutoff = 0.1
 
 ### should i use unRUV matrix???? yes
 y = raw_filtered_norm_logcpm_prior #_RUVcount_k2
@@ -518,25 +529,10 @@ hist(amplitude_lmr, ylim = c(0,100))
 
 
 rhyLimmaSummary <- rhyLimmaSummary |> left_join(rownames_to_column(as.data.frame(amplitude_lmr), "gene_id"))
-lmr_rhythmic <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05 & rhyLimmaSummary$amplitude_lmr > 0.58, ]$gene_id 
+lmr_rhythmic <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05 & rhyLimmaSummary$amplitude_lmr > 0.29, ]$gene_id 
 ```
 
 I do have some genes with rAMP > 1: (my A calcutaed is the peak-mean ratio, hence possible) very high peak to trough ratio!?
-
-```{r}
-as.data.frame(raw_filtered_norm_logcpm_prior[amplitude_lmr > 1,])
-sum(amplitude_lmr > 1)
-annotations[annotations$gene_id %in% names(amplitude_lmr[amplitude_lmr > 0.8]),]
-
-```
-[1] "ENSMUSG00000002250" "ENSMUSG00000018427" "ENSMUSG00000020038" "ENSMUSG00000020429" "ENSMUSG00000020889"
- [6] "ENSMUSG00000021702" "ENSMUSG00000021775" "ENSMUSG00000026077" "ENSMUSG00000028957" "ENSMUSG00000032902"
-[11] "ENSMUSG00000038550" "ENSMUSG00000039982" "ENSMUSG00000044254" "ENSMUSG00000045455" "ENSMUSG00000050967"
-[16] "ENSMUSG00000055116" "ENSMUSG00000056749" "ENSMUSG00000059824" "ENSMUSG00000066687" "ENSMUSG00000067575"
-[21] "ENSMUSG00000073640" "ENSMUSG00000078894" "ENSMUSG00000078896" "ENSMUSG00000081214" "ENSMUSG00000083478"
-[26] "ENSMUSG00000090175" "ENSMUSG00000093769" "ENSMUSG00000095562" "ENSMUSG00000107928" "ENSMUSG00000109061"
-[31] "ENSMUSG00000110496" "ENSMUSG00000111497" "ENSMUSG00000114452" "ENSMUSG00000121375"
-
 
 ### c. JTK (WT)
 
@@ -565,23 +561,12 @@ JTK_output_RUV$amp_lmr <- amplitude_lmr[JTK_output_RUV$gene_id]
 JTK_output_RUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV$gene_id]
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, amp_lmr, amp_lmr_abs, .after = AMP)
 
-# JTK_output_RUV$Rhythmicity <- 'Non-rhythmic'
-# JTK_output_RUV$Rhythmicity[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$AMP > 0.3] <- 'Rhythmic'
-# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity, .before = BH.Q)
-# table(JTK_output_RUV$Rhythmicity)
 
 JTK_output_RUV$Rhythmicity_lmrAMP <- 'Ambiguous'
-JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 & JTK_output_RUV$amp_lmr < 0.58] <- 'Non-rhythmic'
-JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.58] <- 'Rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q > 0.1 | JTK_output_RUV$amp_lmr < 0.29] <- 'Non-rhythmic'
+JTK_output_RUV$Rhythmicity_lmrAMP[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr > 0.29] <- 'Rhythmic'
 JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP, .before = BH.Q)
 table(JTK_output_RUV$Rhythmicity_lmrAMP)
-
-# JTK_output_RUV$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
-# JTK_output_RUV$Rhythmicity_lmrAMP_abs[JTK_output_RUV$BH.Q < 0.05 & JTK_output_RUV$amp_lmr_abs > 0.2] <- 'Rhythmic'
-# JTK_output_RUV <- dplyr::relocate(JTK_output_RUV, Rhythmicity_lmrAMP_abs, .before = BH.Q)
-# table(JTK_output_RUV$Rhythmicity_lmrAMP_abs)
-
-sum(JTK_output_RUV$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic')
 
 
 # AMP unfiltered
@@ -615,6 +600,10 @@ limorhyde 0.05 (vs 0.1) & 0.58 filter:
 protein-coding filter:  (:X)
    Ambiguous Non-rhythmic     Rhythmic 
         6829         8717          124 
+
+-----
+   Ambiguous Non-rhythmic     Rhythmic 
+          82        12776          731
 
 
 ```{r}
@@ -749,7 +738,7 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("VennDiagram/dryR_vs_JTK_rhythmic_filtered.pdf", width = 4, height = 4)
+pdf("VennDiagram/dryR_vs_JTK_rhythmic_unfiltered.pdf", width = 4, height = 4)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -813,7 +802,7 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("VennDiagram/lmr_vs_JTK_rhythmic_unfiltered.pdf", width = 4, height = 4)
+pdf("VennDiagram/lmr_vs_JTK_rhythmic_filtered.pdf", width = 4, height = 4)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -922,6 +911,7 @@ dev.off()
 ```
 
 
+
 ### JTK (mutant)
 
 ```{r}
@@ -951,25 +941,16 @@ JTK_output_RUV_mut$amp_lmr <- amplitude_lmr[JTK_output_RUV_mut$gene_id]
 JTK_output_RUV_mut$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_RUV_mut$gene_id]
 JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, amp_lmr, amp_lmr_abs, .after = AMP)
 
-# JTK_output_RUV_mut$Rhythmicity <- 'Non-rhythmic'
-# JTK_output_RUV_mut$Rhythmicity[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$AMP > 0.3] <- 'Rhythmic'
-# JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, Rhythmicity, .before = BH.Q)
-# table(JTK_output_RUV_mut$Rhythmicity)
-
 JTK_output_RUV_mut$Rhythmicity_lmrAMP <- 'Ambiguous'
-JTK_output_RUV_mut$Rhythmicity_lmrAMP[JTK_output_RUV_mut$BH.Q > 0.1 & JTK_output_RUV_mut$amp_lmr < 0.58] <- 'Non-rhythmic'
-JTK_output_RUV_mut$Rhythmicity_lmrAMP[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$amp_lmr > 0.58] <- 'Rhythmic'
+JTK_output_RUV_mut$Rhythmicity_lmrAMP[JTK_output_RUV_mut$BH.Q > 0.1 | JTK_output_RUV_mut$amp_lmr < 0.29] <- 'Non-rhythmic'
+JTK_output_RUV_mut$Rhythmicity_lmrAMP[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$amp_lmr > 0.29] <- 'Rhythmic'
 JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, Rhythmicity_lmrAMP, .before = BH.Q)
 table(JTK_output_RUV_mut$Rhythmicity_lmrAMP)
 
-# JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs <- 'Non-rhythmic'
-# JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs[JTK_output_RUV_mut$BH.Q < 0.05 & JTK_output_RUV_mut$amp_lmr_abs > 0.2] <- 'Rhythmic'
-# JTK_output_RUV_mut <- dplyr::relocate(JTK_output_RUV_mut, Rhythmicity_lmrAMP_abs, .before = BH.Q)
-# table(JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs)
-
-sum(JTK_output_RUV_mut$Rhythmicity_lmrAMP_abs == 'Rhythmic' & JTK_output_RUV_mut$Rhythmicity_lmrAMP == 'Rhythmic')
 
 ```
+   Ambiguous Non-rhythmic     Rhythmic 
+          56        13104          429 
 
 ```{r}
 ## Visualise overlap (WT vs mutant rhythmic genes)
@@ -1064,8 +1045,8 @@ setorderv(deLimma, 'adj.P.Val')
 deLimma
 
 deLimma$diffExpressed <- 'NO'
-deLimma$diffExpressed[deLimma$logFC>1 & deLimma$adj.P.Val<0.05] <- 'UP'
-deLimma$diffExpressed[deLimma$logFC<(-1) & deLimma$adj.P.Val<0.05] <- 'DOWN'
+deLimma$diffExpressed[deLimma$logFC>0.58 & deLimma$adj.P.Val<0.05] <- 'UP'
+deLimma$diffExpressed[deLimma$logFC<(-0.58) & deLimma$adj.P.Val<0.05] <- 'DOWN'
 table(deLimma$diffExpressed)
 
 pdf("VennDiagram/Bignon_plotSA.pdf", width = 6, height = 4)
@@ -1084,8 +1065,9 @@ time_sin -0.01714264  0.03013925  5.835313e-17  1.000000e+00
 
  DOWN    NO    UP 
   201 15317   152 
-
-
+---
+ DOWN    NO    UP 
+  259 13094   236
 
 ```{r}
 # without interaction
@@ -1177,6 +1159,13 @@ diffExpressed Ambiguous Non-rhythmic Rhythmic
          NO        4826         8504       82
          UP          33           28       23
 
+ ---
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN         7          176       76
+         NO          67        12470      557
+         UP           8          130       98
+
 
 ```{r}
 table <- table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
@@ -1197,6 +1186,10 @@ Ambiguous Non-rhythmic     Rhythmic
    Ambiguous Non-rhythmic     Rhythmic 
  0.013289716  0.008164217  0.338709677
  
+ ---
+    Ambiguous Non-rhythmic     Rhythmic 
+  0.18292683   0.02395116   0.23803010 
+
 
 ```{r}
 # Check for NA values (seems all to be in LAG)
@@ -1214,7 +1207,7 @@ volcano_data_rhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Rhyth
 volcano_data_nonrhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
 
 ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
-  geom_vline(xintercept = c(-1, 1), col='gray', linetype='dashed') +
+  geom_vline(xintercept = c(-0.58, 0.58), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07", "black"), 
@@ -1249,7 +1242,7 @@ ggsave(
 
 ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
 ), col = diffExpressed_fac)) +
-  geom_vline(xintercept = c(-1, 1), col='gray', linetype='dashed') +
+  geom_vline(xintercept = c(-0.58, 0.58), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
   geom_point(size=1) +
   scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
@@ -1288,8 +1281,8 @@ ggsave(
 #### a. DE & rhythmic
 ```{r}
 DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
-                                   JTK_deLimma$amp_lmr > 0.58 & 
-                                   abs(JTK_deLimma$logFC) > 1.0 & 
+                                   JTK_deLimma$amp_lmr > 0.29 & 
+                                   abs(JTK_deLimma$logFC) > 0.58 & 
                                    JTK_deLimma$adj.P.Val < 0.05]
 
 DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_id, annotations$gene_id),], DE_rhythmic_genes) |>
@@ -1327,10 +1320,11 @@ ego <- enrichGO(
   keyType = "ENTREZID",
   ont = "BP",
   pAdjustMethod = "BH",
-  pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05,
+  pvalueCutoff = 0.1,
+  qvalueCutoff = 0.1,
   readable = TRUE
 )
+
 
 go_res <- as.data.frame(ego)
 head(go_res)
@@ -1341,10 +1335,64 @@ dev.off()
 dotplot(ego, showCategory = 10)
 ```
 
+#### a2. DE & rhythmic (high AMP)
+```{r}
+DE_rhythmic_genes_AMP <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
+                                   JTK_deLimma$amp_lmr > 0.58 & 
+                                   abs(JTK_deLimma$logFC) > 0.58 & 
+                                   JTK_deLimma$adj.P.Val < 0.05]
+
+DE_rhythmic_genes_AMP_annot <- right_join(annotations[match(DE_rhythmic_genes_AMP$gene_id, annotations$gene_id),], DE_rhythmic_genes_AMP) |>
+  arrange(desc(abs(logFC))) |> as.matrix()
+
+write.table(DE_rhythmic_genes_AMP, file = "../../results/Bignon_results/Bignon_DE_rhythmic_genes_AMP_annot.tsv", sep = "\t", row.names = FALSE)
+```
+```{r}
+sig_symbols <- DE_rhythmic_genes_AMP$gene_name
+sig_map <- AnnotationDbi::select(
+  org.Mm.eg.db,
+  keys = sig_symbols,
+  columns = "ENTREZID",
+  keytype = "SYMBOL"
+)
+sig_ids <- unique(na.omit(sig_map$ENTREZID))
+
+
+bg_id <- rownames(raw_count_filtered)
+bg_map <- AnnotationDbi::select(
+  org.Mm.eg.db,
+  keys = bg_id,
+  columns = "ENTREZID",
+  keytype = "ENSEMBL"
+)
+bg_ids <- unique(na.omit(bg_map$ENTREZID))
+
+
+ego <- enrichGO(
+  gene = sig_ids,
+  universe = bg_ids,
+  OrgDb = org.Mm.eg.db,
+  keyType = "ENTREZID",
+  ont = "BP",
+  pAdjustMethod = "BH",
+  pvalueCutoff = 0.05,
+  qvalueCutoff = 0.05,
+  readable = TRUE
+)
+
+
+go_res <- as.data.frame(ego)
+head(go_res)
+pdf("../../results/Plots/Bignon_GO_DE_rhythmic_AMP.pdf", width = 6, height = 4)
+dotplot(ego, showCategory = 10)
+dev.off()
+
+dotplot(ego, showCategory = 10)
+```
 
 #### b. DE only
 ```{r}
-DE_genes <- JTK_deLimma[abs(JTK_deLimma$logFC) > 1.0 & 
+DE_genes <- JTK_deLimma[abs(JTK_deLimma$logFC) > 0.58 & 
                                    JTK_deLimma$adj.P.Val < 0.05]
 
 DE_genes_annot <- right_join(annotations[match(DE_genes$gene_id, annotations$gene_id),], DE_genes) |>
@@ -1401,7 +1449,7 @@ dotplot(ego, showCategory = 10)
 #### c. Rhythmic only
 ```{r}
 rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
-                                   JTK_deLimma$amp_lmr > 0.58]
+                                   JTK_deLimma$amp_lmr > 0.29]
 
 rhythmic_genes_annot <- right_join(annotations[match(rhythmic_genes$gene_id, annotations$gene_id),], rhythmic_genes) |>
   arrange(desc(abs(logFC))) |> as.matrix()
@@ -1561,8 +1609,8 @@ Average of absolute change in mean level is higher in rhythmic > non-rhythmic
 JTK_deLimma
 JTK_deLimma$DE_col <- ifelse(JTK_deLimma$diffExpressed_fac == "NO", "Not DE", "DE")
 ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
-  geom_vline(xintercept = c(0.58), col='gray', linetype='dashed') +
-  geom_hline(yintercept=c(-1, 1), col='gray', linetype='dashed') +
+  geom_vline(xintercept = c(0.29), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-0.58, 0.58), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(0), col='black', lwd = 0.2) +
   geom_point(alpha = 0.5) +
   theme_minimal() +
@@ -1570,7 +1618,7 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
   ylab("log2 Fold Change") +
   ggtitle("DE vs rhythmic amplitude") +
   geom_text_repel(
-    data = dplyr::filter(JTK_deLimma, abs(logFC) > 1.2 & amp_lmr > 0.7 | amp_lmr > 1.5), 
+    data = dplyr::filter(JTK_deLimma, abs(logFC) > 1.2 & amp_lmr > 0.8 | amp_lmr > 1.5), 
     aes(, label = gene_name), 
     hjust=0, vjust=0, 
     color = "red", 
@@ -1813,8 +1861,29 @@ What does this linear relationship mean?? does it suggest the DE is quite random
 
 ```{r}
 
-fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio, color = ~log_rhythmic_DE, size = I(30), colors = rainbow(5))
-fig <- fig %>% add_markers()
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio,
+                mode = "markers",
+                marker = list(
+                  size = 3,
+                  color = ~log_rhythmic_DE,
+                  colorscale = "Rainbow",
+                  cmin = 0,
+                  cmax = 3.2,
+                  colorbar = list(
+                    title = "# DE-rhythmic genes",
+                    tickmode = "array",
+                    tickvals = c(0, 1, 2, 3),
+                    ticktext = c(1, 10, 100, 1000),
+                    x = 0.8,
+                    y = 0.5,
+                    len = 0.5,    
+                    thickness = 15
+                  )
+                ),
+               hovertemplate = paste(" logFC: %{x}<br>",
+                                     "AMP: %{y}<br>",
+                                     "ratio: %{z:.2f}<extra></extra>"))
+#fig <- fig %>% add_markers()
 fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
   scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
                                                 range = c(0, 3.5)),
@@ -1822,13 +1891,13 @@ fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC a
                                                 range = c(0, 1.5)),
                                    zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
                                                 range = c(0, 0.9)),
-               aspectmode = "cube"))
+               aspectmode = "cube")
+  )
 
-fig <- colorbar(fig, title = "# rhythmic DE genes", tickmode = "array", tickvals = c(0,1,2,3), ticktext = c(1, 10, 100, 1000))
-
-htmlwidgets::saveWidget(fig, "../../results/Plots/AMP_FC_threshold_3D.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(fig, "../../results/Plots/Bignon_AMP_FC_threshold_3D.html", selfcontained = TRUE)
 fig
 ```
+
 
 ```{r}
 
@@ -1871,6 +1940,9 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -1898,6 +1970,9 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -1929,6 +2004,9 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT"),
+                        levels = c("C"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -1960,6 +2038,10 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT"),
+                        levels = c("C"))]
+
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -1999,6 +2081,9 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -2008,6 +2093,10 @@ ggplot(df) +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 
+ggsave(
+  filename = "../../results/Plots/Bignon_oscillations1.svg",
+  plot = get_last_plot()
+)
 
 ## This shows the log2 value!, hence the AMP ~ relative AMP
 ```
@@ -2027,6 +2116,9 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -2036,6 +2128,10 @@ ggplot(df) +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 
+ggsave(
+  filename = "../../results/Plots/Bignon_oscillations2.svg",
+  plot = get_last_plot()
+)
 ```
 
 

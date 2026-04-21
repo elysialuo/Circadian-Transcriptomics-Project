@@ -34,9 +34,9 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMzIuMDh8NDk4LjUyfDIyLjA4fDMyNy41OA==)'>
-<line x1='142.40' y1='327.58' x2='142.40' y2='22.08' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
-<line x1='32.08' y1='224.79' x2='498.52' y2='224.79' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
-<line x1='32.08' y1='167.86' x2='498.52' y2='167.86' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
+<line x1='97.76' y1='327.58' x2='97.76' y2='22.08' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
+<line x1='32.08' y1='212.84' x2='498.52' y2='212.84' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
+<line x1='32.08' y1='179.82' x2='498.52' y2='179.82' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
 <line x1='32.08' y1='196.33' x2='498.52' y2='196.33' style='stroke-width: 0.43; stroke-linecap: butt;' />
 <circle cx='69.35' cy='38.17' r='1.95' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.50; fill: #000000; fill-opacity: 0.50;' />
 <circle cx='62.05' cy='35.96' r='1.95' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.50; fill: #000000; fill-opacity: 0.50;' />
@@ -13627,40 +13627,34 @@
 <circle cx='64.36' cy='196.33' r='1.95' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.50; fill: #000000; fill-opacity: 0.50;' />
 <circle cx='65.93' cy='196.33' r='1.95' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.50; fill: #000000; fill-opacity: 0.50;' />
 <circle cx='60.82' cy='196.33' r='1.95' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.50; fill: #000000; fill-opacity: 0.50;' />
-<line x1='160.95' y1='173.35' x2='173.36' y2='156.77' style='stroke-width: 1.07; stroke: #FF0000;' />
-<line x1='125.26' y1='202.13' x2='208.86' y2='155.62' style='stroke-width: 1.07; stroke: #FF0000;' />
-<line x1='147.73' y1='189.55' x2='170.77' y2='158.17' style='stroke-width: 1.07; stroke: #FF0000;' />
-<line x1='191.32' y1='164.54' x2='203.24' y2='147.12' style='stroke-width: 1.07; stroke: #FF0000;' />
-<line x1='168.28' y1='150.91' x2='205.74' y2='136.42' style='stroke-width: 1.07; stroke: #FF0000;' />
-<line x1='244.08' y1='245.85' x2='251.53' y2='239.19' style='stroke-width: 1.07; stroke: #FF0000;' />
-<text x='196.85' y='169.05' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.03px' lengthAdjust='spacingAndGlyphs'>Rorc</text>
-<text x='387.20' y='107.23' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='20.56px' lengthAdjust='spacingAndGlyphs'>Npas2</text>
-<text x='218.15' y='136.09' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='18.97px' lengthAdjust='spacingAndGlyphs'>Ppard</text>
-<text x='234.40' y='262.29' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='19.38px' lengthAdjust='spacingAndGlyphs'>Nr1d2</text>
-<text x='178.84' y='103.53' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='16.59px' lengthAdjust='spacingAndGlyphs'>Aqp8</text>
-<text x='150.51' y='300.16' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='24.09px' lengthAdjust='spacingAndGlyphs'>Angptl7</text>
-<text x='216.55' y='156.67' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='17.64px' lengthAdjust='spacingAndGlyphs'>Ypel2</text>
-<text x='257.36' y='161.36' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.03px' lengthAdjust='spacingAndGlyphs'>Cry1</text>
-<text x='232.21' y='237.53' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>Per3</text>
-<text x='146.24' y='180.24' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='25.69px' lengthAdjust='spacingAndGlyphs'>Slc17a4</text>
-<text x='108.83' y='204.84' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.62px' lengthAdjust='spacingAndGlyphs'>Dtx4</text>
-<text x='127.36' y='192.56' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='18.56px' lengthAdjust='spacingAndGlyphs'>Stra6l</text>
-<text x='165.01' y='167.90' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='24.52px' lengthAdjust='spacingAndGlyphs'>Cdkn1a</text>
-<text x='144.02' y='141.26' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.80px' lengthAdjust='spacingAndGlyphs'>Igfn1</text>
-<text x='183.64' y='155.70' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='21.34px' lengthAdjust='spacingAndGlyphs'>Lingo4</text>
-<text x='174.48' y='132.86' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='16.61px' lengthAdjust='spacingAndGlyphs'>Cdx4</text>
-<text x='383.15' y='275.50' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>Ciart</text>
-<text x='161.62' y='261.88' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.36px' lengthAdjust='spacingAndGlyphs'>Trdn</text>
-<text x='275.63' y='259.99' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='19.77px' lengthAdjust='spacingAndGlyphs'>Thbs4</text>
-<text x='361.81' y='244.19' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='19.38px' lengthAdjust='spacingAndGlyphs'>Nr1d1</text>
-<text x='161.77' y='314.29' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='18.58px' lengthAdjust='spacingAndGlyphs'>Synpr</text>
-<text x='143.97' y='153.75' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='22.52px' lengthAdjust='spacingAndGlyphs'>Atp12a</text>
-<text x='460.76' y='246.40' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='13.05px' lengthAdjust='spacingAndGlyphs'>Dbp</text>
-<text x='292.26' y='161.32' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.22px' lengthAdjust='spacingAndGlyphs'>Nfil3</text>
-<text x='152.10' y='243.95' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='17.80px' lengthAdjust='spacingAndGlyphs'>Cxcl1</text>
-<text x='405.43' y='188.41' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.61px' lengthAdjust='spacingAndGlyphs'>Arntl</text>
-<text x='221.72' y='249.79' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='20.56px' lengthAdjust='spacingAndGlyphs'>H3c14</text>
-<text x='331.89' y='213.34' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='22.12px' lengthAdjust='spacingAndGlyphs'>Zfp965</text>
+<line x1='200.77' y1='164.75' x2='209.06' y2='155.88' style='stroke-width: 1.07; stroke: #FF0000;' />
+<line x1='190.46' y1='152.25' x2='198.73' y2='148.24' style='stroke-width: 1.07; stroke: #FF0000;' />
+<line x1='188.01' y1='129.21' x2='205.73' y2='135.67' style='stroke-width: 1.07; stroke: #FF0000;' />
+<line x1='244.12' y1='245.92' x2='251.53' y2='239.19' style='stroke-width: 1.07; stroke: #FF0000;' />
+<text x='206.19' y='168.82' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.03px' lengthAdjust='spacingAndGlyphs'>Rorc</text>
+<text x='387.21' y='107.21' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='20.56px' lengthAdjust='spacingAndGlyphs'>Npas2</text>
+<text x='218.17' y='136.08' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='18.97px' lengthAdjust='spacingAndGlyphs'>Ppard</text>
+<text x='230.71' y='262.33' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='19.38px' lengthAdjust='spacingAndGlyphs'>Nr1d2</text>
+<text x='178.83' y='103.55' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='16.59px' lengthAdjust='spacingAndGlyphs'>Aqp8</text>
+<text x='151.00' y='300.15' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='24.09px' lengthAdjust='spacingAndGlyphs'>Angptl7</text>
+<text x='216.60' y='156.60' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='17.64px' lengthAdjust='spacingAndGlyphs'>Ypel2</text>
+<text x='257.27' y='161.39' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.03px' lengthAdjust='spacingAndGlyphs'>Cry1</text>
+<text x='232.23' y='237.53' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>Per3</text>
+<text x='184.34' y='168.55' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.62px' lengthAdjust='spacingAndGlyphs'>Dtx4</text>
+<text x='179.19' y='143.60' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='24.52px' lengthAdjust='spacingAndGlyphs'>Cdkn1a</text>
+<text x='167.32' y='155.88' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='21.34px' lengthAdjust='spacingAndGlyphs'>Lingo4</text>
+<text x='190.83' y='118.73' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='16.61px' lengthAdjust='spacingAndGlyphs'>Cdx4</text>
+<text x='383.16' y='275.50' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>Ciart</text>
+<text x='161.63' y='261.88' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.36px' lengthAdjust='spacingAndGlyphs'>Trdn</text>
+<text x='275.62' y='259.99' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='19.77px' lengthAdjust='spacingAndGlyphs'>Thbs4</text>
+<text x='361.84' y='244.19' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='19.38px' lengthAdjust='spacingAndGlyphs'>Nr1d1</text>
+<text x='161.75' y='314.31' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='18.58px' lengthAdjust='spacingAndGlyphs'>Synpr</text>
+<text x='163.69' y='131.25' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='22.52px' lengthAdjust='spacingAndGlyphs'>Atp12a</text>
+<text x='460.77' y='246.40' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='13.05px' lengthAdjust='spacingAndGlyphs'>Dbp</text>
+<text x='292.15' y='161.37' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.22px' lengthAdjust='spacingAndGlyphs'>Nfil3</text>
+<text x='405.41' y='188.41' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='14.61px' lengthAdjust='spacingAndGlyphs'>Arntl</text>
+<text x='221.75' y='249.87' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='20.56px' lengthAdjust='spacingAndGlyphs'>H3c14</text>
+<text x='331.95' y='213.31' style='font-size: 7.11px;fill: #FF0000; font-family: "Arial";' textLength='22.12px' lengthAdjust='spacingAndGlyphs'>Zfp965</text>
 <rect x='32.08' y='22.08' width='466.44' height='305.51' style='stroke-width: 1.28;' />
 </g>
 <g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHwzNjAuMDA=)'>
