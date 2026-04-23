@@ -259,6 +259,104 @@ Bmal1KO can't cluster as expected, WT separates timepoints?
 
 
 ```{r}
+# PCA plot: CPM filtered raw count
+pca_test_raw <- prcomp(t(raw_count_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "geo_accession"), metadata, by = "geo_accession") |> dplyr::mutate(genotype = ifelse(genotype == "WT", "WT", "Bmal1KO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "Bmal1KO")))
+pca_df_raw$lightdark <- "light"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  ) + 
+  labs(title = "PCA: Yang unnormalised, filtered",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"))
+
+ggsave(
+  filename = "../../results/Plots/Yang_volcano_PCA_raw.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
+
+## PCA plot: TMM_log_cpm normalised
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "geo_accession"), metadata, by = "geo_accession") |> dplyr::mutate(genotype = ifelse(genotype == "WT", "WT", "Bmal1KO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "Bmal1KO")))
+pca_df_TMM$lightdark <- "light"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  ) + 
+  labs(title = "PCA: Yang TMM normalised, filtered",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+ggsave(
+  filename = "../../results/Plots/Yang_volcano_PCA_TMM.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
+
+## PCA plot: RUV normalised, k=2, prior
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "geo_accession"), metadata, by = "geo_accession") |> dplyr::mutate(genotype = ifelse(genotype == "WT", "WT", "Bmal1KO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "Bmal1KO")))
+pca_df_RUV$lightdark <- "light"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = lightdark, shape = genotype_fac, label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  ) + 
+  labs(title = "PCA: Yang TMM & RUV normalised (k=2), filtered ",
+       x = paste0("PC1 (", round(summary(pca_test)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test)$importance[2,2] * 100, 1), "%)"))
+
+ggsave(
+  filename = "../../results/Plots/Yang_volcano_PCA_RUV.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
+```
+
+
+```{r}
 # Limorhyde
 
 period = 24
@@ -338,7 +436,7 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
-df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"))]
+df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"), labels=c("Bmal1_WT", "Bmal1_KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -348,11 +446,16 @@ ggplot(df) +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 
+ggsave(
+  filename = "../../results/Plots/Yang_oscillations1.svg",
+  plot = get_last_plot()
+)
+
 ```
 
 ```{r}
 
-geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0", "Kcnj15")
+geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0")
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 
@@ -365,7 +468,7 @@ df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
           value.name = 'expr')
 df[, symbol := factor(symbol, geneSymbolsNow)]
 df[, time := as.integer(time)]
-df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"))]
+df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"), labels=c("Bmal1_WT", "Bmal1_KO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
@@ -375,6 +478,10 @@ ggplot(df) +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 
+ggsave(
+  filename = "../../results/Plots/Yang_oscillations2.svg",
+  plot = get_last_plot()
+)
 ```
 
 *Why is the KO still quite rhythmic....???*

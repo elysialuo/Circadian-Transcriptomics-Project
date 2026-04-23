@@ -693,7 +693,7 @@ length(JTK_rhythmic_list)
 
 
 vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list)
-names(vlist) <- c("DryR", "JTK_Cycle")
+names(vlist) <- c("dryR", "JTK_CYCLE")
 myCol <- brewer.pal(3, "Pastel2")
 
 venn.plot <- venn.diagram(
@@ -738,7 +738,7 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("VennDiagram/dryR_vs_JTK_rhythmic_unfiltered.pdf", width = 4, height = 4)
+pdf("VennDiagram/dryR_vs_JTK_rhythmic_filtered.pdf", width = 4, height = 4)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -757,7 +757,7 @@ length(lmr_rhythmic_list)
 
 
 vlist <- list(lmr_rhythmic_list, JTK_rhythmic_list)
-names(vlist) <- c("Limorhyde", "JTK_Cycle")
+names(vlist) <- c("LimoRhyde", "JTK_CYCLE")
 myCol <- brewer.pal(3, "Pastel2")
 
 venn.plot <- venn.diagram(

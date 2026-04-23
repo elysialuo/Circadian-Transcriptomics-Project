@@ -492,7 +492,7 @@ myCol <- brewer.pal(3, "Pastel2")
 
 venn.plot <- venn.diagram(
   x = vlist,
-  category.names = c("WT", "Per1/2 dKO"),
+  category.names = c("WT", "Per1/2\ndKO"),
   filename = NULL,
   output = FALSE,
   # main = "Aviram: WT vs Mutant rhythmic genes", # Title
@@ -518,8 +518,8 @@ venn.plot <- venn.diagram(
   cat.cex = 1.5,
   cat.fontface = "bold",
   cat.default.pos = "outer",
-  cat.pos = c(-30, 30),
-  cat.dist = c(0.03, 0.035),
+  cat.pos = c(-30, -50),
+  cat.dist = c(0.03, 0.05),
   cat.fontfamily = "sans",
   cat.col = myCol[1:2],
   rotation.degree = 1,
@@ -790,18 +790,18 @@ dev.off()
 
 #### a2. DE & rhythmic (high AMP)
 ```{r}
-DE_rhythmic_genes <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
+DE_rhythmic_genes_AMP <- JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & 
                                    JTK_deLimma$amp_lmr > 0.58 & 
                                    abs(JTK_deLimma$logFC) > 0.58 & 
                                    JTK_deLimma$adj.P.Val < 0.05]
 
-DE_rhythmic_genes_annot <- right_join(annotations[match(DE_rhythmic_genes$gene_id, annotations$gene_id),], DE_rhythmic_genes) |>
+DE_rhythmic_genes_AMP_annot <- right_join(annotations[match(DE_rhythmic_genes_AMP$gene_id, annotations$gene_id),], DE_rhythmic_genes_AMP) |>
   arrange(desc(abs(logFC))) |> as.matrix()
 
-write.table(DE_rhythmic_genes_annot, file = "../../results/Aviram_results/Aviram_DE_rhythmic_genes_AMP_annot.tsv", sep = "\t", row.names = FALSE)
+write.table(DE_rhythmic_genes_AMP_annot, file = "../../results/Aviram_results/Aviram_DE_rhythmic_genes_AMP_annot.tsv", sep = "\t", row.names = FALSE)
 ```
 ```{r}
-sig_symbols <- DE_rhythmic_genes$gene_name
+sig_symbols <- DE_rhythmic_genes_AMP$gene_name
 
 
 sig_map <- AnnotationDbi::select(
@@ -843,7 +843,6 @@ pdf("../../results/Plots/Aviram_GO_DE_rhythmic_AMP.pdf", width = 6, height = 4)
 dotplot(ego, showCategory = 10)
 dev.off()
 ```
-
 
 #### b. DE only
 ```{r}
