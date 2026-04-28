@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 576 360">
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 432 252">
   <!-- Generator: Adobe Illustrator 30.2.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 1)  -->
   <defs>
     <style>
@@ -8,44 +8,54 @@
       }
 
       .st3 {
-        font-size: 11px;
-      }
-
-      .st3, .st4, .st5, .st6 {
-        font-family: ArialMT, Arial;
-        isolation: isolate;
-      }
-
-      .st7 {
         fill: #c77cff;
         stroke: #c77cff;
       }
 
-      .st7, .st8, .st1, .st2, .st9, .st10, .st11 {
+      .st3, .st4, .st1, .st2, .st5, .st6, .st7 {
         stroke-linejoin: round;
       }
 
-      .st7, .st8, .st2, .st9, .st10, .st11 {
+      .st3, .st4, .st2, .st5, .st6, .st7 {
         stroke-linecap: round;
       }
 
-      .st7, .st9, .st10, .st11 {
+      .st3, .st5, .st6, .st7 {
         stroke-width: .71px;
       }
 
       .st8 {
-        stroke: #fff;
+        font-size: 10px;
       }
 
-      .st8, .st1 {
-        stroke-width: 1.07px;
-      }
-
-      .st8, .st12 {
-        fill: #fff;
+      .st8, .st9, .st10, .st11 {
+        font-family: ArialMT, Arial;
+        isolation: isolate;
       }
 
       .st4 {
+        stroke: #fff;
+      }
+
+      .st4, .st1 {
+        stroke-width: 1.07px;
+      }
+
+      .st4, .st12 {
+        fill: #fff;
+      }
+
+      .st9 {
+        font-size: 8.54px;
+      }
+
+      .st13 {
+        stroke: #231f20;
+        stroke-miterlimit: 10;
+        stroke-width: .25px;
+      }
+
+      .st10 {
         font-size: 12px;
       }
 
@@ -53,11 +63,11 @@
         stroke: #333;
       }
 
-      .st13 {
+      .st14 {
         clip-path: url(#clippath-1);
       }
 
-      .st14 {
+      .st15 {
         clip-path: url(#clippath-2);
       }
 
@@ -66,285 +76,284 @@
         stroke-width: 1.28px;
       }
 
-      .st9 {
+      .st5 {
         fill: #00bfc4;
         stroke: #00bfc4;
       }
 
-      .st5 {
+      .st11 {
         font-size: 8.8px;
       }
 
-      .st10 {
+      .st6 {
         fill: #7cae00;
         stroke: #7cae00;
       }
 
-      .st11 {
+      .st7 {
         fill: #f8766d;
         stroke: #f8766d;
-      }
-
-      .st15 {
-        letter-spacing: .02em;
       }
 
       .st16 {
         clip-path: url(#clippath);
       }
-
-      .st6 {
-        font-size: 7.11px;
-      }
-
-      .st17 {
-        letter-spacing: 0em;
-      }
-
-      .st18 {
-        letter-spacing: 0em;
-      }
     </style>
     <clipPath id="clippath">
-      <rect class="st0" y="0" width="576" height="360"/>
+      <rect class="st0" y="0" width="432" height="252"/>
     </clipPath>
     <clipPath id="clippath-1">
-      <rect class="st0" x="36.97" y="22.08" width="381.29" height="305.51"/>
+      <rect class="st0" x="36.97" y="22.08" width="225.57" height="197.51"/>
     </clipPath>
     <clipPath id="clippath-2">
-      <rect class="st0" y="0" width="576" height="360"/>
+      <rect class="st0" y="0" width="432" height="252"/>
     </clipPath>
   </defs>
-  <rect class="st12" y="0" width="576" height="360"/>
-  <g class="st16">
-    <rect class="st8" y="0" width="576" height="360"/>
-  </g>
-  <g class="st13">
-    <g>
-      <rect class="st12" x="36.97" y="22.08" width="381.29" height="305.51"/>
-      <circle class="st11" cx="110.27" cy="183.03" r="2.49"/>
-      <circle class="st11" cx="114.56" cy="185.28" r="2.49"/>
-      <circle class="st11" cx="115.4" cy="147.63" r="2.49"/>
-      <circle class="st11" cx="97.6" cy="120.48" r="2.49"/>
-      <circle class="st10" cx="93.23" cy="198.74" r="2.49"/>
-      <circle class="st10" cx="57.19" cy="239.02" r="2.49"/>
-      <circle class="st10" cx="88.48" cy="190.12" r="2.49"/>
-      <circle class="st10" cx="102.26" cy="200.75" r="2.49"/>
-      <circle class="st10" cx="54.3" cy="279.16" r="2.49"/>
-      <circle class="st10" cx="59.63" cy="294.16" r="2.49"/>
-      <circle class="st10" cx="137.82" cy="198.81" r="2.49"/>
-      <circle class="st10" cx="118.5" cy="202.24" r="2.49"/>
-      <circle class="st10" cx="109.36" cy="246.07" r="2.49"/>
-      <circle class="st10" cx="54.46" cy="307.51" r="2.49"/>
-      <circle class="st10" cx="97.48" cy="239.13" r="2.49"/>
-      <circle class="st10" cx="59.11" cy="299.59" r="2.49"/>
-      <circle class="st11" cx="116.66" cy="198.44" r="2.49"/>
-      <circle class="st11" cx="105.56" cy="249.19" r="2.49"/>
-      <circle class="st11" cx="174.87" cy="193.87" r="2.49"/>
-      <circle class="st11" cx="96.04" cy="248.31" r="2.49"/>
-      <circle class="st11" cx="107.68" cy="193.09" r="2.49"/>
-      <circle class="st11" cx="163.41" cy="223.85" r="2.49"/>
-      <circle class="st11" cx="127.49" cy="195.88" r="2.49"/>
-      <circle class="st11" cx="133.28" cy="201.78" r="2.49"/>
-      <circle class="st11" cx="119.25" cy="167.37" r="2.49"/>
-      <circle class="st11" cx="80.69" cy="212.78" r="2.49"/>
-      <circle class="st11" cx="113.74" cy="189.41" r="2.49"/>
-      <circle class="st11" cx="106.95" cy="202.3" r="2.49"/>
-      <circle class="st10" cx="140.36" cy="92.27" r="2.49"/>
-      <circle class="st10" cx="103.94" cy="209.12" r="2.49"/>
-      <circle class="st10" cx="87.86" cy="209.58" r="2.49"/>
-      <circle class="st10" cx="116.34" cy="140.75" r="2.49"/>
-      <circle class="st10" cx="118.33" cy="179.28" r="2.49"/>
-      <circle class="st10" cx="118.26" cy="242.41" r="2.49"/>
-      <circle class="st10" cx="86.24" cy="248.73" r="2.49"/>
-      <circle class="st10" cx="127.35" cy="152.56" r="2.49"/>
-      <circle class="st10" cx="94.6" cy="225.57" r="2.49"/>
-      <circle class="st10" cx="110.08" cy="210.04" r="2.49"/>
-      <circle class="st10" cx="73.78" cy="307.31" r="2.49"/>
-      <circle class="st10" cx="61.02" cy="294.66" r="2.49"/>
-      <circle class="st11" cx="120.48" cy="267.15" r="2.49"/>
-      <circle class="st11" cx="132.36" cy="246.44" r="2.49"/>
-      <circle class="st11" cx="118.13" cy="251.26" r="2.49"/>
-      <circle class="st11" cx="188.62" cy="172.56" r="2.49"/>
-      <circle class="st11" cx="127.87" cy="43.23" r="2.49"/>
-      <circle class="st11" cx="96.15" cy="230.8" r="2.49"/>
-      <circle class="st11" cx="147.28" cy="53.4" r="2.49"/>
-      <circle class="st11" cx="129.49" cy="134.18" r="2.49"/>
-      <circle class="st9" cx="298.85" cy="205.1" r="2.49"/>
-      <circle class="st9" cx="305.92" cy="180.25" r="2.49"/>
-      <circle class="st9" cx="316.09" cy="211.69" r="2.49"/>
-      <circle class="st9" cx="307.14" cy="168.32" r="2.49"/>
-      <circle class="st7" cx="296.23" cy="219.36" r="2.49"/>
-      <circle class="st7" cx="325.47" cy="202.41" r="2.49"/>
-      <circle class="st7" cx="364.51" cy="35.96" r="2.49"/>
-      <circle class="st7" cx="319.11" cy="221.34" r="2.49"/>
-      <circle class="st7" cx="317.73" cy="238.26" r="2.49"/>
-      <circle class="st7" cx="397.49" cy="177.27" r="2.49"/>
-      <circle class="st7" cx="355.34" cy="83.64" r="2.49"/>
-      <circle class="st7" cx="400.93" cy="121.86" r="2.49"/>
-      <circle class="st7" cx="308.47" cy="241.82" r="2.49"/>
-      <circle class="st7" cx="316.63" cy="182.12" r="2.49"/>
-      <circle class="st7" cx="324.23" cy="160.22" r="2.49"/>
-      <circle class="st9" cx="334.02" cy="211.98" r="2.49"/>
-      <circle class="st9" cx="306.44" cy="227.31" r="2.49"/>
-      <circle class="st9" cx="313.65" cy="182.46" r="2.49"/>
-      <circle class="st9" cx="313.68" cy="154.58" r="2.49"/>
-      <circle class="st9" cx="317.73" cy="217.98" r="2.49"/>
-      <circle class="st9" cx="310.62" cy="270.08" r="2.49"/>
-      <circle class="st9" cx="304.67" cy="220.35" r="2.49"/>
-      <circle class="st9" cx="321.33" cy="237.62" r="2.49"/>
-      <circle class="st9" cx="311.99" cy="276.97" r="2.49"/>
-      <circle class="st9" cx="315.99" cy="239.58" r="2.49"/>
-      <circle class="st9" cx="318.06" cy="246.67" r="2.49"/>
-      <circle class="st7" cx="304.27" cy="204.71" r="2.49"/>
-      <circle class="st7" cx="284.16" cy="249.67" r="2.49"/>
-      <circle class="st7" cx="303.1" cy="255.49" r="2.49"/>
-      <circle class="st7" cx="319.79" cy="243.57" r="2.49"/>
-      <circle class="st7" cx="334.08" cy="81.1" r="2.49"/>
-      <circle class="st7" cx="298.41" cy="261.8" r="2.49"/>
-      <circle class="st7" cx="327.11" cy="271.83" r="2.49"/>
-      <circle class="st7" cx="268.93" cy="216.27" r="2.49"/>
-      <circle class="st7" cx="290.96" cy="297.02" r="2.49"/>
-      <circle class="st7" cx="314.67" cy="291.48" r="2.49"/>
-      <circle class="st7" cx="326.88" cy="242.41" r="2.49"/>
-      <circle class="st7" cx="298.46" cy="248.15" r="2.49"/>
-      <circle class="st9" cx="298.8" cy="306.28" r="2.49"/>
-      <circle class="st9" cx="298.85" cy="298.32" r="2.49"/>
-      <circle class="st9" cx="306.95" cy="281.03" r="2.49"/>
-      <circle class="st9" cx="300.28" cy="299.02" r="2.49"/>
-      <circle class="st9" cx="302.38" cy="265.08" r="2.49"/>
-      <circle class="st9" cx="322.61" cy="283.02" r="2.49"/>
-      <circle class="st9" cx="302.15" cy="313.7" r="2.49"/>
-      <circle class="st9" cx="304.11" cy="269.39" r="2.49"/>
-      <text class="st6" transform="translate(111.06 182.01)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(115.35 184.26)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(116.19 146.61)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(98.39 119.46)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(94.02 197.73)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(57.98 238)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(89.27 189.11)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(103.05 199.74)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(55.09 278.14)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(60.42 293.14)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(138.62 197.8)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(119.29 201.22)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(110.94 245.06)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(56.04 306.49)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(99.07 238.12)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(60.69 298.58)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(118.24 197.42)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(107.14 248.17)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(176.45 192.86)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(97.62 247.29)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(109.26 192.08)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(164.99 222.83)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(129.07 194.87)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(134.86 200.77)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(120.83 166.35)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(82.27 211.76)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(115.32 188.39)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(108.53 201.29)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(141.94 91.26)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(105.52 208.11)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(89.44 208.56)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(117.93 139.73)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(119.91 178.26)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(119.84 241.4)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(87.82 247.71)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(128.93 151.54)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(96.18 224.55)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(111.66 209.02)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(75.36 306.29)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(62.6 293.64)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(122.06 266.13)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(133.94 245.43)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(119.71 250.24)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(190.2 171.54)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(129.46 42.22)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(97.73 229.78)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(148.86 52.38)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(131.07 133.16)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(299.64 204.08)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(306.71 179.23)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(316.88 210.68)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(307.93 167.31)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st6" transform="translate(297.02 218.34)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(326.26 201.39)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(365.3 34.94)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(319.9 220.32)"><tspan x="0" y="0">4</tspan></text>
-      <text class="st6" transform="translate(318.52 237.25)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(398.28 176.26)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(356.13 82.62)"><tspan x="0" y="0">8</tspan></text>
-      <text class="st6" transform="translate(402.51 120.84)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(310.05 240.8)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(318.21 181.1)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(325.81 159.21)"><tspan x="0" y="0">12</tspan></text>
-      <text class="st6" transform="translate(335.6 210.96)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(308.02 226.29)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(315.23 181.44)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(315.26 153.56)"><tspan x="0" y="0">16</tspan></text>
-      <text class="st6" transform="translate(319.31 216.96)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(312.2 269.07)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(306.25 219.33)"><tspan x="0" y="0">20</tspan></text>
-      <text class="st6" transform="translate(322.91 236.6)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(313.57 275.95)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(317.57 238.56)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(319.65 245.65)"><tspan x="0" y="0">24</tspan></text>
-      <text class="st6" transform="translate(305.85 203.69)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(285.74 248.66)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(304.68 254.47)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(321.37 242.56)"><tspan x="0" y="0">28</tspan></text>
-      <text class="st6" transform="translate(335.66 80.09)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(299.99 260.78)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(328.69 270.81)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(270.51 215.25)"><tspan x="0" y="0">32</tspan></text>
-      <text class="st6" transform="translate(292.54 296)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(316.25 290.47)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(328.46 241.39)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(300.04 247.13)"><tspan x="0" y="0">36</tspan></text>
-      <text class="st6" transform="translate(300.38 305.26)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(300.43 297.31)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(308.53 280.01)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(301.86 298)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st6" transform="translate(303.97 264.06)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(324.19 282)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(303.73 312.68)"><tspan x="0" y="0">44</tspan></text>
-      <text class="st6" transform="translate(305.69 268.37)"><tspan x="0" y="0">44</tspan></text>
-      <rect class="st2" x="36.97" y="22.08" width="381.29" height="305.51"/>
+  <g>
+    <rect class="st12" y="0" width="432" height="252"/>
+    <g class="st16">
+      <rect class="st4" y="0" width="432" height="252"/>
+    </g>
+    <g class="st14">
+      <g>
+        <rect class="st12" x="36.97" y="22.08" width="225.57" height="197.51"/>
+        <circle class="st7" cx="80.33" cy="126.13" r="2.49"/>
+        <circle class="st7" cx="82.87" cy="127.58" r="2.49"/>
+        <circle class="st7" cx="83.37" cy="103.24" r="2.49"/>
+        <circle class="st7" cx="72.84" cy="85.69" r="2.49"/>
+        <circle class="st6" cx="70.25" cy="136.29" r="2.49"/>
+        <circle class="st6" cx="48.93" cy="162.33" r="2.49"/>
+        <circle class="st6" cx="67.45" cy="130.72" r="2.49"/>
+        <circle class="st6" cx="75.6" cy="137.59" r="2.49"/>
+        <circle class="st6" cx="47.22" cy="188.28" r="2.49"/>
+        <circle class="st6" cx="50.37" cy="197.97" r="2.49"/>
+        <circle class="st6" cx="96.64" cy="136.33" r="2.49"/>
+        <circle class="st6" cx="85.2" cy="138.55" r="2.49"/>
+        <circle class="st6" cx="79.79" cy="166.89" r="2.49"/>
+        <circle class="st6" cx="47.31" cy="206.6" r="2.49"/>
+        <circle class="st6" cx="72.77" cy="162.4" r="2.49"/>
+        <circle class="st6" cx="50.07" cy="201.49" r="2.49"/>
+        <circle class="st7" cx="84.12" cy="136.1" r="2.49"/>
+        <circle class="st7" cx="77.55" cy="168.9" r="2.49"/>
+        <circle class="st7" cx="118.55" cy="133.14" r="2.49"/>
+        <circle class="st7" cx="71.92" cy="168.33" r="2.49"/>
+        <circle class="st7" cx="78.8" cy="132.64" r="2.49"/>
+        <circle class="st7" cx="111.77" cy="152.52" r="2.49"/>
+        <circle class="st7" cx="90.52" cy="134.44" r="2.49"/>
+        <circle class="st7" cx="93.95" cy="138.25" r="2.49"/>
+        <circle class="st7" cx="85.65" cy="116.01" r="2.49"/>
+        <circle class="st7" cx="62.83" cy="145.36" r="2.49"/>
+        <circle class="st7" cx="82.38" cy="130.25" r="2.49"/>
+        <circle class="st7" cx="78.37" cy="138.59" r="2.49"/>
+        <circle class="st6" cx="98.13" cy="67.46" r="2.49"/>
+        <circle class="st6" cx="76.59" cy="143" r="2.49"/>
+        <circle class="st6" cx="67.07" cy="143.29" r="2.49"/>
+        <circle class="st6" cx="83.93" cy="98.8" r="2.49"/>
+        <circle class="st6" cx="85.1" cy="123.71" r="2.49"/>
+        <circle class="st6" cx="85.06" cy="164.52" r="2.49"/>
+        <circle class="st6" cx="66.12" cy="168.61" r="2.49"/>
+        <circle class="st6" cx="90.44" cy="106.43" r="2.49"/>
+        <circle class="st6" cx="71.06" cy="153.63" r="2.49"/>
+        <circle class="st6" cx="80.22" cy="143.59" r="2.49"/>
+        <circle class="st6" cx="58.75" cy="206.48" r="2.49"/>
+        <circle class="st6" cx="51.2" cy="198.3" r="2.49"/>
+        <circle class="st7" cx="86.37" cy="180.51" r="2.49"/>
+        <circle class="st7" cx="93.4" cy="167.13" r="2.49"/>
+        <circle class="st7" cx="84.98" cy="170.24" r="2.49"/>
+        <circle class="st7" cx="126.68" cy="119.36" r="2.49"/>
+        <circle class="st7" cx="90.75" cy="35.75" r="2.49"/>
+        <circle class="st7" cx="71.98" cy="157.01" r="2.49"/>
+        <circle class="st7" cx="102.23" cy="42.32" r="2.49"/>
+        <circle class="st7" cx="91.7" cy="94.55" r="2.49"/>
+        <circle class="st5" cx="191.9" cy="140.4" r="2.49"/>
+        <circle class="st5" cx="196.08" cy="124.33" r="2.49"/>
+        <circle class="st5" cx="202.1" cy="144.66" r="2.49"/>
+        <circle class="st5" cx="196.8" cy="116.62" r="2.49"/>
+        <circle class="st3" cx="190.35" cy="149.62" r="2.49"/>
+        <circle class="st3" cx="207.64" cy="138.66" r="2.49"/>
+        <circle class="st3" cx="230.74" cy="31.05" r="2.49"/>
+        <circle class="st3" cx="203.89" cy="150.9" r="2.49"/>
+        <circle class="st3" cx="203.07" cy="161.84" r="2.49"/>
+        <circle class="st3" cx="250.25" cy="122.41" r="2.49"/>
+        <circle class="st3" cx="225.32" cy="61.88" r="2.49"/>
+        <circle class="st3" cx="252.29" cy="86.58" r="2.49"/>
+        <circle class="st3" cx="197.59" cy="164.14" r="2.49"/>
+        <circle class="st3" cx="202.42" cy="125.54" r="2.49"/>
+        <circle class="st3" cx="206.91" cy="111.39" r="2.49"/>
+        <circle class="st5" cx="212.7" cy="144.85" r="2.49"/>
+        <circle class="st5" cx="196.39" cy="154.76" r="2.49"/>
+        <circle class="st5" cx="200.65" cy="125.76" r="2.49"/>
+        <circle class="st5" cx="200.67" cy="107.74" r="2.49"/>
+        <circle class="st5" cx="203.07" cy="148.72" r="2.49"/>
+        <circle class="st5" cx="198.86" cy="182.41" r="2.49"/>
+        <circle class="st5" cx="195.34" cy="150.26" r="2.49"/>
+        <circle class="st5" cx="205.2" cy="161.42" r="2.49"/>
+        <circle class="st5" cx="199.67" cy="186.86" r="2.49"/>
+        <circle class="st5" cx="202.04" cy="162.69" r="2.49"/>
+        <circle class="st5" cx="203.27" cy="167.27" r="2.49"/>
+        <circle class="st3" cx="195.1" cy="140.15" r="2.49"/>
+        <circle class="st3" cx="183.21" cy="169.21" r="2.49"/>
+        <circle class="st3" cx="194.41" cy="172.98" r="2.49"/>
+        <circle class="st3" cx="204.29" cy="165.27" r="2.49"/>
+        <circle class="st3" cx="212.74" cy="60.24" r="2.49"/>
+        <circle class="st3" cx="191.64" cy="177.06" r="2.49"/>
+        <circle class="st3" cx="208.62" cy="183.54" r="2.49"/>
+        <circle class="st3" cx="174.2" cy="147.62" r="2.49"/>
+        <circle class="st3" cx="187.23" cy="199.82" r="2.49"/>
+        <circle class="st3" cx="201.26" cy="196.25" r="2.49"/>
+        <circle class="st3" cx="208.48" cy="164.52" r="2.49"/>
+        <circle class="st3" cx="191.67" cy="168.23" r="2.49"/>
+        <circle class="st5" cx="191.87" cy="205.81" r="2.49"/>
+        <circle class="st5" cx="191.9" cy="200.67" r="2.49"/>
+        <circle class="st5" cx="196.69" cy="189.48" r="2.49"/>
+        <circle class="st5" cx="192.74" cy="201.12" r="2.49"/>
+        <circle class="st5" cx="193.99" cy="179.17" r="2.49"/>
+        <circle class="st5" cx="205.96" cy="190.77" r="2.49"/>
+        <circle class="st5" cx="193.85" cy="210.6" r="2.49"/>
+        <circle class="st5" cx="195.01" cy="181.96" r="2.49"/>
+        <text class="st9" transform="translate(74.21 124.46)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(78.48 127.53)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(84.32 102.02)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(73.79 84.47)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(69.61 134.08)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(49.88 161.11)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(65.82 128.29)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(73.93 136.72)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(48.17 187.06)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(42.44 198.72)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(100.72 139.49)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(89.32 147.64)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(76.88 164.31)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(47.79 210.31)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(62.32 161.11)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(53.54 201.92)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(85.77 138.99)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(76.88 171.18)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(120.45 131.92)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(68.8 167.17)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(64.26 118.93)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(113.67 151.3)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(92.67 132.43)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(95.52 146.76)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(87.55 114.78)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(50.24 148.92)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(82.8 128.56)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(78.3 135.02)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(100.03 66.24)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(69.81 143.87)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(58.08 141.77)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(83.05 95.61)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(87 122.48)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(86.71 163.3)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(56.95 169.39)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(92.34 105.21)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(67.58 151.2)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(79.37 146.82)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(62.04 206.97)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(50.55 194.49)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(88.26 187.06)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(93.95 171.18)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(84.11 176.23)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(128.58 118.14)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(92.65 34.53)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(74.18 156.35)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(104.13 41.1)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(93.6 93.33)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(188.33 137.86)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(197.03 123.11)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(201.99 142.43)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(197.75 115.4)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st9" transform="translate(187.48 148.78)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(208.59 137.44)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(231.69 29.83)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(216.25 151.06)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st9" transform="translate(190.15 158.65)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(251.2 121.19)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(226.27 60.66)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st9" transform="translate(250.03 83.24)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(175.97 159.07)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(203.64 123.47)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(208.81 110.16)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st9" transform="translate(214.6 143.62)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(195.1 155.15)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(201.37 130.53)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(201.37 104.97)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st9" transform="translate(204.6 148.13)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(201.01 180.77)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(193.08 148.13)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st9" transform="translate(205.03 156.59)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(199.49 187.85)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(208.94 162.32)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(212.44 175.71)"><tspan x="0" y="0">24</tspan></text>
+        <text class="st9" transform="translate(193.82 137.16)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(173.71 166.19)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(195.66 172.27)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(222.29 171.09)"><tspan x="0" y="0">28</tspan></text>
+        <text class="st9" transform="translate(214.64 59.01)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(167.73 176.14)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(211.25 182.38)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(176.1 146.4)"><tspan x="0" y="0">32</tspan></text>
+        <text class="st9" transform="translate(175.24 197.4)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(203.04 195.41)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(221.94 163.7)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(185.6 166.8)"><tspan x="0" y="0">36</tspan></text>
+        <text class="st9" transform="translate(195.33 207.32)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(186.61 197.4)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(179.99 190.17)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(195.33 200.46)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st9" transform="translate(192.15 178.51)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(208.69 189.27)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(197.93 213.89)"><tspan x="0" y="0">44</tspan></text>
+        <text class="st9" transform="translate(179.99 183.47)"><tspan x="0" y="0">44</tspan></text>
+        <rect class="st2" x="36.97" y="22.08" width="225.57" height="197.51"/>
+        <line class="st13" x1="216" y1="148.41" x2="206.5" y2="150.11"/>
+        <line class="st13" x1="189.49" y1="187.89" x2="193.99" y2="189.55"/>
+        <line class="st13" x1="189.41" y1="181.19" x2="192.52" y2="182.84"/>
+        <line class="st13" x1="177.47" y1="173.86" x2="189.08" y2="176.68"/>
+        <line class="st13" x1="185.96" y1="158.86" x2="196.48" y2="161.73"/>
+        <line class="st13" x1="205.2" y1="169.12" x2="212.54" y2="172.98"/>
+        <line class="st13" x1="206.13" y1="167.29" x2="222.29" y2="168.23"/>
+        <line class="st13" x1="210.97" y1="165.18" x2="221.53" y2="161.42"/>
+        <line class="st13" x1="194.71" y1="157.92" x2="202.35" y2="159.35"/>
+        <line class="st13" x1="207.69" y1="157.25" x2="206.33" y2="158.86"/>
+        <line class="st13" x1="209.35" y1="160.05" x2="202.71" y2="162.32"/>
+        <line class="st13" x1="87.8" y1="139.15" x2="90.17" y2="141.5"/>
+      </g>
+    </g>
+    <g class="st15">
+      <g>
+        <text class="st11" transform="translate(19.32 188.4)"><tspan x="0" y="0">-25</tspan></text>
+        <text class="st11" transform="translate(27.15 150.11)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st11" transform="translate(22.25 111.83)"><tspan x="0" y="0">25</tspan></text>
+        <text class="st11" transform="translate(22.25 73.54)"><tspan x="0" y="0">50</tspan></text>
+        <text class="st11" transform="translate(22.25 35.25)"><tspan x="0" y="0">75</tspan></text>
+        <line class="st1" x1="34.23" y1="185.25" x2="36.97" y2="185.25"/>
+        <line class="st1" x1="34.23" y1="146.96" x2="36.97" y2="146.96"/>
+        <line class="st1" x1="34.23" y1="108.68" x2="36.97" y2="108.68"/>
+        <line class="st1" x1="34.23" y1="70.39" x2="36.97" y2="70.39"/>
+        <line class="st1" x1="34.23" y1="32.1" x2="36.97" y2="32.1"/>
+        <line class="st1" x1="78.6" y1="222.32" x2="78.6" y2="219.58"/>
+        <line class="st1" x1="139.35" y1="222.32" x2="139.35" y2="219.58"/>
+        <line class="st1" x1="200.11" y1="222.32" x2="200.11" y2="219.58"/>
+        <line class="st1" x1="260.86" y1="222.32" x2="260.86" y2="219.58"/>
+        <text class="st11" transform="translate(72.24 230.81)"><tspan x="0" y="0">-40</tspan></text>
+        <text class="st11" transform="translate(136.9 230.81)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st11" transform="translate(195.22 230.81)"><tspan x="0" y="0">40</tspan></text>
+        <text class="st11" transform="translate(255.97 230.81)"><tspan x="0" y="0">80</tspan></text>
+        <text class="st10" transform="translate(115.41 244)"><tspan x="0" y="0">PC1 (45.4%)</tspan></text>
+        <text class="st10" transform="translate(14.08 151.84) rotate(-90)"><tspan x="0" y="0">PC2 (9.5%)</tspan></text>
+        <rect class="st12" x="273.5" y="72.49" width="153.02" height="96.68"/>
+        <text class="st10" transform="translate(278.98 87.83)"><tspan x="0" y="0">Circadian phase:Genotype</tspan></text>
+        <circle class="st7" cx="287.62" cy="103.21" r="2.49"/>
+        <circle class="st6" cx="287.62" cy="120.49" r="2.49"/>
+        <circle class="st5" cx="287.62" cy="137.77" r="2.49"/>
+        <circle class="st3" cx="287.62" cy="155.05" r="2.49"/>
+        <text class="st8" transform="translate(301.74 106.79)"><tspan x="0" y="0">dark:WT</tspan></text>
+        <text class="st8" transform="translate(301.74 124.07)"><tspan x="0" y="0">light:WT</tspan></text>
+        <text class="st8" transform="translate(301.74 141.35)"><tspan x="0" y="0">dark:PerDKO</tspan></text>
+        <text class="st8" transform="translate(301.74 158.63)"><tspan x="0" y="0">light:PerDKO</tspan></text>
+      </g>
     </g>
   </g>
-  <g class="st14">
-    <g>
-      <text class="st5" transform="translate(19.32 277.63)"><tspan x="0" y="0">-25</tspan></text>
-      <text class="st5" transform="translate(27.15 218.4)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st5" transform="translate(22.25 159.18)"><tspan x="0" y="0">25</tspan></text>
-      <text class="st5" transform="translate(22.25 99.96)"><tspan x="0" y="0">50</tspan></text>
-      <text class="st5" transform="translate(22.25 40.73)"><tspan x="0" y="0">75</tspan></text>
-      <line class="st1" x1="34.23" y1="274.48" x2="36.97" y2="274.48"/>
-      <line class="st1" x1="34.23" y1="215.25" x2="36.97" y2="215.25"/>
-      <line class="st1" x1="34.23" y1="156.03" x2="36.97" y2="156.03"/>
-      <line class="st1" x1="34.23" y1="96.81" x2="36.97" y2="96.81"/>
-      <line class="st1" x1="34.23" y1="37.58" x2="36.97" y2="37.58"/>
-      <line class="st1" x1="107.34" y1="330.32" x2="107.34" y2="327.58"/>
-      <line class="st1" x1="210.03" y1="330.32" x2="210.03" y2="327.58"/>
-      <line class="st1" x1="312.73" y1="330.32" x2="312.73" y2="327.58"/>
-      <line class="st1" x1="415.42" y1="330.32" x2="415.42" y2="327.58"/>
-      <text class="st5" transform="translate(100.98 338.81)"><tspan x="0" y="0">-40</tspan></text>
-      <text class="st5" transform="translate(207.58 338.81)"><tspan x="0" y="0">0</tspan></text>
-      <text class="st5" transform="translate(307.84 338.81)"><tspan x="0" y="0">40</tspan></text>
-      <text class="st5" transform="translate(410.53 338.81)"><tspan x="0" y="0">80</tspan></text>
-      <text class="st4" transform="translate(193.26 352)"><tspan x="0" y="0">PC1 (45.4%)</tspan></text>
-      <text class="st4" transform="translate(14.08 205.84) rotate(-90)"><tspan x="0" y="0">PC2 (9.5%)</tspan></text>
-      <rect class="st12" x="429.22" y="126.95" width="141.3" height="95.75"/>
-      <text class="st3" transform="translate(434.7 141.47)"><tspan x="0" y="0">Circadian</tspan><tspan class="st18" x="46.46" y="0"> </tspan><tspan x="49.61" y="0">phase:Genotype</tspan></text>
-      <circle class="st11" cx="443.34" cy="156.75" r="2.49"/>
-      <circle class="st10" cx="443.34" cy="174.03" r="2.49"/>
-      <circle class="st9" cx="443.34" cy="191.31" r="2.49"/>
-      <circle class="st7" cx="443.34" cy="208.59" r="2.49"/>
-      <text class="st5" transform="translate(457.46 159.9)"><tspan class="st17" x="0" y="0">dark:W</tspan><tspan x="28.32" y="0">T</tspan></text>
-      <text class="st5" transform="translate(457.46 177.18)"><tspan class="st15" x="0" y="0">light:W</tspan><tspan x="28.32" y="0">T</tspan></text>
-      <text class="st5" transform="translate(457.46 194.46)"><tspan x="0" y="0">dark:PerDKO</tspan></text>
-      <text class="st5" transform="translate(457.46 211.74)"><tspan x="0" y="0">light:PerDKO</tspan></text>
-    </g>
-  </g>
+  <line class="st13" x1="69.61" y1="119.03" x2="77.71" y2="130.15"/>
 </svg>

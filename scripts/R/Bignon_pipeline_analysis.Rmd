@@ -198,9 +198,9 @@ W2 <- RUVs_output_prior$W[,2]
 
 
 ```{r}
-pdf("../../results/Plots/Bignon_RLE.pdf", width = 9, height = 2.5)
+pdf("../../results/Plots/Bignon_RLE.pdf", width = 3, height = 7)
 
-par(mfrow = c(1,3))
+par(mfrow = c(3,1))
 
 ## filtered, unnormalised
 plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
@@ -230,7 +230,7 @@ pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
 ggplot(pca_df_raw, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
-  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
   theme_bw() +
   theme(
     panel.grid = element_blank(),
@@ -238,18 +238,20 @@ ggplot(pca_df_raw, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, se
     axis.text = element_text(colour = "black"),
     axis.title = element_text(colour = "black", size = 12),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
-    legend.key = element_blank()
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
   ) + 
   labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
-       color = 'Light condition:Genotype') 
+       color = 'Light condition:\nGenotype') 
 
 ggsave(
   filename = "../../results/Plots/Bignon_volcano_PCA_raw.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 ```
@@ -267,7 +269,7 @@ pca_df_TMM$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
 ggplot(pca_df_TMM, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
-  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
   theme_bw() +
   theme(
     panel.grid = element_blank(),
@@ -275,18 +277,20 @@ ggplot(pca_df_TMM, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, se
     axis.text = element_text(colour = "black"),
     axis.title = element_text(colour = "black", size = 12),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
-    legend.key = element_blank()
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
   ) + 
   labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
-       color = 'Light condition:Genotype') 
+       color = 'Light condition:\nGenotype') 
 
 ggsave(
   filename = "../../results/Plots/Bignon_volcano_PCA_TMM.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 ```
@@ -304,7 +308,7 @@ pca_df_RUV$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
 ggplot(pca_df_RUV, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
-  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
   theme_bw() +
   theme(
     panel.grid = element_blank(),
@@ -312,18 +316,20 @@ ggplot(pca_df_RUV, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, se
     axis.text = element_text(colour = "black"),
     axis.title = element_text(colour = "black", size = 12),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
-    legend.key = element_blank()
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
   ) + 
   labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
-       color = 'Light condition:Genotype') 
+       color = 'Light condition:\nGenotype') 
 
 ggsave(
   filename = "../../results/Plots/Bignon_volcano_PCA_RUV.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 ```
@@ -529,7 +535,8 @@ hist(amplitude_lmr, ylim = c(0,100))
 
 
 rhyLimmaSummary <- rhyLimmaSummary |> left_join(rownames_to_column(as.data.frame(amplitude_lmr), "gene_id"))
-lmr_rhythmic <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05 & rhyLimmaSummary$amplitude_lmr > 0.29, ]$gene_id 
+lmr_rhythmic <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05 & rhyLimmaSummary$amplitude_lmr > 0.29, ]$gene_id
+lmr_rhythmic_unfiltered <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]$gene_id 
 ```
 
 I do have some genes with rAMP > 1: (my A calcutaed is the peak-mean ratio, hence possible) very high peak to trough ratio!?
@@ -738,7 +745,7 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("VennDiagram/dryR_vs_JTK_rhythmic_filtered.pdf", width = 4, height = 4)
+pdf("VennDiagram/dryR_vs_JTK_rhythmic_unfiltered.pdf", width = 2.5, height = 2.5)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -802,7 +809,7 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("VennDiagram/lmr_vs_JTK_rhythmic_filtered.pdf", width = 4, height = 4)
+pdf("VennDiagram/lmr_vs_JTK_rhythmic_filtered.pdf", width = 2.5, height = 2.5)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -814,7 +821,7 @@ dev.off()
 ## rhythmic (ambiguous & AMP filtered)
 dryR_rhythmic_list <- rhythm_result_grouped_AMPfiltered$gene_id[rhythm_result_grouped_AMPfiltered$grouped_chosen_model == 'rhythmic']
 #rhythm_result_raw_grouped$gene_id[rhythm_result_raw_grouped$grouped_chosen_model == 'rhythmic']
-JTK_rhythmic_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity == 'Rhythmic'] 
+JTK_rhythmic_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic'] 
 lmr_rhythmic_list <- lmr_rhythmic
 
 length(dryR_rhythmic_list) 
@@ -822,7 +829,7 @@ length(JTK_rhythmic_list)
 
 
 vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list, lmr_rhythmic_list)
-names(vlist) <- c("DryR", "JTK_Cycle", "Limorhyde")
+names(vlist) <- c("dryR", "JTK_CYCLE", "LimoRhyde")
 myCol <- brewer.pal(3, "Pastel2")
 
 venn.plot <- venn.diagram(
@@ -852,8 +859,8 @@ venn.plot <- venn.diagram(
   cat.cex = 1,
   cat.fontface = "bold",
   cat.default.pos = "outer",
-  cat.pos = c(-30, -10, -20),
-  cat.dist = c(0.03, 0.03, 0.03),
+  cat.pos = c(-30, 30, 130),
+  cat.dist = c(0.035, 0.04, 0.05),
   cat.fontfamily = "sans",
   cat.col = myCol,
   rotation.degree = 1,
@@ -867,7 +874,70 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("VennDiagram/dryR_vs_JTK_lmr_rhythmic_filtered.pdf", width = 4, height = 4)
+pdf("VennDiagram/dryR_vs_JTK_lmr_rhythmic_filtered.pdf", width = 3.5, height = 3.5)
+grid::grid.newpage()
+grid::grid.draw(venn.plot)
+dev.off()
+```
+#### Venn diagram comparison between dryR & JTK & limorhyde (all unfiltered)
+```{r}
+
+## rhythmic (ambiguous & AMP filtered)
+dryR_rhythmic_list <- rhythm_result_grouped$gene_id[rhythm_result_grouped$grouped_chosen_model == 'rhythmic']
+JTK_rhythmic_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity == 'Rhythmic'] 
+lmr_rhythmic_list <- lmr_rhythmic_unfiltered
+
+length(dryR_rhythmic_list) 
+length(JTK_rhythmic_list)
+
+
+vlist <- list(dryR_rhythmic_list, JTK_rhythmic_list, lmr_rhythmic_list)
+names(vlist) <- c("dryR", "JTK_CYCLE", "LimoRhyde")
+myCol <- brewer.pal(3, "Pastel2")
+
+venn.plot <- venn.diagram(
+  x = vlist,
+  filename = NULL,
+  output = FALSE,
+  #main = "dryR vs JTK_Cycle vs Limorhyde (Rhythmic genes, ambiguous unfiltered)", # Title
+
+  # Output features
+  imagetype="svg" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol,
+  
+  # Numbers
+  cex = 1,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 1,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 30, 130),
+  cat.dist = c(0.035, 0.04, 0.05),
+  cat.fontfamily = "sans",
+  cat.col = myCol,
+  rotation.degree = 1,
+  
+  # The --3 label
+  # scaled = FALSE,
+  ext.pos = c(180.5, 180.5, 0),
+  ext.dist = c(-0.17, 0.015, 0),
+  ext.length = c(0.7, 0.7,0),
+  ext.lwd = 2
+)
+
+
+pdf("VennDiagram/dryR_vs_JTK_lmr_rhythmic_unfiltered.pdf", width = 3.5, height = 3.5)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -993,10 +1063,10 @@ venn.plot <- venn.diagram(
   cat.cex = 1.5,
   cat.fontface = "bold",
   cat.default.pos = "outer",
-  cat.pos = c(-30, 25),
+  cat.pos = c(-30, 15),
   cat.dist = c(0.03, 0.035),
   cat.fontfamily = "sans",
-  cat.col = myCol[1:2],
+  cat.col = myCol[1:2], 
   rotation.degree = 1,
   
   # The --3 label
@@ -1008,7 +1078,7 @@ venn.plot <- venn.diagram(
 )
 
 
-pdf("Bignon_JTK_RUV_WTvsMut.pdf", width = 4, height = 4)
+pdf("VennDiagram/Bignon_JTK_RUV_WTvsMut.pdf", width = 3, height = 3)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -1049,7 +1119,7 @@ deLimma$diffExpressed[deLimma$logFC>0.58 & deLimma$adj.P.Val<0.05] <- 'UP'
 deLimma$diffExpressed[deLimma$logFC<(-0.58) & deLimma$adj.P.Val<0.05] <- 'DOWN'
 table(deLimma$diffExpressed)
 
-pdf("VennDiagram/Bignon_plotSA.pdf", width = 6, height = 4)
+pdf("VennDiagram/Bignon_plotSA.pdf", width = 5, height = 3.5)
 plotSA(fit)
 dev.off()
 ```
@@ -1946,14 +2016,16 @@ df[, genotype := factor(genotype,
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Bignon_mostDE.svg",
+  height = 3,
+  width = 5,
   plot = get_last_plot()
 )
 
@@ -1976,14 +2048,16 @@ df[, genotype := factor(genotype,
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Bignon_leastDE.svg",
+  height = 3,
+  width = 5,
   plot = get_last_plot()
 )
 ```
@@ -2010,14 +2084,16 @@ df[, genotype := factor(genotype,
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Bignon_known_rhythmic.svg",
+  height = 4,
+  width = 4,
   plot = get_last_plot()
 )
 
@@ -2045,14 +2121,16 @@ df[, genotype := factor(genotype,
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Bignon_known_arrhythmic.svg",
+  height = 4,
+  width = 4,
   plot = get_last_plot()
 )
 
@@ -2147,4 +2225,82 @@ ggplot(df) +
   scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
 
 ```
+
+
+
+```{r}
+y_noRUV = raw_filtered_norm_logcpm_prior
+
+geneSymbolsNow = c("Clock", "Rplp0", "Arfgef1")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+df = data.table(t(y_noRUV[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession') 
+df = df[genotype == "C", ]
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT"),
+                        levels = c("C"))]
+
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+ggsave(
+  filename = "../../results/Plots/Bignon_known_arrhythmic.svg",
+  plot = get_last_plot()
+)
+
+JTK_output_RUV[JTK_output_RUV$gene_id %in% geneIdsNow,]
+
+
+
+y_RUV = raw_filtered_norm_logcpm_prior_RUVcount_k2
+
+geneSymbolsNow = c("Clock", "Rplp0", "Arfgef1")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+df = data.table(t(y_RUV[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession') 
+df = df[genotype == "C", ]
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT"),
+                        levels = c("C"))]
+
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+
+ggsave(
+  filename = "../../results/Plots/Bignon_known_arrhythmic.svg",
+  plot = get_last_plot()
+)
+
+JTK_output_RUV[JTK_output_RUV$gene_id %in% geneIdsNow,]
+```
+
+
 
