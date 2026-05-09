@@ -1,0 +1,44 @@
+
+**Bignon**
+Rhythmicity
+DE	Non-rhythmic	Ambiguous	Rhythmic	Overall
+Down	176	7	76	259
+Unchanged	12470	67	557	13094
+Up	130	8	98	236
+Overall	12776	82	731	13589
+% DE	2.4%	18.3%	23.8%	3.6%
+
+χ²(df = 1) = 924.6, p < 2.2 × 10⁻¹⁶
+
+**Aviram**
+Rhythmicity
+DE	Non-rhythmic	Ambiguous	Rhythmic	Overall
+Down	379	2	114	495
+Unchanged	6520	45	1094	7659
+Up	411	7	113	531
+Overall	7310	54	1321	8685
+% DE	10.8%	16.7%	17.2%	11.8%
+
+χ²(df = 1) = 43.8, p = 3.7 × 10⁻¹¹
+
+**Weger**
+Rhythmicity
+DE	Non-rhythmic	Ambiguous	Rhythmic	Overall
+Down	119	17	18	154
+Unchanged	11049	571	354	11974
+Up	153	34	36	223
+Overall	11321	622	408	12351
+% DE	2.4%	8.2%	13.2%	3.1%
+
+χ²(df = 1) = 171.0, p < 2.2 × 10⁻¹⁶
+
+**Yang (post-natal, old analysis version)**
+             Rhythmicity_lmrAMP
+diffExpressed Ambiguous Non-rhythmic Rhythmic
+         DOWN         1           10        3
+         NO        5815         6937      596
+         UP           9           26        4
+
+   Ambiguous Non-rhythmic     Rhythmic 
+ 0.001716738  0.005162771  0.011608624
+

@@ -49,7 +49,7 @@ library(plotly)
 library('org.Mm.eg.db')
 
 library("clusterProfiler")
-
+library('ggExtra')
 ```
 
 ```{r}
@@ -527,6 +527,10 @@ mean = coefs[, "(Intercept)"]
 
 # Compute (absolute) amplitude
 amplitude_lmr_abs = 2^(mean + amplitude_lmr) - 2^mean
+
+# Compute (log2 *relative*) amplitude for each gene
+amplitude_lmr = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2)
+mean = coefs[, "(Intercept)"]
 
 # cbind(amplitude_lmr, amplitude_lmr_rel, coefs[, "(Intercept)"])
 str(coef(fit))
@@ -1191,6 +1195,12 @@ JTK_deLimma <- left_join(deLimma, JTK_output_RUV, by = "gene_id") |>
 
 table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
 # table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP_abs')])
+
+
+JTK_deLimma$DE <- JTK_deLimma$diffExpressed != "NO"
+summary_table <- table(JTK_deLimma[, c('DE', 'Rhythmicity_lmrAMP')])
+summary_table[,2:3]
+chisq.test(summary_table[,2:3], correct = FALSE)
 ```
              Rhythmicity
 diffExpressed Non-rhythmic Rhythmic
@@ -1678,7 +1688,7 @@ Average of absolute change in mean level is higher in rhythmic > non-rhythmic
 # plotting logFC vs amp
 JTK_deLimma
 JTK_deLimma$DE_col <- ifelse(JTK_deLimma$diffExpressed_fac == "NO", "Not DE", "DE")
-ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
+logFC_amp <- ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
   geom_vline(xintercept = c(0.29), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-0.58, 0.58), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(0), col='black', lwd = 0.2) +
@@ -1692,7 +1702,7 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
     aes(, label = gene_name), 
     hjust=0, vjust=0, 
     color = "red", 
-    size = 2.5) + 
+    size = 2.7) + 
   theme(
     panel.grid = element_blank(),
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
@@ -1702,15 +1712,26 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
     legend.key = element_blank()
   )
 
+logFC_amp_marginal <- ggMarginal(
+  p = logFC_amp,
+  type = "histogram",
+  margins = "x",
+  bins = 30,
+  fill = "grey",
+  linewidth = 0.3
+)
+
 ggsave(
   filename = "../../results/Plots/Bignon_DE_amp.svg",
-  plot = get_last_plot(),
-  width = 7, 
-  height = 5, 
+  plot = logFC_amp_marginal,
+  width = 5, 
+  height = 3.5, 
   units = "in"
 )
 
 cor(JTK_deLimma$logFC, JTK_deLimma$amp_lmr)
+
+
 
 ```
 Doesn't really have a correlation between FC and rhythmicity => do no have bias for more DE with more rhythmicity!
@@ -1866,9 +1887,9 @@ threshold_result_abs <- drop_na(threshold_result_abs)
 ```{r}
 plot_df <- threshold_result |>
   filter(
-    abs(logFC - 0.3) < 1e-6 |
-    abs(logFC - 0.5) < 1e-6 |
-    abs(logFC - 0.7) < 1e-6 |
+    abs(logFC - 0.2) < 1e-6 |
+    abs(logFC - 0.4) < 1e-6 |
+    abs(logFC - 0.6) < 1e-6 |
     abs(logFC - 1) < 1e-6
   ) |>
   mutate(logFC_label = paste0("|logFC| ≥ ", round(logFC, 2)))
@@ -1894,20 +1915,22 @@ ggplot(plot_df, aes(x = AMP, y = ratio, color = log_rhythmic_DE)) +
     axis.title.y = element_text(margin = margin(r = 10)),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
     legend.key = element_blank(),
-    legend.title.align = 0.5
+    legend.title.align = 0.5,
+    axis.ticks = element_line(color = "black"),
+    axis.ticks.length = unit(3, "pt") 
   ) +
   scale_color_viridis_c(
     breaks = c(0, 1, 2, 3),
     labels = c("1", "10", "100", "1000"),
     values = scales::rescale(c(0, 1, 2, 3)),
-    limits = c(0, 3)
+    limits = c(0, 3.3)
   )
 
 ggsave(
   filename = "../../results/Plots/Bignon_AMP_threshold_fixedFC.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 ```
@@ -2150,7 +2173,7 @@ geneSymbolsNow = c("Per1", "Per2", "Per3", "Cry1", "Cry2", "Arntl")
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 
-df = data.table(t(y[geneIdsNow, ]))
+df = data.table(t(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ]))
 setnames(df, geneSymbolsNow)
 df[, experiment_accession := colnames(y[geneIdsNow, ])]
 
@@ -2165,19 +2188,22 @@ df[, genotype := factor(genotype,
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Bignon_oscillations1.svg",
+  height = 4,
+  width = 5,
   plot = get_last_plot()
 )
 
 ## This shows the log2 value!, hence the AMP ~ relative AMP
 ```
+
 
 ```{r}
 
@@ -2185,7 +2211,7 @@ geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0")
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 
-df = data.table(t(y[geneIdsNow, ]))
+df = data.table(t(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ]))
 setnames(df, geneSymbolsNow)
 df[, experiment_accession := colnames(y[geneIdsNow, ])]
 
@@ -2200,18 +2226,38 @@ df[, genotype := factor(genotype,
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Bignon_oscillations2.svg",
+  height = 4,
+  width = 5,
   plot = get_last_plot()
 )
 ```
+```{r}
 
+geneSymbolsNow = c("Per1", "Per2", "Per3", "Cry1", "Cry2", "Arntl", "Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+metadata_samplename <- metadata |> mutate(sample_name = paste(genotype, time, replicate, sep = "_"))
+
+timecourse_export_norm <- raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow,] |> as.data.frame() |> rownames_to_column("gene_id") |> mutate(gene_name = geneSymbolsNow) |> relocate(gene_name, .after = gene_id)
+colnames_new_norm <- metadata_samplename$sample_name[match(colnames(timecourse_export_norm[,-(1:2)]), metadata_samplename$experiment_accession)]
+names(timecourse_export_norm)[-(1:2)] <- colnames_new_norm
+  
+timecourse_export_raw <- raw_count[geneIdsNow,] |> as.data.frame() |> rownames_to_column("gene_id") |> mutate(gene_name = geneSymbolsNow) |> relocate(gene_name, .after = gene_id)
+colnames_new_raw <- metadata_samplename$sample_name[match(colnames(timecourse_export_raw[,-(1:2)]), metadata_samplename$experiment_accession)]
+names(timecourse_export_raw)[-(1:2)] <- colnames_new_raw
+
+write.table(timecourse_export_norm, file = "../../results/Bignon_results/Bignon_sample_timecourse_normalised.tsv", sep = "\t", row.names = FALSE)
+write.table(timecourse_export_raw, file = "../../results/Bignon_results/Bignon_sample_timecourse_raw.tsv", sep = "\t", row.names = FALSE)
+
+getwd()
+```
 
 
 ```{r}
@@ -2227,11 +2273,146 @@ ggplot(df) +
 ```
 
 
+### RUV vs no RUV comparison
+
+#### JTK again :3 (no)
+```{r}
+# log-TMM & RUV normalised matrix, control only
+RUVs_output_prior$normalizedCounts[,1:30]
+raw_filtered_norm_logcpm_prior[,1:30]
+
+JTK_matrix_noRUV <- as.data.frame(raw_filtered_norm_logcpm_prior[,1:30])
+JTK_matrix_noRUV <- rownames_to_column(JTK_matrix_noRUV, 'Probe')
+
+
+write.table(JTK_matrix_noRUV, file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_noRUV_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+write.table(JTK_matrix_noRUV['Probe'], file = 'JTK_Cycle/Bignon_JTK/Bignon_QC_JTK_noRUV_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+```
+
+--- running JTK cycle ---
+
+```{r}
+JTK_output_noRUV <- read.table(file = 'JTK_Cycle/Bignon_JTK/JTK.Bignon_QC_JTK_noRUV_run.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output_noRUV$amp_lmr <- amplitude_lmr[JTK_output_noRUV$gene_id]
+JTK_output_noRUV$amp_lmr_abs <- amplitude_lmr_abs[JTK_output_noRUV$gene_id]
+JTK_output_noRUV <- dplyr::relocate(JTK_output_noRUV, amp_lmr, amp_lmr_abs, .after = AMP)
+
+
+JTK_output_noRUV$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_noRUV$Rhythmicity_lmrAMP[JTK_output_noRUV$BH.Q > 0.1 | JTK_output_noRUV$amp_lmr < 0.29] <- 'Non-rhythmic'
+JTK_output_noRUV$Rhythmicity_lmrAMP[JTK_output_noRUV$BH.Q < 0.05 & JTK_output_noRUV$amp_lmr > 0.29] <- 'Rhythmic'
+JTK_output_noRUV <- dplyr::relocate(JTK_output_noRUV, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_noRUV$Rhythmicity_lmrAMP)
+
+
+# AMP unfiltered
+JTK_output_noRUV$Rhythmicity <- 'Non-rhythmic'
+JTK_output_noRUV$Rhythmicity[JTK_output_noRUV$BH.Q < 0.05] <- 'Rhythmic'
+JTK_output_noRUV <- dplyr::relocate(JTK_output_noRUV, Rhythmicity, .before = BH.Q)
+table(JTK_output_noRUV$Rhythmicity)
+
+```
+
+no RUV:
+   Ambiguous Non-rhythmic     Rhythmic 
+          94        12849          646 
+          
+with RUV:
+   Ambiguous Non-rhythmic     Rhythmic 
+          82        12776          731
+          
+```{r}
+JTK_RUV_list <- JTK_output_RUV$gene_id[JTK_output_RUV$Rhythmicity_lmrAMP == 'Rhythmic'] 
+JTK_noRUV_list <- JTK_output_noRUV$gene_id[JTK_output_noRUV$Rhythmicity_lmrAMP == 'Rhythmic'] 
+
+length(JTK_RUV_list) 
+length(JTK_noRUV_list)
+
+
+vlist <- list(JTK_RUV_list, JTK_noRUV_list)
+names(vlist) <- c("JTK_RUV", "JTK_noRUV")
+myCol <- brewer.pal(3, "Pastel2")
+
+venn.plot <- venn.diagram(
+  x = vlist,
+  filename = NULL,
+  output = FALSE,
+  #main = "Limorhyde vs JTK_Cycle (Rhythmic genes, ambiguous unfiltered)", # Title
+
+  # Output features
+  imagetype="svg" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol[1:2],
+  
+  # Numbers
+  cex = 1,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 1,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 30),
+  cat.dist = c(0.03, 0.03),
+  cat.fontfamily = "sans",
+  cat.col = myCol[1:2],
+  rotation.degree = 1,
+  
+  # The --3 label
+  # scaled = FALSE,
+  ext.pos = c(180.5, 180.5),
+  ext.dist = c(-0.13, -0.13),
+  ext.length = c(0.7, 0.7),
+  ext.lwd = 2
+)
+
+
+pdf("VennDiagram/JTK_RUV_vs_noRUV.pdf", width = 2.5, height = 2.5)
+grid::grid.newpage()
+grid::grid.draw(venn.plot)
+dev.off()
+```
+
+
+```{r}
+RUV_new_rhythmic <- JTK_RUV_list[!JTK_RUV_list %in% JTK_noRUV_list]
+
+RUV_new_rhythmic_annot = annotations[match(RUV_new_rhythmic, annotations$gene_id),]
+RUV_new_rhythmic_annot
+
+JTK_output_noRUV[JTK_output_noRUV$gene_id == 'ENSMUSG00000047281',]
+JTK_output_RUV[JTK_output_RUV$gene_id == 'ENSMUSG00000047281',]
+
+```
+
+```{r}
+RUV_new_nonrhythmic <- JTK_noRUV_list[!JTK_noRUV_list %in% JTK_RUV_list]
+
+RUV_new_nonrhythmic_annot = annotations[match(RUV_new_nonrhythmic, annotations$gene_id),]
+RUV_new_nonrhythmic_annot
+
+JTK_output_noRUV[JTK_output_noRUV$gene_id == 'ENSMUSG00000061578',]
+JTK_output_RUV[JTK_output_RUV$gene_id == 'ENSMUSG00000061578',]
+```
+
 
 ```{r}
 y_noRUV = raw_filtered_norm_logcpm_prior
 
-geneSymbolsNow = c("Clock", "Rplp0", "Arfgef1")
+geneSymbolsNow = c("Sh2d3c", "Slco4a1", "Ksr2", "Espl1", "Clock", "Rplp0")
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 df = data.table(t(y_noRUV[geneIdsNow, ]))
@@ -2247,29 +2428,10 @@ df[, time := as.integer(time)]
 df[, genotype := factor(genotype,
                         labels = c("Bmal1_WT"),
                         levels = c("C"))]
-
-
-ggplot(df) +
-  facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
-  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
-  scale_shape(solid = FALSE, guide = 'none') +
-  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
-
-ggsave(
-  filename = "../../results/Plots/Bignon_known_arrhythmic.svg",
-  plot = get_last_plot()
-)
-
-JTK_output_RUV[JTK_output_RUV$gene_id %in% geneIdsNow,]
-
+df_noRUV <- df[, RUV := "without RUV"]
 
 
 y_RUV = raw_filtered_norm_logcpm_prior_RUVcount_k2
-
-geneSymbolsNow = c("Clock", "Rplp0", "Arfgef1")
-geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 df = data.table(t(y_RUV[geneIdsNow, ]))
 setnames(df, geneSymbolsNow)
@@ -2284,23 +2446,34 @@ df[, time := as.integer(time)]
 df[, genotype := factor(genotype,
                         labels = c("Bmal1_WT"),
                         levels = c("C"))]
+df_RUV <- df[, RUV := "with RUV"]
 
+df_combined = rbind(df_noRUV, df_RUV) 
+df_combined[, RUV_fac := factor(RUV,
+                        labels = c("Before RUV", "After RUV"),
+                        levels = c("without RUV", "with RUV"))]
 
-ggplot(df) +
-  facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+ggplot(df_combined) +
+  facet_grid(symbol ~ RUV_fac, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = RUV, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
-  filename = "../../results/Plots/Bignon_known_arrhythmic.svg",
+  filename = "../../results/Plots/Bignon_RUV.svg",
+  height = 4,
+  width = 5,
   plot = get_last_plot()
 )
 
-JTK_output_RUV[JTK_output_RUV$gene_id %in% geneIdsNow,]
+
+JTK_output_noRUV[match(geneIdsNow,JTK_output_noRUV$gene_id),]
+JTK_output_RUV[match(geneIdsNow,JTK_output_RUV$gene_id),]
+
+
 ```
 
-
+[1] "ENSMUSG00000047281" "ENSMUSG00000070720" "ENSMUSG00000061578" "ENSMUSG00000026630"
 

@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 595.28 841.89">
+  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
+  <defs>
+    <style>
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10 {
+        fill: none;
+      }
+
+      .st11, .st12 {
+        opacity: .5;
+      }
+
+      .st11, .st13 {
+        fill: #fdccab;
+      }
+
+      .st1 {
+        stroke: #1c9e77;
+      }
+
+      .st1, .st2, .st14, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10 {
+        stroke-linejoin: round;
+      }
+
+      .st1, .st14, .st15, .st4, .st5, .st6, .st8, .st9, .st10 {
+        stroke-linecap: round;
+      }
+
+      .st1, .st4, .st5, .st6, .st8, .st10 {
+        stroke-width: .71px;
+      }
+
+      .st16 {
+        fill: #d9d9d8;
+      }
+
+      .st17 {
+        fill: #ebebeb;
+      }
+
+      .st12, .st18 {
+        fill: #b2ddca;
+      }
+
+      .st2 {
+        stroke: #333;
+      }
+
+      .st2, .st14, .st7 {
+        stroke-width: 1.07px;
+      }
+
+      .st14, .st3, .st7 {
+        stroke: #fff;
+      }
+
+      .st14, .st19 {
+        fill: #fff;
+      }
+
+      .st15 {
+        stroke: #231f20;
+        stroke-miterlimit: 10;
+      }
+
+      .st15, .st20 {
+        fill: #010101;
+      }
+
+      .st21 {
+        fill: #231f20;
+        font-family: MyriadPro-Bold, 'Myriad Pro';
+        font-size: 12px;
+      }
+
+      .st21, .st18, .st22, .st13 {
+        font-weight: 700;
+      }
+
+      .st3 {
+        stroke-width: .53px;
+      }
+
+      .st4 {
+        stroke: #e5ac23;
+      }
+
+      .st5 {
+        stroke: #7671b3;
+      }
+
+      .st6 {
+        stroke: #66a743;
+      }
+
+      .st23 {
+        clip-path: url(#clippath-17);
+      }
+
+      .st24 {
+        clip-path: url(#clippath-19);
+      }
+
+      .st25 {
+        clip-path: url(#clippath-11);
+      }
+
+      .st26 {
+        clip-path: url(#clippath-15);
+      }
+
+      .st27 {
+        clip-path: url(#clippath-13);
+      }
+
+      .st28 {
+        clip-path: url(#clippath-31);
+      }
+
+      .st29 {
+        clip-path: url(#clippath-33);
+      }
+
+      .st30 {
+        clip-path: url(#clippath-35);
+      }
+
+      .st31 {
+        clip-path: url(#clippath-39);
+      }
+
+      .st32 {
+        clip-path: url(#clippath-37);
+      }
+
+      .st33 {
+        clip-path: url(#clippath-27);
+      }
+
+      .st34 {
+        clip-path: url(#clippath-29);
+      }
+
+      .st35 {
+        clip-path: url(#clippath-21);
+      }
+
+      .st36 {
+        clip-path: url(#clippath-23);
+      }
+
+      .st37 {
+        clip-path: url(#clippath-25);
+      }
+
+      .st38 {
+        clip-path: url(#clippath-41);
+      }
+
+      .st39 {
+        clip-path: url(#clippath-40);
+      }
+
+      .st18, .st22, .st13 {
+        font-family: Helvetica-Bold, Helvetica;
+        font-size: 10.49px;
+      }
+
+      .st40 {
+        clip-path: url(#clippath-1);
+      }
+
+      .st41 {
+        clip-path: url(#clippath-3);
+      }
+
+      .st42 {
+        clip-path: url(#clippath-7);
+      }
+
+      .st43 {
+        clip-path: url(#clippath-9);
+      }
+
+      .st44 {
+        clip-path: url(#clippath-5);
+      }
+
+      .st45 {
+        letter-spacing: 0em;
+      }
+
+      .st46 {
+        letter-spacing: 0em;
+      }
+
+      .st47 {
+        fill: #1a1a1a;
+      }
+
+      .st47, .st20, .st48 {
+        font-family: ArialMT, Arial;
+        isolation: isolate;
+      }
+
+      .st47, .st48 {
+        font-size: 7.08px;
+      }
+
+      .st8 {
+        stroke: #d76127;
+      }
+
+      .st20 {
+        font-size: 8.85px;
+      }
+
+      .st49 {
+        letter-spacing: -.02em;
+      }
+
+      .st50 {
+        letter-spacing: -.02em;
+      }
+
+      .st48 {
+        fill: #4e4e4e;
+      }
+
+      .st9 {
+        stroke: #000001;
+        stroke-width: .66px;
+      }
+
+      .st10 {
+        stroke: #e62c8b;
+      }
+
+      .st51 {
+        clip-path: url(#clippath);
+      }
+
+      .st22 {
+        fill: #000001;
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="st0" x="214.45" y="21.87" width="289.66" height="231.73"/>
+    </clipPath>
+    <clipPath id="clippath-1">
+      <rect class="st0" x="245.42" y="39.9" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-3">
+      <rect class="st0" x="245.42" y="72.02" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-5">
+      <rect class="st0" x="245.42" y="104.15" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-7">
+      <rect class="st0" x="245.42" y="136.28" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-9">
+      <rect class="st0" x="245.42" y="168.41" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-11">
+      <rect class="st0" x="245.42" y="200.54" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-13">
+      <rect class="st0" x="367.96" y="39.9" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-15">
+      <rect class="st0" x="367.96" y="72.02" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-17">
+      <rect class="st0" x="367.96" y="104.15" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-19">
+      <rect class="st0" x="367.96" y="136.28" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-21">
+      <rect class="st0" x="367.96" y="168.41" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-23">
+      <rect class="st0" x="367.96" y="200.54" width="118.13" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-25">
+      <rect class="st0" x="245.42" y="26.28" width="118.13" height="13.61"/>
+    </clipPath>
+    <clipPath id="clippath-27">
+      <rect class="st0" x="367.96" y="26.28" width="118.13" height="13.61"/>
+    </clipPath>
+    <clipPath id="clippath-29">
+      <rect class="st0" x="486.09" y="39.9" width="13.61" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-31">
+      <rect class="st0" x="486.09" y="72.02" width="13.61" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-33">
+      <rect class="st0" x="486.09" y="104.15" width="13.61" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-35">
+      <rect class="st0" x="486.09" y="136.28" width="13.61" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-37">
+      <rect class="st0" x="486.09" y="168.41" width="13.61" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-39">
+      <rect class="st0" x="486.09" y="200.54" width="13.61" height="27.72"/>
+    </clipPath>
+    <clipPath id="clippath-40">
+      <rect class="st0" x="214.45" y="21.87" width="289.66" height="231.73"/>
+    </clipPath>
+    <clipPath id="clippath-41">
+      <rect class="st0" x="20.05" y="44.17" width="157.37" height="157.37"/>
+    </clipPath>
+  </defs>
+  <path class="st15" d="M473.41,253.6"/>
+  <path class="st15" d="M464.96,51.57"/>
+  <g>
+    <rect class="st19" x="214.45" y="21.87" width="289.66" height="231.73"/>
+    <g class="st51">
+      <rect class="st14" x="214.45" y="21.87" width="289.66" height="231.73"/>
+    </g>
+    <g class="st40">
+      <g>
+        <rect class="st17" x="245.42" y="39.9" width="118.13" height="27.72"/>
+        <line class="st3" x1="245.42" y1="66.3" x2="363.56" y2="66.3"/>
+        <line class="st3" x1="245.42" y1="60.62" x2="363.56" y2="60.62"/>
+        <line class="st3" x1="245.42" y1="54.93" x2="363.56" y2="54.93"/>
+        <line class="st3" x1="245.42" y1="49.24" x2="363.56" y2="49.24"/>
+        <line class="st3" x1="245.42" y1="43.55" x2="363.56" y2="43.55"/>
+        <line class="st3" x1="261.53" y1="67.62" x2="261.53" y2="39.9"/>
+        <line class="st3" x1="283.01" y1="67.62" x2="283.01" y2="39.9"/>
+        <line class="st3" x1="304.49" y1="67.62" x2="304.49" y2="39.9"/>
+        <line class="st3" x1="325.96" y1="67.62" x2="325.96" y2="39.9"/>
+        <line class="st3" x1="347.44" y1="67.62" x2="347.44" y2="39.9"/>
+        <line class="st7" x1="245.42" y1="63.46" x2="363.56" y2="63.46"/>
+        <line class="st7" x1="245.42" y1="57.77" x2="363.56" y2="57.77"/>
+        <line class="st7" x1="245.42" y1="52.08" x2="363.56" y2="52.08"/>
+        <line class="st7" x1="245.42" y1="46.39" x2="363.56" y2="46.39"/>
+        <line class="st7" x1="245.42" y1="40.7" x2="363.56" y2="40.7"/>
+        <line class="st7" x1="250.79" y1="67.62" x2="250.79" y2="39.9"/>
+        <line class="st7" x1="272.26" y1="67.62" x2="272.26" y2="39.9"/>
+        <line class="st7" x1="293.75" y1="67.62" x2="293.75" y2="39.9"/>
+        <line class="st7" x1="315.22" y1="67.62" x2="315.22" y2="39.9"/>
+        <line class="st7" x1="336.71" y1="67.62" x2="336.71" y2="39.9"/>
+        <line class="st7" x1="358.18" y1="67.62" x2="358.18" y2="39.9"/>
+        <polygon class="st1" points="250.79 45.77 252.91 49.44 248.67 49.44 250.79 45.77"/>
+        <polygon class="st1" points="250.79 55.39 252.91 59.05 248.67 59.05 250.79 55.39"/>
+        <polygon class="st1" points="250.79 51.05 252.91 54.72 248.67 54.72 250.79 51.05"/>
+        <polygon class="st1" points="250.79 50.65 252.91 54.32 248.67 54.32 250.79 50.65"/>
+        <polygon class="st1" points="250.79 53.24 252.91 56.91 248.67 56.91 250.79 53.24"/>
+        <polygon class="st1" points="272.26 42.64 274.39 46.31 270.15 46.31 272.26 42.64"/>
+        <polygon class="st1" points="272.26 51.52 274.39 55.18 270.15 55.18 272.26 51.52"/>
+        <polygon class="st1" points="272.26 41.38 274.39 45.05 270.15 45.05 272.26 41.38"/>
+        <polygon class="st1" points="272.26 48.78 274.39 52.45 270.15 52.45 272.26 48.78"/>
+        <polygon class="st1" points="272.26 41.62 274.39 45.29 270.15 45.29 272.26 41.62"/>
+        <polygon class="st1" points="293.75 45.97 295.86 49.64 291.63 49.64 293.75 45.97"/>
+        <polygon class="st1" points="293.75 47.92 295.86 51.59 291.63 51.59 293.75 47.92"/>
+        <polygon class="st1" points="293.75 42.31 295.86 45.98 291.63 45.98 293.75 42.31"/>
+        <polygon class="st1" points="293.75 47.12 295.86 50.79 291.63 50.79 293.75 47.12"/>
+        <polygon class="st1" points="293.75 43.71 295.86 47.38 291.63 47.38 293.75 43.71"/>
+        <polygon class="st1" points="315.22 45.05 317.35 48.72 313.11 48.72 315.22 45.05"/>
+        <polygon class="st1" points="315.22 51 317.35 54.67 313.11 54.67 315.22 51"/>
+        <polygon class="st1" points="315.22 43.86 317.35 47.53 313.11 47.53 315.22 43.86"/>
+        <polygon class="st1" points="315.22 56.93 317.35 60.6 313.11 60.6 315.22 56.93"/>
+        <polygon class="st1" points="315.22 46.99 317.35 50.66 313.11 50.66 315.22 46.99"/>
+        <polygon class="st1" points="336.71 38.71 338.82 42.37 334.58 42.37 336.71 38.71"/>
+        <polygon class="st1" points="336.71 48.91 338.82 52.58 334.58 52.58 336.71 48.91"/>
+        <polygon class="st1" points="336.71 47.52 338.82 51.19 334.58 51.19 336.71 47.52"/>
+        <polygon class="st1" points="336.71 49.22 338.82 52.89 334.58 52.89 336.71 49.22"/>
+        <polygon class="st1" points="336.71 47.87 338.82 51.54 334.58 51.54 336.71 47.87"/>
+        <polygon class="st1" points="358.18 59.05 360.3 62.72 356.07 62.72 358.18 59.05"/>
+        <polygon class="st1" points="358.18 61.63 360.3 65.3 356.07 65.3 358.18 61.63"/>
+        <polygon class="st1" points="358.18 52.83 360.3 56.5 356.07 56.5 358.18 52.83"/>
+        <polygon class="st1" points="358.18 46.41 360.3 50.08 356.07 50.08 358.18 46.41"/>
+        <polygon class="st1" points="358.18 49.8 360.3 53.47 356.07 53.47 358.18 49.8"/>
+      </g>
+    </g>
+    <g class="st41">
+      <g>
+        <rect class="st17" x="245.42" y="72.02" width="118.13" height="27.72"/>
+        <line class="st3" x1="245.42" y1="94.06" x2="363.56" y2="94.06"/>
+        <line class="st3" x1="245.42" y1="84.96" x2="363.56" y2="84.96"/>
+        <line class="st3" x1="245.42" y1="75.86" x2="363.56" y2="75.86"/>
+        <line class="st3" x1="261.53" y1="99.74" x2="261.53" y2="72.02"/>
+        <line class="st3" x1="283.01" y1="99.74" x2="283.01" y2="72.02"/>
+        <line class="st3" x1="304.49" y1="99.74" x2="304.49" y2="72.02"/>
+        <line class="st3" x1="325.96" y1="99.74" x2="325.96" y2="72.02"/>
+        <line class="st3" x1="347.44" y1="99.74" x2="347.44" y2="72.02"/>
+        <line class="st7" x1="245.42" y1="98.6" x2="363.56" y2="98.6"/>
+        <line class="st7" x1="245.42" y1="89.5" x2="363.56" y2="89.5"/>
+        <line class="st7" x1="245.42" y1="80.41" x2="363.56" y2="80.41"/>
+        <line class="st7" x1="250.79" y1="99.74" x2="250.79" y2="72.02"/>
+        <line class="st7" x1="272.26" y1="99.74" x2="272.26" y2="72.02"/>
+        <line class="st7" x1="293.75" y1="99.74" x2="293.75" y2="72.02"/>
+        <line class="st7" x1="315.22" y1="99.74" x2="315.22" y2="72.02"/>
+        <line class="st7" x1="336.71" y1="99.74" x2="336.71" y2="72.02"/>
+        <line class="st7" x1="358.18" y1="99.74" x2="358.18" y2="72.02"/>
+        <polygon class="st8" points="250.79 93.27 252.91 96.94 248.67 96.94 250.79 93.27"/>
+        <polygon class="st8" points="250.79 86.15 252.91 89.82 248.67 89.82 250.79 86.15"/>
+        <polygon class="st8" points="250.79 96.03 252.91 99.7 248.67 99.7 250.79 96.03"/>
+        <polygon class="st8" points="250.79 82.62 252.91 86.29 248.67 86.29 250.79 82.62"/>
+        <polygon class="st8" points="250.79 82.11 252.91 85.78 248.67 85.78 250.79 82.11"/>
+        <polygon class="st8" points="272.26 93.07 274.39 96.73 270.15 96.73 272.26 93.07"/>
+        <polygon class="st8" points="272.26 87.95 274.39 91.62 270.15 91.62 272.26 87.95"/>
+        <polygon class="st8" points="272.26 82.06 274.39 85.73 270.15 85.73 272.26 82.06"/>
+        <polygon class="st8" points="272.26 94.96 274.39 98.63 270.15 98.63 272.26 94.96"/>
+        <polygon class="st8" points="272.26 84.27 274.39 87.94 270.15 87.94 272.26 84.27"/>
+        <polygon class="st8" points="293.75 91.29 295.86 94.96 291.63 94.96 293.75 91.29"/>
+        <polygon class="st8" points="293.75 92.59 295.86 96.26 291.63 96.26 293.75 92.59"/>
+        <polygon class="st8" points="293.75 87.08 295.86 90.75 291.63 90.75 293.75 87.08"/>
+        <polygon class="st8" points="293.75 86.68 295.86 90.35 291.63 90.35 293.75 86.68"/>
+        <polygon class="st8" points="293.75 88.7 295.86 92.37 291.63 92.37 293.75 88.7"/>
+        <polygon class="st8" points="315.22 83.4 317.35 87.07 313.11 87.07 315.22 83.4"/>
+        <polygon class="st8" points="315.22 85.38 317.35 89.05 313.11 89.05 315.22 85.38"/>
+        <polygon class="st8" points="315.22 87.18 317.35 90.85 313.11 90.85 315.22 87.18"/>
+        <polygon class="st8" points="315.22 92.22 317.35 95.89 313.11 95.89 315.22 92.22"/>
+        <polygon class="st8" points="315.22 83.5 317.35 87.17 313.11 87.17 315.22 83.5"/>
+        <polygon class="st8" points="336.71 79.65 338.82 83.32 334.58 83.32 336.71 79.65"/>
+        <polygon class="st8" points="336.71 81.15 338.82 84.82 334.58 84.82 336.71 81.15"/>
+        <polygon class="st8" points="336.71 82.77 338.82 86.44 334.58 86.44 336.71 82.77"/>
+        <polygon class="st8" points="336.71 86.32 338.82 89.99 334.58 89.99 336.71 86.32"/>
+        <polygon class="st8" points="336.71 81.71 338.82 85.38 334.58 85.38 336.71 81.71"/>
+        <polygon class="st8" points="358.18 88.76 360.3 92.43 356.07 92.43 358.18 88.76"/>
+        <polygon class="st8" points="358.18 94.49 360.3 98.16 356.07 98.16 358.18 94.49"/>
+        <polygon class="st8" points="358.18 83.86 360.3 87.53 356.07 87.53 358.18 83.86"/>
+        <polygon class="st8" points="358.18 86.67 360.3 90.34 356.07 90.34 358.18 86.67"/>
+        <polygon class="st8" points="358.18 80.35 360.3 84.02 356.07 84.02 358.18 80.35"/>
+      </g>
+    </g>
+    <g class="st44">
+      <g>
+        <rect class="st17" x="245.42" y="104.15" width="118.13" height="27.72"/>
+        <line class="st3" x1="245.42" y1="129.1" x2="363.56" y2="129.1"/>
+        <line class="st3" x1="245.42" y1="121.78" x2="363.56" y2="121.78"/>
+        <line class="st3" x1="245.42" y1="114.46" x2="363.56" y2="114.46"/>
+        <line class="st3" x1="245.42" y1="107.14" x2="363.56" y2="107.14"/>
+        <line class="st3" x1="261.53" y1="131.87" x2="261.53" y2="104.15"/>
+        <line class="st3" x1="283.01" y1="131.87" x2="283.01" y2="104.15"/>
+        <line class="st3" x1="304.49" y1="131.87" x2="304.49" y2="104.15"/>
+        <line class="st3" x1="325.96" y1="131.87" x2="325.96" y2="104.15"/>
+        <line class="st3" x1="347.44" y1="131.87" x2="347.44" y2="104.15"/>
+        <line class="st7" x1="245.42" y1="125.44" x2="363.56" y2="125.44"/>
+        <line class="st7" x1="245.42" y1="118.12" x2="363.56" y2="118.12"/>
+        <line class="st7" x1="245.42" y1="110.8" x2="363.56" y2="110.8"/>
+        <line class="st7" x1="250.79" y1="131.87" x2="250.79" y2="104.15"/>
+        <line class="st7" x1="272.26" y1="131.87" x2="272.26" y2="104.15"/>
+        <line class="st7" x1="293.75" y1="131.87" x2="293.75" y2="104.15"/>
+        <line class="st7" x1="315.22" y1="131.87" x2="315.22" y2="104.15"/>
+        <line class="st7" x1="336.71" y1="131.87" x2="336.71" y2="104.15"/>
+        <line class="st7" x1="358.18" y1="131.87" x2="358.18" y2="104.15"/>
+        <polygon class="st5" points="250.79 110.24 252.91 113.9 248.67 113.9 250.79 110.24"/>
+        <polygon class="st5" points="250.79 114.56 252.91 118.23 248.67 118.23 250.79 114.56"/>
+        <polygon class="st5" points="250.79 104.32 252.91 107.99 248.67 107.99 250.79 104.32"/>
+        <polygon class="st5" points="250.79 111.57 252.91 115.24 248.67 115.24 250.79 111.57"/>
+        <polygon class="st5" points="250.79 112.33 252.91 116 248.67 116 250.79 112.33"/>
+        <polygon class="st5" points="272.26 115.35 274.39 119.01 270.15 119.01 272.26 115.35"/>
+        <polygon class="st5" points="272.26 112.75 274.39 116.42 270.15 116.42 272.26 112.75"/>
+        <polygon class="st5" points="272.26 118.43 274.39 122.1 270.15 122.1 272.26 118.43"/>
+        <polygon class="st5" points="272.26 117.53 274.39 121.19 270.15 121.19 272.26 117.53"/>
+        <polygon class="st5" points="272.26 119.03 274.39 122.7 270.15 122.7 272.26 119.03"/>
+        <polygon class="st5" points="293.75 110.08 295.86 113.75 291.63 113.75 293.75 110.08"/>
+        <polygon class="st5" points="293.75 116.71 295.86 120.37 291.63 120.37 293.75 116.71"/>
+        <polygon class="st5" points="293.75 121.06 295.86 124.73 291.63 124.73 293.75 121.06"/>
+        <polygon class="st5" points="293.75 116.2 295.86 119.87 291.63 119.87 293.75 116.2"/>
+        <polygon class="st5" points="293.75 115.59 295.86 119.26 291.63 119.26 293.75 115.59"/>
+        <polygon class="st5" points="315.22 118.06 317.35 121.73 313.11 121.73 315.22 118.06"/>
+        <polygon class="st5" points="315.22 120.29 317.35 123.96 313.11 123.96 315.22 120.29"/>
+        <polygon class="st5" points="315.22 114.65 317.35 118.32 313.11 118.32 315.22 114.65"/>
+        <polygon class="st5" points="315.22 117.93 317.35 121.6 313.11 121.6 315.22 117.93"/>
+        <polygon class="st5" points="315.22 118.85 317.35 122.52 313.11 122.52 315.22 118.85"/>
+        <polygon class="st5" points="336.71 105.2 338.82 108.87 334.58 108.87 336.71 105.2"/>
+        <polygon class="st5" points="336.71 109.46 338.82 113.13 334.58 113.13 336.71 109.46"/>
+        <polygon class="st5" points="336.71 106.51 338.82 110.18 334.58 110.18 336.71 106.51"/>
+        <polygon class="st5" points="336.71 102.97 338.82 106.63 334.58 106.63 336.71 102.97"/>
+        <polygon class="st5" points="336.71 112.41 338.82 116.08 334.58 116.08 336.71 112.41"/>
+        <polygon class="st5" points="358.18 110.42 360.3 114.09 356.07 114.09 358.18 110.42"/>
+        <polygon class="st5" points="358.18 107.9 360.3 111.57 356.07 111.57 358.18 107.9"/>
+        <polygon class="st5" points="358.18 114.24 360.3 117.91 356.07 117.91 358.18 114.24"/>
+        <polygon class="st5" points="358.18 111.92 360.3 115.59 356.07 115.59 358.18 111.92"/>
+        <polygon class="st5" points="358.18 109.7 360.3 113.37 356.07 113.37 358.18 109.7"/>
+      </g>
+    </g>
+    <g class="st42">
+      <g>
+        <rect class="st17" x="245.42" y="136.28" width="118.13" height="27.72"/>
+        <line class="st3" x1="245.42" y1="162.25" x2="363.56" y2="162.25"/>
+        <line class="st3" x1="245.42" y1="156.36" x2="363.56" y2="156.36"/>
+        <line class="st3" x1="245.42" y1="150.46" x2="363.56" y2="150.46"/>
+        <line class="st3" x1="245.42" y1="144.57" x2="363.56" y2="144.57"/>
+        <line class="st3" x1="245.42" y1="138.67" x2="363.56" y2="138.67"/>
+        <line class="st3" x1="261.53" y1="164" x2="261.53" y2="136.28"/>
+        <line class="st3" x1="283.01" y1="164" x2="283.01" y2="136.28"/>
+        <line class="st3" x1="304.49" y1="164" x2="304.49" y2="136.28"/>
+        <line class="st3" x1="325.96" y1="164" x2="325.96" y2="136.28"/>
+        <line class="st3" x1="347.44" y1="164" x2="347.44" y2="136.28"/>
+        <line class="st7" x1="245.42" y1="159.3" x2="363.56" y2="159.3"/>
+        <line class="st7" x1="245.42" y1="153.41" x2="363.56" y2="153.41"/>
+        <line class="st7" x1="245.42" y1="147.51" x2="363.56" y2="147.51"/>
+        <line class="st7" x1="245.42" y1="141.62" x2="363.56" y2="141.62"/>
+        <line class="st7" x1="250.79" y1="164" x2="250.79" y2="136.28"/>
+        <line class="st7" x1="272.26" y1="164" x2="272.26" y2="136.28"/>
+        <line class="st7" x1="293.75" y1="164" x2="293.75" y2="136.28"/>
+        <line class="st7" x1="315.22" y1="164" x2="315.22" y2="136.28"/>
+        <line class="st7" x1="336.71" y1="164" x2="336.71" y2="136.28"/>
+        <line class="st7" x1="358.18" y1="164" x2="358.18" y2="136.28"/>
+        <polygon class="st10" points="250.79 137.75 252.91 141.42 248.67 141.42 250.79 137.75"/>
+        <polygon class="st10" points="250.79 144.31 252.91 147.98 248.67 147.98 250.79 144.31"/>
+        <polygon class="st10" points="250.79 136.41 252.91 140.08 248.67 140.08 250.79 136.41"/>
+        <polygon class="st10" points="250.79 136.73 252.91 140.4 248.67 140.4 250.79 136.73"/>
+        <polygon class="st10" points="250.79 135.36 252.91 139.02 248.67 139.02 250.79 135.36"/>
+        <polygon class="st10" points="272.26 137.66 274.39 141.33 270.15 141.33 272.26 137.66"/>
+        <polygon class="st10" points="272.26 146.47 274.39 150.14 270.15 150.14 272.26 146.47"/>
+        <polygon class="st10" points="272.26 136.79 274.39 140.46 270.15 140.46 272.26 136.79"/>
+        <polygon class="st10" points="272.26 136.87 274.39 140.54 270.15 140.54 272.26 136.87"/>
+        <polygon class="st10" points="272.26 140.66 274.39 144.33 270.15 144.33 272.26 140.66"/>
+        <polygon class="st10" points="293.75 135.11 295.86 138.78 291.63 138.78 293.75 135.11"/>
+        <polygon class="st10" points="293.75 141.54 295.86 145.21 291.63 145.21 293.75 141.54"/>
+        <polygon class="st10" points="293.75 145.98 295.86 149.65 291.63 149.65 293.75 145.98"/>
+        <polygon class="st10" points="293.75 145 295.86 148.67 291.63 148.67 293.75 145"/>
+        <polygon class="st10" points="293.75 139.95 295.86 143.62 291.63 143.62 293.75 139.95"/>
+        <polygon class="st10" points="315.22 143.5 317.35 147.17 313.11 147.17 315.22 143.5"/>
+        <polygon class="st10" points="315.22 145.09 317.35 148.76 313.11 148.76 315.22 145.09"/>
+        <polygon class="st10" points="315.22 145.11 317.35 148.78 313.11 148.78 315.22 145.11"/>
+        <polygon class="st10" points="315.22 153.56 317.35 157.23 313.11 157.23 315.22 153.56"/>
+        <polygon class="st10" points="315.22 141.01 317.35 144.68 313.11 144.68 315.22 141.01"/>
+        <polygon class="st10" points="336.71 142.96 338.82 146.63 334.58 146.63 336.71 142.96"/>
+        <polygon class="st10" points="336.71 147.79 338.82 151.46 334.58 151.46 336.71 147.79"/>
+        <polygon class="st10" points="336.71 140.71 338.82 144.38 334.58 144.38 336.71 140.71"/>
+        <polygon class="st10" points="336.71 155.38 338.82 159.05 334.58 159.05 336.71 155.38"/>
+        <polygon class="st10" points="336.71 135.1 338.82 138.77 334.58 138.77 336.71 135.1"/>
+        <polygon class="st10" points="358.18 138.45 360.3 142.11 356.07 142.11 358.18 138.45"/>
+        <polygon class="st10" points="358.18 138.45 360.3 142.11 356.07 142.11 358.18 138.45"/>
+        <polygon class="st10" points="358.18 139.26 360.3 142.93 356.07 142.93 358.18 139.26"/>
+        <polygon class="st10" points="358.18 138.72 360.3 142.39 356.07 142.39 358.18 138.72"/>
+        <polygon class="st10" points="358.18 137.54 360.3 141.21 356.07 141.21 358.18 137.54"/>
+      </g>
+    </g>
+    <g class="st43">
+      <g>
+        <rect class="st17" x="245.42" y="168.41" width="118.13" height="27.72"/>
+        <line class="st3" x1="245.42" y1="189.35" x2="363.56" y2="189.35"/>
+        <line class="st3" x1="245.42" y1="179.95" x2="363.56" y2="179.95"/>
+        <line class="st3" x1="245.42" y1="170.56" x2="363.56" y2="170.56"/>
+        <line class="st3" x1="261.53" y1="196.13" x2="261.53" y2="168.41"/>
+        <line class="st3" x1="283.01" y1="196.13" x2="283.01" y2="168.41"/>
+        <line class="st3" x1="304.49" y1="196.13" x2="304.49" y2="168.41"/>
+        <line class="st3" x1="325.96" y1="196.13" x2="325.96" y2="168.41"/>
+        <line class="st3" x1="347.44" y1="196.13" x2="347.44" y2="168.41"/>
+        <line class="st7" x1="245.42" y1="194.04" x2="363.56" y2="194.04"/>
+        <line class="st7" x1="245.42" y1="184.65" x2="363.56" y2="184.65"/>
+        <line class="st7" x1="245.42" y1="175.26" x2="363.56" y2="175.26"/>
+        <line class="st7" x1="250.79" y1="196.13" x2="250.79" y2="168.41"/>
+        <line class="st7" x1="272.26" y1="196.13" x2="272.26" y2="168.41"/>
+        <line class="st7" x1="293.75" y1="196.13" x2="293.75" y2="168.41"/>
+        <line class="st7" x1="315.22" y1="196.13" x2="315.22" y2="168.41"/>
+        <line class="st7" x1="336.71" y1="196.13" x2="336.71" y2="168.41"/>
+        <line class="st7" x1="358.18" y1="196.13" x2="358.18" y2="168.41"/>
+        <polygon class="st6" points="250.79 177.97 252.91 181.64 248.67 181.64 250.79 177.97"/>
+        <polygon class="st6" points="250.79 172.56 252.91 176.23 248.67 176.23 250.79 172.56"/>
+        <polygon class="st6" points="250.79 169.87 252.91 173.53 248.67 173.53 250.79 169.87"/>
+        <polygon class="st6" points="250.79 171.19 252.91 174.86 248.67 174.86 250.79 171.19"/>
+        <polygon class="st6" points="250.79 179.14 252.91 182.81 248.67 182.81 250.79 179.14"/>
+        <polygon class="st6" points="272.26 183.52 274.39 187.19 270.15 187.19 272.26 183.52"/>
+        <polygon class="st6" points="272.26 182.01 274.39 185.68 270.15 185.68 272.26 182.01"/>
+        <polygon class="st6" points="272.26 190.46 274.39 194.12 270.15 194.12 272.26 190.46"/>
+        <polygon class="st6" points="272.26 184.34 274.39 188.01 270.15 188.01 272.26 184.34"/>
+        <polygon class="st6" points="272.26 179.58 274.39 183.25 270.15 183.25 272.26 179.58"/>
+        <polygon class="st6" points="293.75 181.28 295.86 184.95 291.63 184.95 293.75 181.28"/>
+        <polygon class="st6" points="293.75 184 295.86 187.67 291.63 187.67 293.75 184"/>
+        <polygon class="st6" points="293.75 190.65 295.86 194.32 291.63 194.32 293.75 190.65"/>
+        <polygon class="st6" points="293.75 192.43 295.86 196.1 291.63 196.1 293.75 192.43"/>
+        <polygon class="st6" points="293.75 185.6 295.86 189.27 291.63 189.27 293.75 185.6"/>
+        <polygon class="st6" points="315.22 182.54 317.35 186.21 313.11 186.21 315.22 182.54"/>
+        <polygon class="st6" points="315.22 190.21 317.35 193.88 313.11 193.88 315.22 190.21"/>
+        <polygon class="st6" points="315.22 179.76 317.35 183.43 313.11 183.43 315.22 179.76"/>
+        <polygon class="st6" points="315.22 185.72 317.35 189.39 313.11 189.39 315.22 185.72"/>
+        <polygon class="st6" points="315.22 183.19 317.35 186.86 313.11 186.86 315.22 183.19"/>
+        <polygon class="st6" points="336.71 181.65 338.82 185.32 334.58 185.32 336.71 181.65"/>
+        <polygon class="st6" points="336.71 181.43 338.82 185.1 334.58 185.1 336.71 181.43"/>
+        <polygon class="st6" points="336.71 175.43 338.82 179.09 334.58 179.09 336.71 175.43"/>
+        <polygon class="st6" points="336.71 171.34 338.82 175.01 334.58 175.01 336.71 171.34"/>
+        <polygon class="st6" points="336.71 180.41 338.82 184.08 334.58 184.08 336.71 180.41"/>
+        <polygon class="st6" points="358.18 172.69 360.3 176.36 356.07 176.36 358.18 172.69"/>
+        <polygon class="st6" points="358.18 172.61 360.3 176.28 356.07 176.28 358.18 172.61"/>
+        <polygon class="st6" points="358.18 170.46 360.3 174.13 356.07 174.13 358.18 170.46"/>
+        <polygon class="st6" points="358.18 171.77 360.3 175.44 356.07 175.44 358.18 171.77"/>
+        <polygon class="st6" points="358.18 168.88 360.3 172.55 356.07 172.55 358.18 168.88"/>
+      </g>
+    </g>
+    <g class="st25">
+      <g>
+        <rect class="st17" x="245.42" y="200.54" width="118.13" height="27.72"/>
+        <line class="st3" x1="245.42" y1="222.83" x2="363.56" y2="222.83"/>
+        <line class="st3" x1="245.42" y1="212.72" x2="363.56" y2="212.72"/>
+        <line class="st3" x1="245.42" y1="202.61" x2="363.56" y2="202.61"/>
+        <line class="st3" x1="261.53" y1="228.26" x2="261.53" y2="200.54"/>
+        <line class="st3" x1="283.01" y1="228.26" x2="283.01" y2="200.54"/>
+        <line class="st3" x1="304.49" y1="228.26" x2="304.49" y2="200.54"/>
+        <line class="st3" x1="325.96" y1="228.26" x2="325.96" y2="200.54"/>
+        <line class="st3" x1="347.44" y1="228.26" x2="347.44" y2="200.54"/>
+        <line class="st7" x1="245.42" y1="227.89" x2="363.56" y2="227.89"/>
+        <line class="st7" x1="245.42" y1="217.78" x2="363.56" y2="217.78"/>
+        <line class="st7" x1="245.42" y1="207.67" x2="363.56" y2="207.67"/>
+        <line class="st7" x1="250.79" y1="228.26" x2="250.79" y2="200.54"/>
+        <line class="st7" x1="272.26" y1="228.26" x2="272.26" y2="200.54"/>
+        <line class="st7" x1="293.75" y1="228.26" x2="293.75" y2="200.54"/>
+        <line class="st7" x1="315.22" y1="228.26" x2="315.22" y2="200.54"/>
+        <line class="st7" x1="336.71" y1="228.26" x2="336.71" y2="200.54"/>
+        <line class="st7" x1="358.18" y1="228.26" x2="358.18" y2="200.54"/>
+        <polygon class="st4" points="250.79 206 252.91 209.67 248.67 209.67 250.79 206"/>
+        <polygon class="st4" points="250.79 210.81 252.91 214.48 248.67 214.48 250.79 210.81"/>
+        <polygon class="st4" points="250.79 212.9 252.91 216.57 248.67 216.57 250.79 212.9"/>
+        <polygon class="st4" points="250.79 209.07 252.91 212.74 248.67 212.74 250.79 209.07"/>
+        <polygon class="st4" points="250.79 210.57 252.91 214.24 248.67 214.24 250.79 210.57"/>
+        <polygon class="st4" points="272.26 201.9 274.39 205.57 270.15 205.57 272.26 201.9"/>
+        <polygon class="st4" points="272.26 210.78 274.39 214.45 270.15 214.45 272.26 210.78"/>
+        <polygon class="st4" points="272.26 206.08 274.39 209.75 270.15 209.75 272.26 206.08"/>
+        <polygon class="st4" points="272.26 206.48 274.39 210.15 270.15 210.15 272.26 206.48"/>
+        <polygon class="st4" points="272.26 206.11 274.39 209.77 270.15 209.77 272.26 206.11"/>
+        <polygon class="st4" points="293.75 208.66 295.86 212.33 291.63 212.33 293.75 208.66"/>
+        <polygon class="st4" points="293.75 213.06 295.86 216.73 291.63 216.73 293.75 213.06"/>
+        <polygon class="st4" points="293.75 208.98 295.86 212.65 291.63 212.65 293.75 208.98"/>
+        <polygon class="st4" points="293.75 209.83 295.86 213.5 291.63 213.5 293.75 209.83"/>
+        <polygon class="st4" points="293.75 207.22 295.86 210.89 291.63 210.89 293.75 207.22"/>
+        <polygon class="st4" points="315.22 204.58 317.35 208.25 313.11 208.25 315.22 204.58"/>
+        <polygon class="st4" points="315.22 211.32 317.35 214.99 313.11 214.99 315.22 211.32"/>
+        <polygon class="st4" points="315.22 208.37 317.35 212.04 313.11 212.04 315.22 208.37"/>
+        <polygon class="st4" points="315.22 219.14 317.35 222.81 313.11 222.81 315.22 219.14"/>
+        <polygon class="st4" points="315.22 212.12 317.35 215.79 313.11 215.79 315.22 212.12"/>
+        <polygon class="st4" points="336.71 199.35 338.82 203.02 334.58 203.02 336.71 199.35"/>
+        <polygon class="st4" points="336.71 208.11 338.82 211.78 334.58 211.78 336.71 208.11"/>
+        <polygon class="st4" points="336.71 209.9 338.82 213.57 334.58 213.57 336.71 209.9"/>
+        <polygon class="st4" points="336.71 207.27 338.82 210.94 334.58 210.94 336.71 207.27"/>
+        <polygon class="st4" points="336.71 207.72 338.82 211.39 334.58 211.39 336.71 207.72"/>
+        <polygon class="st4" points="358.18 220.1 360.3 223.77 356.07 223.77 358.18 220.1"/>
+        <polygon class="st4" points="358.18 205.93 360.3 209.6 356.07 209.6 358.18 205.93"/>
+        <polygon class="st4" points="358.18 204.06 360.3 207.73 356.07 207.73 358.18 204.06"/>
+        <polygon class="st4" points="358.18 205.42 360.3 209.09 356.07 209.09 358.18 205.42"/>
+        <polygon class="st4" points="358.18 207.04 360.3 210.71 356.07 210.71 358.18 207.04"/>
+      </g>
+    </g>
+    <g class="st27">
+      <g>
+        <rect class="st17" x="367.96" y="39.9" width="118.13" height="27.72"/>
+        <line class="st3" x1="367.96" y1="66.3" x2="486.09" y2="66.3"/>
+        <line class="st3" x1="367.96" y1="60.62" x2="486.09" y2="60.62"/>
+        <line class="st3" x1="367.96" y1="54.93" x2="486.09" y2="54.93"/>
+        <line class="st3" x1="367.96" y1="49.24" x2="486.09" y2="49.24"/>
+        <line class="st3" x1="367.96" y1="43.55" x2="486.09" y2="43.55"/>
+        <line class="st3" x1="384.07" y1="67.62" x2="384.07" y2="39.9"/>
+        <line class="st3" x1="405.55" y1="67.62" x2="405.55" y2="39.9"/>
+        <line class="st3" x1="427.02" y1="67.62" x2="427.02" y2="39.9"/>
+        <line class="st3" x1="448.51" y1="67.62" x2="448.51" y2="39.9"/>
+        <line class="st3" x1="469.98" y1="67.62" x2="469.98" y2="39.9"/>
+        <line class="st7" x1="367.96" y1="63.46" x2="486.09" y2="63.46"/>
+        <line class="st7" x1="367.96" y1="57.77" x2="486.09" y2="57.77"/>
+        <line class="st7" x1="367.96" y1="52.08" x2="486.09" y2="52.08"/>
+        <line class="st7" x1="367.96" y1="46.39" x2="486.09" y2="46.39"/>
+        <line class="st7" x1="367.96" y1="40.7" x2="486.09" y2="40.7"/>
+        <line class="st7" x1="373.33" y1="67.62" x2="373.33" y2="39.9"/>
+        <line class="st7" x1="394.81" y1="67.62" x2="394.81" y2="39.9"/>
+        <line class="st7" x1="416.29" y1="67.62" x2="416.29" y2="39.9"/>
+        <line class="st7" x1="437.77" y1="67.62" x2="437.77" y2="39.9"/>
+        <line class="st7" x1="459.25" y1="67.62" x2="459.25" y2="39.9"/>
+        <line class="st7" x1="480.72" y1="67.62" x2="480.72" y2="39.9"/>
+        <circle class="st1" cx="373.33" cy="59.91" r="1.57"/>
+        <circle class="st1" cx="373.33" cy="64.42" r="1.57"/>
+        <circle class="st1" cx="373.33" cy="60.41" r="1.57"/>
+        <circle class="st1" cx="373.33" cy="61.83" r="1.57"/>
+        <circle class="st1" cx="373.33" cy="64.57" r="1.57"/>
+        <circle class="st1" cx="394.81" cy="58.74" r="1.57"/>
+        <circle class="st1" cx="394.81" cy="61.8" r="1.57"/>
+        <circle class="st1" cx="394.81" cy="57.29" r="1.57"/>
+        <circle class="st1" cx="394.81" cy="61.03" r="1.57"/>
+        <circle class="st1" cx="394.81" cy="55.06" r="1.57"/>
+        <circle class="st1" cx="416.29" cy="56.15" r="1.57"/>
+        <circle class="st1" cx="416.29" cy="55.77" r="1.57"/>
+        <circle class="st1" cx="416.29" cy="53.21" r="1.57"/>
+        <circle class="st1" cx="416.29" cy="59.25" r="1.57"/>
+        <circle class="st1" cx="416.29" cy="55.45" r="1.57"/>
+        <circle class="st1" cx="437.77" cy="56.18" r="1.57"/>
+        <circle class="st1" cx="437.77" cy="61.8" r="1.57"/>
+        <circle class="st1" cx="437.77" cy="54.87" r="1.57"/>
+        <circle class="st1" cx="437.77" cy="58.61" r="1.57"/>
+        <circle class="st1" cx="437.77" cy="55.67" r="1.57"/>
+        <circle class="st1" cx="459.25" cy="60.56" r="1.57"/>
+        <circle class="st1" cx="459.25" cy="60.75" r="1.57"/>
+        <circle class="st1" cx="459.25" cy="57.75" r="1.57"/>
+        <circle class="st1" cx="459.25" cy="58.4" r="1.57"/>
+        <circle class="st1" cx="459.25" cy="59.38" r="1.57"/>
+        <circle class="st1" cx="480.72" cy="62.16" r="1.57"/>
+        <circle class="st1" cx="480.72" cy="66.35" r="1.57"/>
+        <circle class="st1" cx="480.72" cy="63.25" r="1.57"/>
+        <circle class="st1" cx="480.72" cy="60.38" r="1.57"/>
+        <circle class="st1" cx="480.72" cy="59.94" r="1.57"/>
+      </g>
+    </g>
+    <g class="st26">
+      <g>
+        <rect class="st17" x="367.96" y="72.02" width="118.13" height="27.72"/>
+        <line class="st3" x1="367.96" y1="94.06" x2="486.09" y2="94.06"/>
+        <line class="st3" x1="367.96" y1="84.96" x2="486.09" y2="84.96"/>
+        <line class="st3" x1="367.96" y1="75.86" x2="486.09" y2="75.86"/>
+        <line class="st3" x1="384.07" y1="99.74" x2="384.07" y2="72.02"/>
+        <line class="st3" x1="405.55" y1="99.74" x2="405.55" y2="72.02"/>
+        <line class="st3" x1="427.02" y1="99.74" x2="427.02" y2="72.02"/>
+        <line class="st3" x1="448.51" y1="99.74" x2="448.51" y2="72.02"/>
+        <line class="st3" x1="469.98" y1="99.74" x2="469.98" y2="72.02"/>
+        <line class="st7" x1="367.96" y1="98.6" x2="486.09" y2="98.6"/>
+        <line class="st7" x1="367.96" y1="89.5" x2="486.09" y2="89.5"/>
+        <line class="st7" x1="367.96" y1="80.41" x2="486.09" y2="80.41"/>
+        <line class="st7" x1="373.33" y1="99.74" x2="373.33" y2="72.02"/>
+        <line class="st7" x1="394.81" y1="99.74" x2="394.81" y2="72.02"/>
+        <line class="st7" x1="416.29" y1="99.74" x2="416.29" y2="72.02"/>
+        <line class="st7" x1="437.77" y1="99.74" x2="437.77" y2="72.02"/>
+        <line class="st7" x1="459.25" y1="99.74" x2="459.25" y2="72.02"/>
+        <line class="st7" x1="480.72" y1="99.74" x2="480.72" y2="72.02"/>
+        <circle class="st8" cx="373.33" cy="86.76" r="1.57"/>
+        <circle class="st8" cx="373.33" cy="82.53" r="1.57"/>
+        <circle class="st8" cx="373.33" cy="87.58" r="1.57"/>
+        <circle class="st8" cx="373.33" cy="80.75" r="1.57"/>
+        <circle class="st8" cx="373.33" cy="77.56" r="1.57"/>
+        <circle class="st8" cx="394.81" cy="88.2" r="1.57"/>
+        <circle class="st8" cx="394.81" cy="84.65" r="1.57"/>
+        <circle class="st8" cx="394.81" cy="82.6" r="1.57"/>
+        <circle class="st8" cx="394.81" cy="87.88" r="1.57"/>
+        <circle class="st8" cx="394.81" cy="80.3" r="1.57"/>
+        <circle class="st8" cx="416.29" cy="83.95" r="1.57"/>
+        <circle class="st8" cx="416.29" cy="86.68" r="1.57"/>
+        <circle class="st8" cx="416.29" cy="85.33" r="1.57"/>
+        <circle class="st8" cx="416.29" cy="86.73" r="1.57"/>
+        <circle class="st8" cx="416.29" cy="81.08" r="1.57"/>
+        <circle class="st8" cx="437.77" cy="75.74" r="1.57"/>
+        <circle class="st8" cx="437.77" cy="82.03" r="1.57"/>
+        <circle class="st8" cx="437.77" cy="80.18" r="1.57"/>
+        <circle class="st8" cx="437.77" cy="80.83" r="1.57"/>
+        <circle class="st8" cx="437.77" cy="79.9" r="1.57"/>
+        <circle class="st8" cx="459.25" cy="78.38" r="1.57"/>
+        <circle class="st8" cx="459.25" cy="76.76" r="1.57"/>
+        <circle class="st8" cx="459.25" cy="77.42" r="1.57"/>
+        <circle class="st8" cx="459.25" cy="78.57" r="1.57"/>
+        <circle class="st8" cx="459.25" cy="79.92" r="1.57"/>
+        <circle class="st8" cx="480.72" cy="82.86" r="1.57"/>
+        <circle class="st8" cx="480.72" cy="77.58" r="1.57"/>
+        <circle class="st8" cx="480.72" cy="80.55" r="1.57"/>
+        <circle class="st8" cx="480.72" cy="81.15" r="1.57"/>
+        <circle class="st8" cx="480.72" cy="73.28" r="1.57"/>
+      </g>
+    </g>
+    <g class="st23">
+      <g>
+        <rect class="st17" x="367.96" y="104.15" width="118.13" height="27.72"/>
+        <line class="st3" x1="367.96" y1="129.1" x2="486.09" y2="129.1"/>
+        <line class="st3" x1="367.96" y1="121.78" x2="486.09" y2="121.78"/>
+        <line class="st3" x1="367.96" y1="114.46" x2="486.09" y2="114.46"/>
+        <line class="st3" x1="367.96" y1="107.14" x2="486.09" y2="107.14"/>
+        <line class="st3" x1="384.07" y1="131.87" x2="384.07" y2="104.15"/>
+        <line class="st3" x1="405.55" y1="131.87" x2="405.55" y2="104.15"/>
+        <line class="st3" x1="427.02" y1="131.87" x2="427.02" y2="104.15"/>
+        <line class="st3" x1="448.51" y1="131.87" x2="448.51" y2="104.15"/>
+        <line class="st3" x1="469.98" y1="131.87" x2="469.98" y2="104.15"/>
+        <line class="st7" x1="367.96" y1="125.44" x2="486.09" y2="125.44"/>
+        <line class="st7" x1="367.96" y1="118.12" x2="486.09" y2="118.12"/>
+        <line class="st7" x1="367.96" y1="110.8" x2="486.09" y2="110.8"/>
+        <line class="st7" x1="373.33" y1="131.87" x2="373.33" y2="104.15"/>
+        <line class="st7" x1="394.81" y1="131.87" x2="394.81" y2="104.15"/>
+        <line class="st7" x1="416.29" y1="131.87" x2="416.29" y2="104.15"/>
+        <line class="st7" x1="437.77" y1="131.87" x2="437.77" y2="104.15"/>
+        <line class="st7" x1="459.25" y1="131.87" x2="459.25" y2="104.15"/>
+        <line class="st7" x1="480.72" y1="131.87" x2="480.72" y2="104.15"/>
+        <circle class="st5" cx="373.33" cy="120.96" r="1.57"/>
+        <circle class="st5" cx="373.33" cy="122.45" r="1.57"/>
+        <circle class="st5" cx="373.33" cy="115.86" r="1.57"/>
+        <circle class="st5" cx="373.33" cy="118.43" r="1.57"/>
+        <circle class="st5" cx="373.33" cy="121.22" r="1.57"/>
+        <circle class="st5" cx="394.81" cy="125.11" r="1.57"/>
+        <circle class="st5" cx="394.81" cy="120.55" r="1.57"/>
+        <circle class="st5" cx="394.81" cy="124.12" r="1.57"/>
+        <circle class="st5" cx="394.81" cy="128.43" r="1.57"/>
+        <circle class="st5" cx="394.81" cy="127.76" r="1.57"/>
+        <circle class="st5" cx="416.29" cy="120.89" r="1.57"/>
+        <circle class="st5" cx="416.29" cy="126.13" r="1.57"/>
+        <circle class="st5" cx="416.29" cy="127.78" r="1.57"/>
+        <circle class="st5" cx="416.29" cy="121.75" r="1.57"/>
+        <circle class="st5" cx="416.29" cy="126.81" r="1.57"/>
+        <circle class="st5" cx="437.77" cy="129.24" r="1.57"/>
+        <circle class="st5" cx="437.77" cy="128.2" r="1.57"/>
+        <circle class="st5" cx="437.77" cy="125.32" r="1.57"/>
+        <circle class="st5" cx="437.77" cy="130.61" r="1.57"/>
+        <circle class="st5" cx="437.77" cy="126.66" r="1.57"/>
+        <circle class="st5" cx="459.25" cy="113.05" r="1.57"/>
+        <circle class="st5" cx="459.25" cy="118.3" r="1.57"/>
+        <circle class="st5" cx="459.25" cy="115.85" r="1.57"/>
+        <circle class="st5" cx="459.25" cy="113.95" r="1.57"/>
+        <circle class="st5" cx="459.25" cy="119.26" r="1.57"/>
+        <circle class="st5" cx="480.72" cy="119.19" r="1.57"/>
+        <circle class="st5" cx="480.72" cy="125.12" r="1.57"/>
+        <circle class="st5" cx="480.72" cy="122.06" r="1.57"/>
+        <circle class="st5" cx="480.72" cy="121.88" r="1.57"/>
+        <circle class="st5" cx="480.72" cy="120.3" r="1.57"/>
+      </g>
+    </g>
+    <g class="st24">
+      <g>
+        <rect class="st17" x="367.96" y="136.28" width="118.13" height="27.72"/>
+        <line class="st3" x1="367.96" y1="162.25" x2="486.09" y2="162.25"/>
+        <line class="st3" x1="367.96" y1="156.36" x2="486.09" y2="156.36"/>
+        <line class="st3" x1="367.96" y1="150.46" x2="486.09" y2="150.46"/>
+        <line class="st3" x1="367.96" y1="144.57" x2="486.09" y2="144.57"/>
+        <line class="st3" x1="367.96" y1="138.67" x2="486.09" y2="138.67"/>
+        <line class="st3" x1="384.07" y1="164" x2="384.07" y2="136.28"/>
+        <line class="st3" x1="405.55" y1="164" x2="405.55" y2="136.28"/>
+        <line class="st3" x1="427.02" y1="164" x2="427.02" y2="136.28"/>
+        <line class="st3" x1="448.51" y1="164" x2="448.51" y2="136.28"/>
+        <line class="st3" x1="469.98" y1="164" x2="469.98" y2="136.28"/>
+        <line class="st7" x1="367.96" y1="159.3" x2="486.09" y2="159.3"/>
+        <line class="st7" x1="367.96" y1="153.41" x2="486.09" y2="153.41"/>
+        <line class="st7" x1="367.96" y1="147.51" x2="486.09" y2="147.51"/>
+        <line class="st7" x1="367.96" y1="141.62" x2="486.09" y2="141.62"/>
+        <line class="st7" x1="373.33" y1="164" x2="373.33" y2="136.28"/>
+        <line class="st7" x1="394.81" y1="164" x2="394.81" y2="136.28"/>
+        <line class="st7" x1="416.29" y1="164" x2="416.29" y2="136.28"/>
+        <line class="st7" x1="437.77" y1="164" x2="437.77" y2="136.28"/>
+        <line class="st7" x1="459.25" y1="164" x2="459.25" y2="136.28"/>
+        <line class="st7" x1="480.72" y1="164" x2="480.72" y2="136.28"/>
+        <circle class="st10" cx="373.33" cy="148.13" r="1.57"/>
+        <circle class="st10" cx="373.33" cy="151.3" r="1.57"/>
+        <circle class="st10" cx="373.33" cy="143.93" r="1.57"/>
+        <circle class="st10" cx="373.33" cy="144.94" r="1.57"/>
+        <circle class="st10" cx="373.33" cy="143.84" r="1.57"/>
+        <circle class="st10" cx="394.81" cy="149.14" r="1.57"/>
+        <circle class="st10" cx="394.81" cy="154.21" r="1.57"/>
+        <circle class="st10" cx="394.81" cy="147.78" r="1.57"/>
+        <circle class="st10" cx="394.81" cy="146.1" r="1.57"/>
+        <circle class="st10" cx="394.81" cy="150.43" r="1.57"/>
+        <circle class="st10" cx="416.29" cy="143.06" r="1.57"/>
+        <circle class="st10" cx="416.29" cy="147.95" r="1.57"/>
+        <circle class="st10" cx="416.29" cy="153.99" r="1.57"/>
+        <circle class="st10" cx="416.29" cy="153.67" r="1.57"/>
+        <circle class="st10" cx="416.29" cy="148.91" r="1.57"/>
+        <circle class="st10" cx="437.77" cy="152.07" r="1.57"/>
+        <circle class="st10" cx="437.77" cy="153.16" r="1.57"/>
+        <circle class="st10" cx="437.77" cy="153.56" r="1.57"/>
+        <circle class="st10" cx="437.77" cy="156.49" r="1.57"/>
+        <circle class="st10" cx="437.77" cy="147.76" r="1.57"/>
+        <circle class="st10" cx="459.25" cy="157.79" r="1.57"/>
+        <circle class="st10" cx="459.25" cy="156.58" r="1.57"/>
+        <circle class="st10" cx="459.25" cy="148.56" r="1.57"/>
+        <circle class="st10" cx="459.25" cy="162.74" r="1.57"/>
+        <circle class="st10" cx="459.25" cy="143.5" r="1.57"/>
+        <circle class="st10" cx="480.72" cy="141.89" r="1.57"/>
+        <circle class="st10" cx="480.72" cy="143.65" r="1.57"/>
+        <circle class="st10" cx="480.72" cy="147.09" r="1.57"/>
+        <circle class="st10" cx="480.72" cy="148.91" r="1.57"/>
+        <circle class="st10" cx="480.72" cy="145.45" r="1.57"/>
+      </g>
+    </g>
+    <g class="st35">
+      <g>
+        <rect class="st17" x="367.96" y="168.41" width="118.13" height="27.72"/>
+        <line class="st3" x1="367.96" y1="189.35" x2="486.09" y2="189.35"/>
+        <line class="st3" x1="367.96" y1="179.95" x2="486.09" y2="179.95"/>
+        <line class="st3" x1="367.96" y1="170.56" x2="486.09" y2="170.56"/>
+        <line class="st3" x1="384.07" y1="196.13" x2="384.07" y2="168.41"/>
+        <line class="st3" x1="405.55" y1="196.13" x2="405.55" y2="168.41"/>
+        <line class="st3" x1="427.02" y1="196.13" x2="427.02" y2="168.41"/>
+        <line class="st3" x1="448.51" y1="196.13" x2="448.51" y2="168.41"/>
+        <line class="st3" x1="469.98" y1="196.13" x2="469.98" y2="168.41"/>
+        <line class="st7" x1="367.96" y1="194.04" x2="486.09" y2="194.04"/>
+        <line class="st7" x1="367.96" y1="184.65" x2="486.09" y2="184.65"/>
+        <line class="st7" x1="367.96" y1="175.26" x2="486.09" y2="175.26"/>
+        <line class="st7" x1="373.33" y1="196.13" x2="373.33" y2="168.41"/>
+        <line class="st7" x1="394.81" y1="196.13" x2="394.81" y2="168.41"/>
+        <line class="st7" x1="416.29" y1="196.13" x2="416.29" y2="168.41"/>
+        <line class="st7" x1="437.77" y1="196.13" x2="437.77" y2="168.41"/>
+        <line class="st7" x1="459.25" y1="196.13" x2="459.25" y2="168.41"/>
+        <line class="st7" x1="480.72" y1="196.13" x2="480.72" y2="168.41"/>
+        <circle class="st6" cx="373.33" cy="176.75" r="1.57"/>
+        <circle class="st6" cx="373.33" cy="173.16" r="1.57"/>
+        <circle class="st6" cx="373.33" cy="171.31" r="1.57"/>
+        <circle class="st6" cx="373.33" cy="170.42" r="1.57"/>
+        <circle class="st6" cx="373.33" cy="178.85" r="1.57"/>
+        <circle class="st6" cx="394.81" cy="181.04" r="1.57"/>
+        <circle class="st6" cx="394.81" cy="181.95" r="1.57"/>
+        <circle class="st6" cx="394.81" cy="186.96" r="1.57"/>
+        <circle class="st6" cx="394.81" cy="184.14" r="1.57"/>
+        <circle class="st6" cx="394.81" cy="178.17" r="1.57"/>
+        <circle class="st6" cx="416.29" cy="182.1" r="1.57"/>
+        <circle class="st6" cx="416.29" cy="185.63" r="1.57"/>
+        <circle class="st6" cx="416.29" cy="189.98" r="1.57"/>
+        <circle class="st6" cx="416.29" cy="190.81" r="1.57"/>
+        <circle class="st6" cx="416.29" cy="185.75" r="1.57"/>
+        <circle class="st6" cx="437.77" cy="182.98" r="1.57"/>
+        <circle class="st6" cx="437.77" cy="189.92" r="1.57"/>
+        <circle class="st6" cx="437.77" cy="180.12" r="1.57"/>
+        <circle class="st6" cx="437.77" cy="191.38" r="1.57"/>
+        <circle class="st6" cx="437.77" cy="183.95" r="1.57"/>
+        <circle class="st6" cx="459.25" cy="175.73" r="1.57"/>
+        <circle class="st6" cx="459.25" cy="180.86" r="1.57"/>
+        <circle class="st6" cx="459.25" cy="175.82" r="1.57"/>
+        <circle class="st6" cx="459.25" cy="172.71" r="1.57"/>
+        <circle class="st6" cx="459.25" cy="179.47" r="1.57"/>
+        <circle class="st6" cx="480.72" cy="176.54" r="1.57"/>
+        <circle class="st6" cx="480.72" cy="177.98" r="1.57"/>
+        <circle class="st6" cx="480.72" cy="170.34" r="1.57"/>
+        <circle class="st6" cx="480.72" cy="170.44" r="1.57"/>
+        <circle class="st6" cx="480.72" cy="169.67" r="1.57"/>
+      </g>
+    </g>
+    <g class="st36">
+      <g>
+        <rect class="st17" x="367.96" y="200.54" width="118.13" height="27.72"/>
+        <line class="st3" x1="367.96" y1="222.83" x2="486.09" y2="222.83"/>
+        <line class="st3" x1="367.96" y1="212.72" x2="486.09" y2="212.72"/>
+        <line class="st3" x1="367.96" y1="202.61" x2="486.09" y2="202.61"/>
+        <line class="st3" x1="384.07" y1="228.26" x2="384.07" y2="200.54"/>
+        <line class="st3" x1="405.55" y1="228.26" x2="405.55" y2="200.54"/>
+        <line class="st3" x1="427.02" y1="228.26" x2="427.02" y2="200.54"/>
+        <line class="st3" x1="448.51" y1="228.26" x2="448.51" y2="200.54"/>
+        <line class="st3" x1="469.98" y1="228.26" x2="469.98" y2="200.54"/>
+        <line class="st7" x1="367.96" y1="227.89" x2="486.09" y2="227.89"/>
+        <line class="st7" x1="367.96" y1="217.78" x2="486.09" y2="217.78"/>
+        <line class="st7" x1="367.96" y1="207.67" x2="486.09" y2="207.67"/>
+        <line class="st7" x1="373.33" y1="228.26" x2="373.33" y2="200.54"/>
+        <line class="st7" x1="394.81" y1="228.26" x2="394.81" y2="200.54"/>
+        <line class="st7" x1="416.29" y1="228.26" x2="416.29" y2="200.54"/>
+        <line class="st7" x1="437.77" y1="228.26" x2="437.77" y2="200.54"/>
+        <line class="st7" x1="459.25" y1="228.26" x2="459.25" y2="200.54"/>
+        <line class="st7" x1="480.72" y1="228.26" x2="480.72" y2="200.54"/>
+        <circle class="st4" cx="373.33" cy="225.1" r="1.57"/>
+        <circle class="st4" cx="373.33" cy="222.87" r="1.57"/>
+        <circle class="st4" cx="373.33" cy="226.43" r="1.57"/>
+        <circle class="st4" cx="373.33" cy="223.44" r="1.57"/>
+        <circle class="st4" cx="373.33" cy="225.71" r="1.57"/>
+        <circle class="st4" cx="394.81" cy="223.11" r="1.57"/>
+        <circle class="st4" cx="394.81" cy="224.33" r="1.57"/>
+        <circle class="st4" cx="394.81" cy="225.87" r="1.57"/>
+        <circle class="st4" cx="394.81" cy="223.33" r="1.57"/>
+        <circle class="st4" cx="394.81" cy="223.78" r="1.57"/>
+        <circle class="st4" cx="416.29" cy="222.95" r="1.57"/>
+        <circle class="st4" cx="416.29" cy="224.12" r="1.57"/>
+        <circle class="st4" cx="416.29" cy="222.96" r="1.57"/>
+        <circle class="st4" cx="416.29" cy="224.97" r="1.57"/>
+        <circle class="st4" cx="416.29" cy="223.54" r="1.57"/>
+        <circle class="st4" cx="437.77" cy="220.15" r="1.57"/>
+        <circle class="st4" cx="437.77" cy="225.52" r="1.57"/>
+        <circle class="st4" cx="437.77" cy="223.65" r="1.57"/>
+        <circle class="st4" cx="437.77" cy="223.65" r="1.57"/>
+        <circle class="st4" cx="437.77" cy="223.7" r="1.57"/>
+        <circle class="st4" cx="459.25" cy="227" r="1.57"/>
+        <circle class="st4" cx="459.25" cy="223.86" r="1.57"/>
+        <circle class="st4" cx="459.25" cy="223.83" r="1.57"/>
+        <circle class="st4" cx="459.25" cy="220.4" r="1.57"/>
+        <circle class="st4" cx="459.25" cy="222.49" r="1.57"/>
+        <circle class="st4" cx="480.72" cy="225.2" r="1.57"/>
+        <circle class="st4" cx="480.72" cy="215.46" r="1.57"/>
+        <circle class="st4" cx="480.72" cy="217.77" r="1.57"/>
+        <circle class="st4" cx="480.72" cy="224.08" r="1.57"/>
+        <circle class="st4" cx="480.72" cy="221.22" r="1.57"/>
+      </g>
+    </g>
+    <g class="st37">
+      <g>
+        <rect class="st16" x="245.42" y="26.28" width="118.13" height="13.61"/>
+        <text class="st47" transform="translate(285.6 35.62)"><tspan x="0" y="0">Before RUV</tspan></text>
+      </g>
+    </g>
+    <g class="st33">
+      <g>
+        <rect class="st16" x="367.96" y="26.28" width="118.13" height="13.61"/>
+        <text class="st47" transform="translate(411.09 35.62)"><tspan x="0" y="0">After RUV</tspan></text>
+      </g>
+    </g>
+    <g class="st34">
+      <g>
+        <rect class="st16" x="486.09" y="39.9" width="13.61" height="27.72"/>
+        <text class="st47" transform="translate(490.36 41.74) rotate(90)"><tspan x="0" y="0">Sh2d3c</tspan></text>
+      </g>
+    </g>
+    <g class="st28">
+      <g>
+        <rect class="st16" x="486.09" y="72.02" width="13.61" height="27.72"/>
+        <text class="st47" transform="translate(490.36 73.09) rotate(90)"><tspan x="0" y="0">Slco4a1</tspan></text>
+      </g>
+    </g>
+    <g class="st29">
+      <g>
+        <rect class="st16" x="486.09" y="104.15" width="13.61" height="27.72"/>
+        <text class="st47" transform="translate(490.36 110.73) rotate(90)"><tspan x="0" y="0">Ksr2</tspan></text>
+      </g>
+    </g>
+    <g class="st30">
+      <g>
+        <rect class="st16" x="486.09" y="136.28" width="13.61" height="27.72"/>
+        <text class="st47" transform="translate(490.36 141.29) rotate(90)"><tspan x="0" y="0">Espl1</tspan></text>
+      </g>
+    </g>
+    <g class="st32">
+      <g>
+        <rect class="st16" x="486.09" y="168.41" width="13.61" height="27.72"/>
+        <text class="st47" transform="translate(490.37 173.42) rotate(90)"><tspan x="0" y="0">Clock</tspan></text>
+      </g>
+    </g>
+    <g class="st31">
+      <g>
+        <rect class="st16" x="486.09" y="200.54" width="13.61" height="27.72"/>
+        <text class="st47" transform="translate(490.36 205.15) rotate(90)"><tspan x="0" y="0">Rplp0</tspan></text>
+      </g>
+    </g>
+    <g class="st39">
+      <g>
+        <line class="st2" x1="250.79" y1="230.46" x2="250.79" y2="228.26"/>
+        <line class="st2" x1="272.26" y1="230.46" x2="272.26" y2="228.26"/>
+        <line class="st2" x1="293.75" y1="230.46" x2="293.75" y2="228.26"/>
+        <line class="st2" x1="315.22" y1="230.46" x2="315.22" y2="228.26"/>
+        <line class="st2" x1="336.71" y1="230.46" x2="336.71" y2="228.26"/>
+        <line class="st2" x1="358.18" y1="230.46" x2="358.18" y2="228.26"/>
+        <text class="st48" transform="translate(248.82 237.3)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st48" transform="translate(270.29 237.3)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st48" transform="translate(291.78 237.3)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st48" transform="translate(311.28 237.3)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st48" transform="translate(332.77 237.3)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st48" transform="translate(354.24 237.3)"><tspan x="0" y="0">20</tspan></text>
+        <line class="st2" x1="373.33" y1="230.46" x2="373.33" y2="228.26"/>
+        <line class="st2" x1="394.81" y1="230.46" x2="394.81" y2="228.26"/>
+        <line class="st2" x1="416.29" y1="230.46" x2="416.29" y2="228.26"/>
+        <line class="st2" x1="437.77" y1="230.46" x2="437.77" y2="228.26"/>
+        <line class="st2" x1="459.25" y1="230.46" x2="459.25" y2="228.26"/>
+        <line class="st2" x1="480.72" y1="230.46" x2="480.72" y2="228.26"/>
+        <text class="st48" transform="translate(371.36 237.3)"><tspan x="0" y="0">0</tspan></text>
+        <text class="st48" transform="translate(392.84 237.3)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st48" transform="translate(414.32 237.3)"><tspan x="0" y="0">8</tspan></text>
+        <text class="st48" transform="translate(433.83 237.3)"><tspan x="0" y="0">12</tspan></text>
+        <text class="st48" transform="translate(455.31 237.3)"><tspan x="0" y="0">16</tspan></text>
+        <text class="st48" transform="translate(476.79 237.3)"><tspan x="0" y="0">20</tspan></text>
+        <text class="st48" transform="translate(231.61 65.99)"><tspan x="0" y="0">1.5</tspan></text>
+        <text class="st48" transform="translate(231.61 60.3)"><tspan x="0" y="0">2.0</tspan></text>
+        <text class="st48" transform="translate(231.61 54.61)"><tspan x="0" y="0">2.5</tspan></text>
+        <text class="st48" transform="translate(231.61 48.92)"><tspan x="0" y="0">3.0</tspan></text>
+        <text class="st48" transform="translate(231.61 43.24)"><tspan x="0" y="0">3.5</tspan></text>
+        <line class="st2" x1="243.22" y1="63.46" x2="245.42" y2="63.46"/>
+        <line class="st2" x1="243.22" y1="57.77" x2="245.42" y2="57.77"/>
+        <line class="st2" x1="243.22" y1="52.08" x2="245.42" y2="52.08"/>
+        <line class="st2" x1="243.22" y1="46.39" x2="245.42" y2="46.39"/>
+        <line class="st2" x1="243.22" y1="40.7" x2="245.42" y2="40.7"/>
+        <text class="st48" transform="translate(237.52 101.14)"><tspan x="0" y="0">3</tspan></text>
+        <text class="st48" transform="translate(237.52 92.04)"><tspan x="0" y="0">4</tspan></text>
+        <text class="st48" transform="translate(237.52 82.94)"><tspan x="0" y="0">5</tspan></text>
+        <line class="st2" x1="243.22" y1="98.6" x2="245.42" y2="98.6"/>
+        <line class="st2" x1="243.22" y1="89.5" x2="245.42" y2="89.5"/>
+        <line class="st2" x1="243.22" y1="80.41" x2="245.42" y2="80.41"/>
+        <text class="st48" transform="translate(231.61 127.98)"><tspan x="0" y="0">4.0</tspan></text>
+        <text class="st48" transform="translate(231.61 120.66)"><tspan x="0" y="0">4.5</tspan></text>
+        <text class="st48" transform="translate(231.61 113.33)"><tspan x="0" y="0">5.0</tspan></text>
+        <line class="st2" x1="243.22" y1="125.44" x2="245.42" y2="125.44"/>
+        <line class="st2" x1="243.22" y1="118.12" x2="245.42" y2="118.12"/>
+        <line class="st2" x1="243.22" y1="110.8" x2="245.42" y2="110.8"/>
+        <text class="st48" transform="translate(229.25 161.84)"><tspan x="0" y="0">-1.5</tspan></text>
+        <text class="st48" transform="translate(229.25 155.95)"><tspan x="0" y="0">-1.0</tspan></text>
+        <text class="st48" transform="translate(229.25 150.05)"><tspan x="0" y="0">-0.5</tspan></text>
+        <text class="st48" transform="translate(231.61 144.15)"><tspan x="0" y="0">0.0</tspan></text>
+        <line class="st2" x1="243.22" y1="159.3" x2="245.42" y2="159.3"/>
+        <line class="st2" x1="243.22" y1="153.41" x2="245.42" y2="153.41"/>
+        <line class="st2" x1="243.22" y1="147.51" x2="245.42" y2="147.51"/>
+        <line class="st2" x1="243.22" y1="141.62" x2="245.42" y2="141.62"/>
+        <text class="st48" transform="translate(231.61 196.57)"><tspan x="0" y="0">6.0</tspan></text>
+        <text class="st48" transform="translate(231.61 187.18)"><tspan x="0" y="0">6.5</tspan></text>
+        <text class="st48" transform="translate(231.61 177.79)"><tspan x="0" y="0">7.0</tspan></text>
+        <line class="st2" x1="243.22" y1="194.04" x2="245.42" y2="194.04"/>
+        <line class="st2" x1="243.22" y1="184.65" x2="245.42" y2="184.65"/>
+        <line class="st2" x1="243.22" y1="175.26" x2="245.42" y2="175.26"/>
+        <text class="st48" transform="translate(231.61 230.42)"><tspan x="0" y="0">7.5</tspan></text>
+        <text class="st48" transform="translate(231.61 220.32)"><tspan x="0" y="0">8.0</tspan></text>
+        <text class="st48" transform="translate(231.61 210.2)"><tspan x="0" y="0">8.5</tspan></text>
+        <line class="st2" x1="243.22" y1="227.89" x2="245.42" y2="227.89"/>
+        <line class="st2" x1="243.22" y1="217.78" x2="245.42" y2="217.78"/>
+        <line class="st2" x1="243.22" y1="207.67" x2="245.42" y2="207.67"/>
+        <text class="st20" transform="translate(330.83 247.33)"><tspan x="0" y="0">Zeitgeber</tspan><tspan class="st46" x="37.39" y="0"> </tspan><tspan x="39.86" y="0">time</tspan><tspan class="st46" x="56.58" y="0"> </tspan><tspan x="59.05" y="0">(h)</tspan></text>
+        <text class="st20" transform="translate(225.2 166.05) rotate(-90)"><tspan x="0" y="0">Expression (log)</tspan></text>
+      </g>
+    </g>
+  </g>
+  <g class="st38">
+    <polygon class="st12" points="170.47 121.58 170.46 121.43 170.46 121.28 170.46 121.13 170.45 120.97 170.45 120.82 170.44 120.67 170.44 120.52 170.43 120.36 170.42 120.21 170.42 120.05 170.42 119.9 170.41 119.76 170.41 119.6 170.4 119.45 170.39 119.29 170.38 119.14 170.37 118.99 170.36 118.84 170.35 118.68 170.35 118.53 170.34 118.37 170.33 118.23 170.32 118.07 170.31 117.92 170.3 117.77 170.28 117.61 170.28 117.47 170.27 117.31 170.25 117.16 170.24 117 170.23 116.85 170.21 116.7 170.21 116.55 170.19 116.4 170.17 116.24 170.16 116.09 170.14 115.94 170.14 115.79 170.12 115.64 170.1 115.48 170.08 115.33 170.07 115.17 170.06 115.03 170.04 114.88 170.02 114.72 170 114.57 169.99 114.42 169.97 114.27 169.95 114.12 169.94 113.96 169.91 113.81 169.89 113.66 169.87 113.5 169.86 113.36 169.84 113.21 169.81 113.05 169.8 112.9 169.77 112.75 169.75 112.6 169.73 112.45 169.71 112.3 169.68 112.15 169.66 111.99 169.64 111.84 169.62 111.7 169.59 111.54 169.57 111.39 169.54 111.24 169.52 111.09 169.5 110.93 169.47 110.79 169.45 110.64 169.42 110.49 169.39 110.33 169.37 110.18 169.34 110.03 169.31 109.89 169.29 109.74 169.26 109.58 169.23 109.43 169.2 109.28 169.17 109.13 169.15 108.98 169.11 108.83 169.09 108.68 169.05 108.53 169.03 108.38 168.99 108.23 168.96 108.08 168.93 107.94 168.9 107.79 168.87 107.63 168.84 107.48 168.81 107.33 168.77 107.18 168.74 107.04 168.71 106.89 168.68 106.74 168.64 106.59 168.61 106.44 168.57 106.29 168.54 106.14 168.5 105.99 168.47 105.85 168.43 105.7 168.4 105.55 168.35 105.4 168.32 105.25 168.28 105.1 168.25 104.95 168.2 104.81 168.17 104.66 168.13 104.51 168.09 104.36 168.06 104.21 168.01 104.06 167.98 103.91 167.93 103.77 167.9 103.63 167.85 103.48 167.81 103.33 167.78 103.18 167.73 103.03 167.69 102.88 167.64 102.74 167.61 102.59 167.57 102.45 167.52 102.3 167.48 102.15 167.43 102.01 167.39 101.86 167.35 101.71 167.3 101.57 167.26 101.42 167.21 101.27 167.16 101.12 167.12 100.99 167.08 100.84 167.03 100.69 166.98 100.55 166.94 100.4 166.88 100.25 166.84 100.11 166.8 99.96 166.74 99.82 166.69 99.67 166.65 99.53 166.6 99.39 166.55 99.24 166.5 99.1 166.45 98.95 166.4 98.81 166.35 98.66 166.3 98.52 166.25 98.37 166.19 98.23 166.14 98.08 166.09 97.94 166.04 97.79 165.98 97.65 165.93 97.51 165.88 97.37 165.83 97.23 165.77 97.08 165.72 96.94 165.66 96.8 165.61 96.65 165.55 96.51 165.5 96.37 165.44 96.23 165.39 96.08 165.33 95.94 165.28 95.8 165.21 95.66 165.16 95.51 165.1 95.37 165.05 95.23 164.99 95.09 164.93 94.95 164.87 94.8 164.81 94.66 164.75 94.52 164.69 94.38 164.64 94.24 164.58 94.1 164.51 93.96 164.45 93.82 164.39 93.68 164.33 93.54 164.27 93.4 164.21 93.27 164.15 93.13 164.09 92.99 164.02 92.85 163.95 92.71 163.89 92.57 163.83 92.43 163.76 92.29 163.7 92.15 163.64 92.01 163.57 91.87 163.51 91.74 163.44 91.6 163.38 91.46 163.31 91.32 163.25 91.18 163.18 91.04 163.11 90.9 163.05 90.76 162.98 90.63 162.91 90.49 162.84 90.35 162.77 90.22 162.7 90.08 162.63 89.95 162.56 89.81 162.49 89.67 162.42 89.54 162.35 89.4 162.28 89.27 162.22 89.13 162.15 89 162.08 88.86 162.01 88.73 161.94 88.59 161.86 88.46 161.79 88.32 161.72 88.19 161.64 88.05 161.57 87.91 161.5 87.78 161.42 87.65 161.35 87.51 161.27 87.38 161.2 87.25 161.12 87.12 161.05 86.98 160.97 86.85 160.89 86.72 160.82 86.59 160.75 86.45 160.67 86.31 160.6 86.18 160.52 86.05 160.44 85.92 160.36 85.79 160.28 85.66 160.2 85.53 160.13 85.4 160.05 85.27 159.97 85.13 159.89 85 159.81 84.87 159.73 84.74 159.65 84.61 159.57 84.48 159.5 84.35 159.41 84.22 159.33 84.09 159.25 83.96 159.16 83.83 159.09 83.7 159.01 83.58 158.92 83.45 158.84 83.32 158.75 83.18 158.67 83.06 158.59 82.93 158.51 82.81 158.42 82.68 158.33 82.55 158.25 82.42 158.17 82.29 158.08 82.17 157.99 82.04 157.91 81.92 157.83 81.79 157.74 81.66 157.65 81.53 157.56 81.41 157.48 81.29 157.39 81.16 157.3 81.03 157.21 80.91 157.13 80.78 157.04 80.66 156.95 80.54 156.86 80.4 156.78 80.28 156.68 80.16 156.59 80.04 156.51 79.91 156.42 79.79 156.32 79.67 156.23 79.54 156.14 79.42 156.05 79.29 155.96 79.17 155.87 79.05 155.78 78.93 155.68 78.8 155.6 78.68 155.5 78.57 155.4 78.45 155.32 78.32 155.22 78.2 155.12 78.08 155.04 77.96 154.94 77.84 154.84 77.72 154.75 77.6 154.65 77.48 154.56 77.36 154.46 77.24 154.37 77.12 154.28 77 154.18 76.88 154.08 76.77 153.98 76.64 153.88 76.53 153.79 76.41 153.69 76.3 153.59 76.17 153.5 76.06 153.4 75.94 153.3 75.82 153.2 75.7 153.1 75.59 153 75.47 152.9 75.36 152.81 75.24 152.7 75.12 152.61 75.01 152.5 74.9 152.41 74.77 152.3 74.66 152.2 74.55 152.1 74.43 151.99 74.32 151.9 74.21 151.79 74.09 151.69 73.98 151.59 73.86 151.49 73.75 151.38 73.64 151.28 73.52 151.18 73.41 151.08 73.3 150.97 73.19 150.87 73.08 150.76 72.96 150.66 72.85 150.55 72.75 150.45 72.63 150.34 72.52 150.24 72.41 150.13 72.3 150.03 72.19 149.91 72.08 149.81 71.97 149.7 71.86 149.6 71.75 149.49 71.64 149.38 71.53 149.28 71.43 149.17 71.31 149.06 71.21 148.95 71.1 148.85 70.99 148.73 70.88 148.63 70.78 148.51 70.67 148.41 70.56 148.3 70.45 148.18 70.35 148.08 70.24 147.96 70.14 147.86 70.04 147.75 69.93 147.63 69.83 147.53 69.72 147.41 69.62 147.3 69.51 147.19 69.41 147.07 69.3 146.97 69.2 146.85 69.09 146.74 68.99 146.63 68.89 146.51 68.78 146.4 68.68 146.29 68.58 146.17 68.48 146.06 68.37 145.94 68.27 145.83 68.17 145.72 68.07 145.6 67.97 145.48 67.87 145.37 67.77 145.25 67.67 145.14 67.57 145.03 67.46 144.9 67.37 144.79 67.27 144.68 67.17 144.55 67.07 144.44 66.98 144.32 66.88 144.2 66.77 144.09 66.68 143.97 66.58 143.85 66.49 143.73 66.39 143.62 66.29 143.5 66.2 143.37 66.1 143.26 66 143.14 65.91 143.02 65.81 142.9 65.72 142.78 65.62 142.66 65.52 142.54 65.44 142.42 65.34 142.3 65.24 142.18 65.15 142.05 65.06 141.94 64.96 141.82 64.87 141.7 64.78 141.57 64.68 141.45 64.6 141.33 64.5 141.21 64.41 141.08 64.32 140.96 64.23 140.84 64.13 140.72 64.05 140.59 63.96 140.47 63.86 140.34 63.78 140.22 63.69 140.1 63.59 139.97 63.5 139.85 63.42 139.72 63.33 139.6 63.24 139.47 63.15 139.35 63.07 139.22 62.98 139.1 62.89 138.97 62.8 138.85 62.72 138.72 62.63 138.59 62.54 138.47 62.46 138.34 62.37 138.22 62.29 138.08 62.2 137.96 62.11 137.83 62.04 137.71 61.95 137.58 61.86 137.45 61.78 137.32 61.69 137.19 61.62 137.06 61.53 136.94 61.45 136.81 61.36 136.68 61.28 136.55 61.2 136.42 61.12 136.29 61.04 136.16 60.95 136.03 60.87 135.9 60.79 135.77 60.72 135.65 60.64 135.51 60.56 135.38 60.47 135.25 60.39 135.12 60.31 134.99 60.23 134.86 60.16 134.73 60.08 134.6 60.01 134.46 59.93 134.33 59.85 134.19 59.77 134.06 59.69 133.93 59.61 133.8 59.54 133.67 59.46 133.54 59.39 133.4 59.32 133.27 59.24 133.14 59.17 133 59.09 132.87 59.02 132.73 58.94 132.6 58.87 132.46 58.79 132.33 58.72 132.2 58.65 132.06 58.57 131.93 58.5 131.8 58.43 131.66 58.36 131.53 58.28 131.39 58.21 131.26 58.14 131.12 58.07 130.99 58 130.85 57.93 130.71 57.86 130.57 57.8 130.43 57.73 130.3 57.66 130.16 57.59 130.02 57.52 129.89 57.45 129.75 57.38 129.61 57.31 129.48 57.25 129.34 57.18 129.2 57.12 129.06 57.05 128.93 56.98 128.79 56.92 128.65 56.85 128.51 56.79 128.37 56.73 128.24 56.66 128.1 56.6 127.96 56.53 127.82 56.47 127.68 56.4 127.54 56.34 127.4 56.28 127.26 56.21 127.12 56.15 126.98 56.09 126.84 56.03 126.7 55.97 126.56 55.91 126.42 55.85 126.28 55.78 126.14 55.72 126 55.67 125.86 55.61 125.72 55.55 125.58 55.49 125.43 55.43 125.29 55.37 125.15 55.31 125.01 55.26 124.87 55.2 124.73 55.14 124.59 55.08 124.45 55.02 124.31 54.97 124.17 54.92 124.02 54.86 123.88 54.8 123.74 54.75 123.59 54.69 123.45 54.64 123.31 54.59 123.16 54.53 123.02 54.48 122.87 54.42 122.73 54.37 122.59 54.32 122.44 54.26 122.3 54.21 122.15 54.16 122.02 54.11 121.87 54.06 121.73 54.01 121.58 53.96 121.44 53.9 121.29 53.86 121.15 53.81 121 53.76 120.86 53.71 120.71 53.66 120.57 53.61 120.42 53.56 120.28 53.51 120.14 53.47 119.99 53.42 119.85 53.37 119.7 53.33 119.55 53.28 119.41 53.23 119.26 53.19 119.11 53.14 118.96 53.1 118.82 53.06 118.68 53.01 118.53 52.96 118.39 52.92 118.24 52.87 118.09 52.83 117.94 52.79 117.79 52.75 117.65 52.71 117.5 52.66 117.36 52.62 117.21 52.58 117.06 52.54 116.91 52.5 116.77 52.45 116.62 52.42 116.47 52.37 116.32 52.34 116.17 52.3 116.03 52.26 115.88 52.22 115.73 52.18 115.58 52.15 115.43 52.1 115.28 52.07 115.14 52.03 114.99 52 114.85 51.95 114.7 51.92 114.55 51.88 114.4 51.85 114.25 51.81 114.1 51.78 113.95 51.74 113.8 51.71 113.65 51.68 113.5 51.64 113.35 51.61 113.2 51.58 113.05 51.54 112.9 51.51 112.76 51.48 112.61 51.45 112.46 51.41 112.31 51.39 112.15 51.35 112 51.33 111.86 51.29 111.71 51.26 111.56 51.24 111.41 51.2 111.26 51.18 111.1 51.15 110.96 51.12 110.81 51.09 110.66 51.06 110.51 51.04 110.35 51.01 110.2 50.98 110.05 50.96 109.91 50.93 109.76 50.91 109.6 50.88 109.45 50.85 109.3 50.83 109.15 50.8 109 50.77 108.85 50.76 108.7 50.73 108.54 50.7 108.39 50.69 108.24 50.66 108.1 50.64 107.94 50.62 107.79 50.6 107.64 50.57 107.48 50.56 107.34 50.53 107.19 50.51 107.03 50.49 106.88 50.47 106.73 50.45 106.58 50.43 106.43 50.42 106.28 50.4 106.12 50.38 105.97 50.35 105.81 50.34 105.67 50.32 105.52 50.31 105.36 50.29 105.21 50.28 105.06 50.26 104.91 50.24 104.76 50.22 104.6 50.21 104.45 50.2 104.3 50.18 104.14 50.17 104 50.15 103.84 50.14 103.69 50.13 103.53 50.12 103.38 50.1 103.24 50.09 103.08 50.08 102.93 50.07 102.77 50.06 102.62 50.05 102.47 50.03 102.32 50.02 102.17 50.01 102.01 50.01 101.86 50 101.71 49.99 101.56 49.98 101.4 49.97 101.25 49.96 101.09 49.95 100.94 49.94 100.79 49.94 100.64 49.94 100.48 49.93 100.33 49.92 100.18 49.92 100.03 49.91 99.88 49.9 99.72 49.9 99.57 49.89 99.41 49.89 99.27 49.88 99.11 49.88 98.96 49.88 98.8 49.87 98.65 49.87 98.5 49.87 98.35 49.87 98.19 49.87 98.04 49.87 97.88 49.87 97.74 49.87 97.58 49.87 97.43 49.87 97.27 49.87 97.12 49.87 96.97 49.87 96.82 49.87 96.66 49.87 96.51 49.87 96.35 49.87 96.21 49.87 96.05 49.87 95.9 49.88 95.74 49.88 95.59 49.89 95.45 49.89 95.29 49.9 95.14 49.9 94.98 49.91 94.83 49.91 94.68 49.92 94.53 49.93 94.37 49.93 94.22 49.94 94.06 49.94 93.92 49.95 93.76 49.96 93.61 49.97 93.45 49.97 93.3 49.98 93.15 49.99 93 50.01 92.85 50.01 92.69 50.02 92.54 50.03 92.39 50.04 92.24 50.05 92.08 50.07 91.93 50.08 91.77 50.08 91.62 50.1 91.48 50.11 91.32 50.13 91.17 50.14 91.01 50.15 90.86 50.16 90.72 50.18 90.56 50.19 90.41 50.21 90.25 50.22 90.1 50.24 89.95 50.25 89.8 50.27 89.65 50.28 89.49 50.3 89.34 50.32 89.19 50.34 89.04 50.35 88.89 50.37 88.74 50.39 88.58 50.41 88.43 50.42 88.28 50.44 88.13 50.47 87.98 50.49 87.82 50.5 87.67 50.52 87.52 50.55 87.37 50.56 87.22 50.59 87.07 50.61 86.92 50.63 86.76 50.65 86.61 50.68 86.47 50.7 86.31 50.72 86.16 50.75 86.01 50.77 85.86 50.79 85.71 50.82 85.56 50.84 85.41 50.87 85.26 50.9 85.1 50.92 84.95 50.95 84.81 50.98 84.66 51 84.5 51.03 84.35 51.05 84.2 51.08 84.05 51.11 83.9 51.14 83.75 51.17 83.6 51.19 83.45 51.22 83.3 51.26 83.15 51.28 83 51.32 82.86 51.34 82.7 51.38 82.55 51.4 82.4 51.44 82.25 51.47 82.1 51.5 81.96 51.54 81.81 51.57 81.66 51.6 81.51 51.63 81.36 51.67 81.21 51.7 81.05 51.74 80.91 51.77 80.76 51.81 80.61 51.84 80.46 51.88 80.31 51.91 80.16 51.95 80.01 51.98 79.87 52.02 79.72 52.06 79.58 52.09 79.43 52.13 79.28 52.17 79.13 52.21 78.98 52.24 78.83 52.29 78.69 52.32 78.54 52.37 78.39 52.4 78.24 52.44 78.09 52.49 77.95 52.52 77.8 52.57 77.65 52.61 77.5 52.65 77.36 52.69 77.22 52.73 77.07 52.78 76.92 52.82 76.77 52.86 76.62 52.91 76.48 52.95 76.33 53 76.18 53.04 76.04 53.08 75.9 53.13 75.75 53.17 75.6 53.22 75.46 53.27 75.31 53.31 75.16 53.35 75.02 53.41 74.87 53.45 74.72 53.5 74.58 53.55 74.44 53.6 74.3 53.64 74.15 53.69 74.01 53.74 73.86 53.79 73.71 53.84 73.57 53.89 73.42 53.94 73.28 53.99 73.13 54.04 72.99 54.1 72.84 54.14 72.71 54.19 72.57 54.25 72.42 54.3 72.28 54.35 72.13 54.4 71.99 54.46 71.85 54.52 71.7 54.57 71.56 54.62 71.41 54.67 71.27 54.73 71.13 54.79 70.99 54.84 70.84 54.89 70.7 54.95 70.56 55.01 70.41 55.07 70.27 55.12 70.13 55.18 69.99 55.23 69.85 55.29 69.71 55.36 69.57 55.41 69.43 55.47 69.29 55.53 69.15 55.58 69.01 55.64 68.87 55.71 68.73 55.77 68.58 55.83 68.44 55.89 68.3 55.95 68.16 56.01 68.02 56.07 67.88 56.13 67.74 56.2 67.6 56.26 67.46 56.32 67.33 56.39 67.19 56.45 67.05 56.51 66.91 56.57 66.77 56.64 66.63 56.7 66.49 56.76 66.35 56.83 66.22 56.89 66.08 56.96 65.94 57.03 65.8 57.1 65.67 57.17 65.53 57.23 65.39 57.3 65.25 57.37 65.12 57.43 64.98 57.5 64.84 57.57 64.71 57.64 64.57 57.71 64.43 57.78 64.29 57.84 64.15 57.91 64.02 57.98 63.88 58.05 63.75 58.13 63.61 58.2 63.48 58.27 63.34 58.34 63.21 58.41 63.08 58.48 62.94 58.56 62.81 58.63 62.67 58.7 62.54 58.77 62.41 58.84 62.27 58.91 62.13 58.99 62 59.06 61.86 59.14 61.73 59.21 61.6 59.29 61.47 59.37 61.34 59.44 61.2 59.52 61.07 59.6 60.94 59.67 60.81 59.74 60.67 59.82 60.54 59.9 60.41 59.98 60.28 60.05 60.15 60.13 60.01 60.21 59.89 60.29 59.76 60.37 59.63 60.44 59.49 60.53 59.36 60.61 59.23 60.69 59.1 60.77 58.97 60.85 58.84 60.93 58.71 61.01 58.59 61.09 58.45 61.17 58.32 61.26 58.19 61.34 58.07 61.41 57.94 61.5 57.81 61.58 57.68 61.67 57.55 61.75 57.42 61.83 57.3 61.92 57.17 62 57.04 62.09 56.92 62.18 56.78 62.25 56.66 62.34 56.53 62.43 56.41 62.52 56.28 62.6 56.15 62.69 56.03 62.77 55.9 62.86 55.78 62.94 55.66 63.03 55.53 63.12 55.4 63.21 55.28 63.3 55.15 63.39 55.03 63.48 54.9 63.57 54.78 63.65 54.66 63.75 54.53 63.84 54.41 63.92 54.28 64.01 54.16 64.11 54.04 64.19 53.92 64.29 53.79 64.38 53.67 64.47 53.55 64.56 53.43 64.66 53.3 64.75 53.18 64.84 53.06 64.93 52.94 65.03 52.82 65.12 52.7 65.21 52.58 65.31 52.46 65.4 52.33 65.5 52.22 65.59 52.1 65.68 51.98 65.78 51.86 65.87 51.74 65.97 51.62 66.07 51.5 66.16 51.38 66.26 51.27 66.35 51.14 66.45 51.03 66.55 50.91 66.65 50.8 66.75 50.67 66.84 50.56 66.94 50.45 67.04 50.32 67.14 50.21 67.24 50.1 67.33 49.97 67.44 49.86 67.53 49.75 67.64 49.62 67.74 49.51 67.83 49.4 67.94 49.28 68.03 49.17 68.14 49.06 68.24 48.94 68.34 48.83 68.44 48.71 68.55 48.6 68.65 48.49 68.75 48.37 68.85 48.26 68.95 48.15 69.06 48.03 69.16 47.92 69.27 47.81 69.37 47.7 69.48 47.59 69.58 47.47 69.69 47.36 69.79 47.25 69.9 47.14 70 47.03 70.11 46.92 70.21 46.81 70.31 46.69 70.42 46.59 70.52 46.48 70.64 46.37 70.74 46.26 70.85 46.15 70.95 46.05 71.07 45.93 71.17 45.83 71.28 45.72 71.39 45.61 71.5 45.51 71.61 45.4 71.71 45.29 71.83 45.18 71.93 45.08 72.05 44.97 72.15 44.87 72.26 44.76 72.37 44.65 72.48 44.54 72.6 44.44 72.7 44.33 72.82 44.23 72.93 44.12 73.04 44.02 73.15 43.92 73.26 43.82 73.37 43.71 73.49 43.61 73.6 43.5 73.72 43.41 73.83 43.3 73.94 43.2 74.06 43.09 74.17 43 74.28 42.89 74.4 42.8 74.51 42.69 74.63 42.59 74.74 42.49 74.85 42.38 74.97 42.29 75.09 42.19 75.2 42.09 75.32 41.99 75.43 41.89 75.55 41.79 75.67 41.69 75.78 41.6 75.9 41.49 76.02 41.4 76.14 41.3 76.25 41.2 76.37 41.11 76.49 41.01 76.61 40.91 76.72 40.81 76.85 40.71 76.96 40.62 77.08 40.53 77.2 40.43 77.32 40.34 77.44 40.24 77.55 40.15 77.68 40.05 77.8 39.95 77.92 39.87 78.04 39.77 78.16 39.67 78.28 39.59 78.4 39.49 78.52 39.39 78.65 39.31 78.77 39.21 78.89 39.12 79.01 39.03 79.14 38.94 79.26 38.84 79.38 38.76 79.5 38.67 79.63 38.57 79.75 38.49 79.87 38.4 79.99 38.3 80.12 38.21 80.25 38.13 80.37 38.04 80.49 37.95 80.61 37.86 80.74 37.77 80.87 37.68 80.99 37.59 81.11 37.51 81.24 37.42 81.37 37.34 81.5 37.25 81.62 37.17 81.74 37.08 81.87 36.99 82 36.9 82.13 36.82 82.25 36.74 82.38 36.65 82.5 36.57 82.63 36.48 82.76 36.4 82.89 36.32 83.02 36.23 83.15 36.15 83.27 36.06 83.4 35.98 83.53 35.9 83.66 35.82 83.79 35.74 83.92 35.65 84.05 35.57 84.18 35.5 84.3 35.42 84.43 35.33 84.57 35.25 84.7 35.17 84.83 35.09 84.96 35.01 85.09 34.94 85.22 34.86 85.35 34.78 85.48 34.7 85.62 34.62 85.75 34.54 85.88 34.46 86.01 34.39 86.14 34.31 86.27 34.24 86.4 34.16 86.54 34.09 86.67 34.01 86.8 33.93 86.94 33.86 87.07 33.78 87.21 33.71 87.34 33.63 87.47 33.56 87.61 33.48 87.74 33.41 87.87 33.34 88.01 33.27 88.14 33.2 88.27 33.13 88.41 33.05 88.54 32.98 88.68 32.91 88.81 32.84 88.95 32.77 89.09 32.7 89.23 32.63 89.36 32.56 89.5 32.49 89.63 32.42 89.77 32.35 89.9 32.28 90.04 32.21 90.18 32.14 90.31 32.08 90.45 32.01 90.59 31.94 90.72 31.87 90.86 31.81 91 31.74 91.13 31.67 91.27 31.6 91.41 31.54 91.55 31.47 91.69 31.41 91.82 31.34 91.96 31.28 92.1 31.21 92.24 31.15 92.38 31.09 92.52 31.03 92.66 30.96 92.8 30.9 92.93 30.84 93.07 30.77 93.21 30.71 93.35 30.65 93.49 30.59 93.63 30.53 93.77 30.47 93.91 30.41 94.06 30.35 94.2 30.28 94.34 30.22 94.48 30.17 94.62 30.11 94.76 30.05 94.9 29.99 95.04 29.93 95.19 29.87 95.33 29.82 95.47 29.76 95.61 29.71 95.75 29.65 95.9 29.59 96.04 29.53 96.18 29.48 96.32 29.42 96.46 29.37 96.6 29.31 96.74 29.26 96.89 29.2 97.03 29.15 97.17 29.1 97.32 29.04 97.46 28.99 97.61 28.94 97.75 28.89 97.89 28.83 98.04 28.78 98.18 28.73 98.33 28.68 98.47 28.63 98.62 28.58 98.76 28.53 98.9 28.47 99.04 28.43 99.19 28.38 99.33 28.33 99.48 28.28 99.62 28.23 99.77 28.19 99.92 28.13 100.06 28.09 100.21 28.04 100.36 27.99 100.5 27.95 100.64 27.9 100.78 27.85 100.93 27.81 101.08 27.77 101.23 27.71 101.37 27.67 101.52 27.63 101.67 27.58 101.81 27.54 101.96 27.5 102.1 27.45 102.25 27.41 102.39 27.36 102.54 27.33 102.69 27.29 102.84 27.24 102.99 27.2 103.14 27.15 103.28 27.12 103.42 27.08 103.57 27.04 103.72 27 103.87 26.95 104.02 26.92 104.17 26.87 104.32 26.84 104.46 26.8 104.6 26.76 104.75 26.73 104.9 26.69 105.05 26.65 105.2 26.61 105.35 26.58 105.5 26.54 105.65 26.51 105.79 26.47 105.94 26.44 106.09 26.4 106.24 26.37 106.39 26.33 106.54 26.3 106.69 26.26 106.83 26.23 106.98 26.19 107.13 26.17 107.29 26.13 107.44 26.1 107.59 26.07 107.73 26.04 107.88 26.01 108.03 25.97 108.18 25.94 108.33 25.91 108.48 25.89 108.64 25.85 108.78 25.83 108.93 25.8 109.08 25.76 109.23 25.74 109.38 25.71 109.54 25.69 109.68 25.65 109.83 25.62 109.98 25.6 110.13 25.57 110.29 25.55 110.44 25.52 110.58 25.49 110.73 25.48 110.89 25.45 111.04 25.42 111.19 25.4 111.34 25.37 111.49 25.35 111.64 25.33 111.79 25.3 111.94 25.28 112.1 25.26 112.25 25.24 112.39 25.21 112.55 25.2 112.7 25.17 112.85 25.15 113.01 25.13 113.16 25.11 113.3 25.09 113.46 25.07 113.61 25.06 113.76 25.03 113.92 25.01 114.06 24.99 114.21 24.98 114.37 24.96 114.52 24.94 114.68 24.92 114.83 24.91 114.97 24.89 115.13 24.88 115.28 24.86 115.43 24.85 115.59 24.83 115.73 24.82 115.89 24.8 116.04 24.79 116.19 24.78 116.35 24.76 116.5 24.75 116.65 24.73 116.8 24.72 116.96 24.71 117.11 24.7 117.26 24.69 117.41 24.67 117.56 24.66 117.72 24.65 117.87 24.65 118.03 24.64 118.17 24.63 118.33 24.62 118.48 24.6 118.63 24.59 118.79 24.59 118.93 24.58 119.09 24.58 119.24 24.57 119.4 24.56 119.55 24.55 119.7 24.55 119.85 24.54 120.01 24.53 120.16 24.53 120.32 24.52 120.46 24.51 120.62 24.51 120.77 24.51 120.93 24.51 121.08 24.51 121.22 24.5 121.38 24.5 121.53 24.5 121.69 24.49 121.84 24.49 121.99 24.49 122.14 24.49 122.3 24.49 122.45 24.49 122.61 24.48 122.75 24.48 122.91 24.48 123.06 24.49 123.22 24.49 123.37 24.49 123.52 24.49 123.67 24.49 123.83 24.49 123.98 24.5 124.14 24.5 124.28 24.5 124.44 24.51 124.59 24.51 124.75 24.51 124.9 24.51 125.05 24.52 125.2 24.52 125.36 24.53 125.51 24.54 125.67 24.54 125.81 24.55 125.96 24.56 126.12 24.57 126.27 24.57 126.43 24.58 126.58 24.58 126.73 24.59 126.88 24.6 127.04 24.61 127.19 24.62 127.34 24.63 127.49 24.64 127.65 24.65 127.8 24.66 127.95 24.67 128.11 24.68 128.25 24.7 128.41 24.71 128.56 24.72 128.72 24.73 128.87 24.74 129.01 24.76 129.17 24.77 129.32 24.79 129.48 24.79 129.63 24.81 129.78 24.83 129.93 24.84 130.08 24.86 130.24 24.87 130.39 24.89 130.54 24.91 130.69 24.92 130.84 24.93 131 24.95 131.15 24.97 131.3 24.99 131.45 25.01 131.6 25.03 131.76 25.05 131.91 25.06 132.06 25.08 132.21 25.11 132.36 25.13 132.51 25.14 132.67 25.16 132.82 25.19 132.97 25.2 133.12 25.23 133.27 25.25 133.42 25.27 133.57 25.29 133.73 25.32 133.88 25.34 134.02 25.36 134.18 25.39 134.33 25.41 134.48 25.44 134.63 25.47 134.79 25.48 134.93 25.51 135.08 25.54 135.23 25.56 135.39 25.59 135.54 25.62 135.69 25.64 135.83 25.68 135.98 25.7 136.14 25.73 136.29 25.76 136.44 25.78 136.59 25.82 136.73 25.84 136.89 25.87 137.04 25.9 137.19 25.93 137.34 25.97 137.49 25.99 137.64 26.03 137.78 26.05 137.93 26.09 138.09 26.12 138.24 26.15 138.39 26.18 138.54 26.22 138.68 26.25 138.83 26.29 138.98 26.32 139.13 26.35 139.28 26.39 139.43 26.42 139.58 26.45 139.72 26.49 139.87 26.53 140.02 26.57 140.17 26.6 140.32 26.64 140.47 26.67 140.62 26.72 140.77 26.75 140.91 26.79 141.06 26.83 141.21 26.87 141.36 26.9 141.51 26.94 141.66 26.98 141.81 27.02 141.95 27.07 142.09 27.1 142.24 27.15 142.39 27.19 142.54 27.22 142.69 27.27 142.84 27.31 142.98 27.36 143.13 27.4 143.27 27.44 143.42 27.48 143.57 27.52 143.71 27.57 143.86 27.61 144.01 27.66 144.15 27.71 144.3 27.75 144.45 27.79 144.59 27.84 144.73 27.89 144.88 27.93 145.03 27.98 145.17 28.03 145.32 28.07 145.47 28.12 145.61 28.17 145.76 28.21 145.9 28.26 146.05 28.31 146.19 28.36 146.33 28.41 146.48 28.46 146.62 28.51 146.77 28.56 146.91 28.61 147.06 28.66 147.2 28.71 147.35 28.76 147.49 28.82 147.64 28.87 147.78 28.92 147.93 28.97 148.07 29.03 148.21 29.08 148.35 29.13 148.49 29.18 148.64 29.24 148.78 29.3 148.92 29.35 149.07 29.4 149.21 29.46 149.35 29.51 149.49 29.57 149.64 29.63 149.78 29.68 149.92 29.74 150.06 29.79 150.21 29.86 150.35 29.92 150.49 29.97 150.63 30.03 150.77 30.09 150.92 30.14 151.06 30.21 151.2 30.27 151.34 30.33 151.48 30.39 151.62 30.45 151.76 30.5 151.9 30.56 152.03 30.63 152.17 30.69 152.31 30.76 152.45 30.82 152.59 30.88 152.73 30.94 152.87 31 153.01 31.06 153.15 31.13 153.29 31.19 153.43 31.25 153.57 31.32 153.71 31.39 153.84 31.46 153.98 31.52 154.12 31.59 154.26 31.65 154.4 31.72 154.54 31.78 154.68 31.85 154.82 31.92 154.96 31.98 155.09 32.05 155.23 32.12 155.37 32.19 155.5 32.25 155.64 32.32 155.77 32.39 155.91 32.46 156.05 32.53 156.18 32.6 156.32 32.67 156.45 32.74 156.59 32.81 156.72 32.88 156.86 32.96 156.99 33.03 157.13 33.1 157.26 33.17 157.4 33.25 157.53 33.32 157.67 33.39 157.81 33.47 157.94 33.54 158.07 33.61 158.21 33.69 158.34 33.76 158.47 33.83 158.6 33.91 158.74 33.98 158.87 34.06 159 34.14 159.13 34.21 159.27 34.29 159.41 34.37 159.54 34.45 159.67 34.52 159.8 34.59 159.93 34.67 160.06 34.75 160.19 34.83 160.32 34.91 160.45 34.99 160.59 35.07 160.72 35.15 160.85 35.22 160.98 35.3 161.11 35.39 161.24 35.47 161.37 35.55 161.49 35.63 161.63 35.71 161.76 35.79 161.89 35.87 162.02 35.96 162.14 36.04 162.27 36.12 162.4 36.2 162.54 36.29 162.66 36.37 162.79 36.46 162.91 36.54 163.04 36.62 163.17 36.71 163.3 36.79 163.43 36.88 163.55 36.96 163.68 37.05 163.8 37.13 163.93 37.22 164.06 37.3 164.19 37.39 164.31 37.48 164.43 37.57 164.56 37.65 164.69 37.74 164.81 37.83 164.94 37.92 165.06 38 165.18 38.1 165.32 38.19 165.44 38.28 165.56 38.36 165.68 38.45 165.81 38.55 165.93 38.63 166.05 38.72 166.18 38.82 166.3 38.9 166.43 39 166.55 39.09 166.67 39.18 166.79 39.27 166.92 39.37 167.04 39.46 167.15 39.55 167.27 39.65 167.4 39.74 167.52 39.83 167.64 39.93 167.76 40.02 167.88 40.11 168 40.21 168.12 40.3 168.24 40.4 168.36 40.5 168.48 40.59 168.6 40.69 168.72 40.78 168.84 40.88 168.95 40.98 169.07 41.07 169.19 41.17 169.31 41.27 169.42 41.36 169.55 41.47 169.66 41.56 169.78 41.66 169.9 41.76 170.02 41.86 170.13 41.96 170.25 42.05 170.36 42.16 170.48 42.25 170.6 42.36 170.71 42.45 170.82 42.56 170.95 42.66 171.06 42.76 171.17 42.86 171.29 42.96 171.4 43.07 171.51 43.16 171.63 43.27 171.74 43.37 171.86 43.47 171.97 43.57 172.08 43.68 172.2 43.78 172.31 43.89 172.42 43.99 172.53 44.09 172.64 44.19 172.76 44.3 172.87 44.4 172.97 44.51 173.09 44.61 173.2 44.72 173.31 44.83 173.42 44.94 173.53 45.04 173.64 45.15 173.75 45.25 173.86 45.36 173.97 45.47 174.08 45.58 174.19 45.68 174.29 45.79 174.41 45.9 174.51 46 174.62 46.12 174.73 46.22 174.84 46.34 174.94 46.44 175.05 46.55 175.16 46.66 175.26 46.77 175.37 46.88 175.47 46.99 175.58 47.11 175.68 47.21 175.79 47.32 175.89 47.44 176 47.54 176.1 47.66 176.21 47.77 176.31 47.88 176.42 48 176.52 48.11 176.63 48.22 176.73 48.33 176.83 48.44 176.93 48.56 177.04 48.67 177.14 48.78 177.24 48.9 177.35 49.01 177.45 49.13 177.55 49.25 177.65 49.36 177.75 49.48 177.85 49.59 177.95 49.7 178.05 49.82 178.15 49.94 178.26 50.05 178.35 50.17 178.45 50.29 178.55 50.4 178.65 50.52 178.74 50.64 178.84 50.75 178.95 50.87 179.04 50.99 179.14 51.11 179.23 51.22 179.33 51.35 179.43 51.46 179.52 51.58 179.62 51.7 179.72 51.82 179.81 51.94 179.91 52.05 180 52.18 180.1 52.3 180.2 52.42 180.28 52.54 180.38 52.66 180.48 52.78 180.57 52.9 180.66 53.02 180.76 53.15 180.85 53.26 180.94 53.38 181.04 53.51 181.12 53.63 181.22 53.75 181.31 53.87 181.4 54 181.49 54.12 181.59 54.24 181.67 54.37 181.76 54.49 181.86 54.62 181.94 54.74 182.03 54.86 182.13 54.98 182.22 55.11 182.3 55.24 182.39 55.36 182.48 55.48 182.57 55.61 182.65 55.73 182.74 55.86 182.83 55.99 182.91 56.11 183 56.24 183.09 56.36 183.18 56.5 183.26 56.62 183.35 56.75 183.43 56.87 183.52 57 183.61 57.13 183.68 57.26 183.77 57.38 183.86 57.51 183.94 57.64 184.03 57.76 184.1 57.89 184.19 58.03 184.27 58.15 184.36 58.28 184.44 58.41 184.52 58.54 184.6 58.66 184.68 58.8 184.77 58.93 184.85 59.06 184.93 59.19 185 59.32 185.08 59.45 185.16 59.58 185.25 59.71 185.33 59.84 185.41 59.97 185.49 60.11 185.56 60.24 185.64 60.37 185.71 60.5 185.79 60.63 185.87 60.76 185.95 60.89 186.03 61.02 186.11 61.16 186.18 61.29 186.25 61.43 186.33 61.56 186.4 61.69 186.48 61.82 186.55 61.96 186.63 62.09 186.7 62.22 186.78 62.36 186.85 62.49 186.93 62.62 187 62.76 187.07 62.9 187.15 63.03 187.22 63.17 187.29 63.3 187.36 63.44 187.44 63.57 187.51 63.71 187.57 63.84 187.64 63.98 187.71 64.11 187.78 64.25 187.85 64.38 187.92 64.52 187.99 64.66 188.06 64.79 188.13 64.93 188.2 65.07 188.27 65.2 188.34 65.34 188.41 65.48 188.47 65.61 188.54 65.75 188.6 65.89 188.67 66.03 188.74 66.17 188.8 66.31 188.87 66.45 188.93 66.58 188.99 66.72 189.06 66.86 189.12 67 189.19 67.14 189.25 67.28 189.31 67.42 189.38 67.56 189.44 67.7 189.51 67.84 189.57 67.98 189.63 68.11 189.69 68.25 189.75 68.39 189.81 68.53 189.87 68.67 189.94 68.81 190 68.95 190.05 69.09 190.11 69.24 190.17 69.38 190.23 69.52 190.29 69.66 190.35 69.8 190.41 69.94 190.46 70.09 190.52 70.23 190.58 70.37 190.63 70.51 190.7 70.66 190.75 70.8 190.8 70.94 190.86 71.08 190.91 71.23 190.97 71.37 191.03 71.51 191.08 71.66 191.13 71.8 191.19 71.94 191.24 72.08 191.3 72.22 191.35 72.37 191.4 72.51 191.46 72.65 191.51 72.8 191.56 72.94 191.61 73.09 191.66 73.23 191.71 73.38 191.76 73.52 191.82 73.67 191.86 73.81 191.91 73.96 191.96 74.1 192.01 74.24 192.06 74.39 192.11 74.53 192.16 74.68 192.21 74.83 192.25 74.97 192.3 75.12 192.35 75.26 192.39 75.41 192.44 75.56 192.49 75.7 192.53 75.84 192.58 75.99 192.62 76.14 192.66 76.28 192.71 76.43 192.76 76.58 192.8 76.73 192.85 76.87 192.89 77.02 192.93 77.16 192.97 77.31 193.01 77.46 193.06 77.6 193.1 77.75 193.14 77.9 193.18 78.05 193.22 78.2 193.27 78.34 193.3 78.48 193.35 78.63 193.38 78.78 193.42 78.93 193.46 79.08 193.5 79.23 193.54 79.38 193.57 79.52 193.62 79.67 193.65 79.82 193.69 79.97 193.72 80.12 193.76 80.27 193.8 80.42 193.83 80.56 193.87 80.71 193.9 80.86 193.94 81.01 193.97 81.16 194.01 81.31 194.04 81.46 194.08 81.61 194.11 81.75 194.14 81.9 194.18 82.05 194.21 82.2 194.24 82.35 194.27 82.51 194.31 82.65 194.33 82.8 194.37 82.95 194.39 83.1 194.43 83.25 194.46 83.4 194.48 83.55 194.52 83.7 194.54 83.85 194.57 84 194.6 84.15 194.63 84.3 194.66 84.46 194.68 84.6 194.71 84.75 194.74 84.9 194.76 85.06 194.79 85.21 194.81 85.36 194.84 85.5 194.87 85.66 194.89 85.81 194.92 85.96 194.95 86.11 194.96 86.27 194.99 86.41 195.02 86.56 195.03 86.71 195.06 86.87 195.08 87.02 195.1 87.17 195.12 87.32 195.15 87.47 195.16 87.62 195.19 87.78 195.21 87.93 195.23 88.08 195.25 88.23 195.27 88.38 195.29 88.53 195.3 88.69 195.32 88.84 195.34 88.98 195.36 89.14 195.38 89.29 195.4 89.45 195.41 89.6 195.43 89.74 195.44 89.9 195.46 90.05 195.48 90.21 195.5 90.36 195.5 90.51 195.52 90.66 195.54 90.81 195.55 90.97 195.57 91.12 195.57 91.27 195.59 91.42 195.6 91.57 195.62 91.73 195.63 91.88 195.64 92.04 195.65 92.18 195.66 92.33 195.67 92.49 195.69 92.64 195.7 92.8 195.71 92.94 195.71 93.1 195.72 93.25 195.73 93.41 195.74 93.56 195.75 93.71 195.76 93.86 195.77 94.01 195.78 94.17 195.78 94.32 195.78 94.47 195.79 94.62 195.8 94.78 195.8 94.93 195.81 95.09 195.82 95.24 195.82 95.39 195.83 95.54 195.83 95.7 195.84 95.85 195.84 96 195.84 96.15 195.85 96.31 195.85 96.46 195.85 96.62 195.85 96.77 195.85 96.92 195.85 97.07 195.85 97.23 195.85 97.38 195.85 97.53 195.85 97.68 195.85 97.83 195.85 97.99 195.85 98.14 195.85 98.3 195.85 98.44 195.85 98.6 195.85 98.75 195.85 98.91 195.85 99.06 195.84 99.21 195.84 99.36 195.83 99.52 195.83 99.67 195.82 99.83 195.82 99.97 195.81 100.13 195.81 100.28 195.8 100.44 195.79 100.59 195.79 100.74 195.78 100.89 195.78 101.05 195.77 101.2 195.76 101.35 195.75 101.5 195.75 101.65 195.74 101.81 195.73 101.96 195.71 102.12 195.71 102.26 195.7 102.42 195.69 102.57 195.68 102.73 195.67 102.88 195.65 103.03 195.64 103.18 195.64 103.33 195.62 103.49 195.61 103.64 195.59 103.79 195.58 103.94 195.57 104.09 195.56 104.25 195.54 104.4 195.53 104.56 195.51 104.7 195.5 104.85 195.48 105.01 195.47 105.16 195.45 105.32 195.43 105.46 195.42 105.61 195.4 105.77 195.38 105.92 195.36 106.07 195.35 106.23 195.33 106.37 195.31 106.53 195.29 106.68 195.28 106.83 195.25 106.99 195.23 107.13 195.22 107.28 195.2 107.44 195.17 107.59 195.16 107.74 195.13 107.89 195.11 108.04 195.09 108.19 195.07 108.34 195.04 108.5 195.02 108.65 195 108.8 194.97 108.95 194.95 109.1 194.93 109.25 194.9 109.4 194.88 109.56 194.85 109.71 194.82 109.85 194.8 110 194.77 110.15 194.74 110.31 194.72 110.46 194.69 110.61 194.67 110.75 194.64 110.91 194.61 111.06 194.58 111.21 194.55 111.36 194.53 111.51 194.5 111.65 194.46 111.81 194.44 111.96 194.4 112.11 194.38 112.26 194.34 112.41 194.32 112.56 194.28 112.7 194.25 112.85 194.22 113 194.18 113.16 194.15 113.31 194.12 113.46 194.09 113.6 194.05 113.75 194.02 113.9 193.98 114.05 193.95 114.2 193.91 114.35 193.88 114.5 193.84 114.64 193.81 114.79 193.77 114.94 193.74 115.09 193.7 115.24 193.66 115.39 193.63 115.54 193.59 115.69 193.55 115.83 193.51 115.98 193.48 116.12 193.43 116.27 193.4 116.42 193.35 116.57 193.32 116.72 193.28 116.87 193.23 117.01 193.2 117.16 193.15 117.3 193.11 117.45 193.07 117.6 193.03 117.75 192.99 117.9 192.94 118.04 192.9 118.19 192.86 118.33 192.81 118.48 192.77 118.62 192.72 118.77 192.68 118.92 192.64 119.07 192.59 119.21 192.55 119.36 192.5 119.51 192.45 119.65 192.41 119.79 192.37 119.94 192.31 120.08 192.27 120.23 192.22 120.37 192.17 120.52 192.12 120.67 192.08 120.81 192.03 120.96 191.98 121.1 191.93 121.25 191.88 121.39 191.83 121.53 191.78 121.67 191.73 121.82 191.68 121.96 191.62 122.11 191.58 122.25 191.53 122.4 191.47 122.54 191.42 122.69 191.37 122.83 191.32 122.97 191.26 123.12 191.2 123.26 191.15 123.41 191.1 123.55 191.05 123.68 190.99 123.82 190.93 123.97 190.88 124.11 190.83 124.25 190.77 124.4 190.71 124.54 190.65 124.68 190.6 124.82 190.54 124.97 190.49 125.11 190.43 125.25 190.36 125.39 190.31 125.53 190.25 125.67 190.19 125.81 190.14 125.96 190.08 126.1 190.01 126.24 189.95 126.38 189.89 126.52 189.83 126.66 189.77 126.8 189.71 126.94 189.65 127.08 189.59 127.22 189.52 127.36 189.46 127.5 189.4 127.64 189.33 127.78 189.27 127.92 189.21 128.05 189.15 128.19 189.08 128.33 189.02 128.47 188.96 128.61 188.89 128.75 188.83 128.88 188.76 129.02 188.69 129.16 188.62 129.3 188.55 129.43 188.49 129.57 188.42 129.71 188.35 129.85 188.29 129.98 188.22 130.12 188.15 130.26 188.08 130.39 188.01 130.53 187.94 130.66 187.88 130.8 187.81 130.93 187.74 131.07 187.67 131.2 187.59 131.34 187.52 131.47 187.45 131.61 187.38 131.75 187.31 131.89 187.24 132.02 187.16 132.16 187.09 132.29 187.02 132.42 186.95 132.56 186.88 132.69 186.81 132.82 186.73 132.96 186.66 133.09 186.58 133.22 186.51 133.35 186.43 133.49 186.35 133.63 186.28 133.76 186.2 133.89 186.12 134.02 186.05 134.15 185.98 134.29 185.9 134.42 185.82 134.55 185.74 134.68 185.67 134.81 185.59 134.95 185.51 135.08 185.43 135.21 185.35 135.34 185.28 135.47 185.19 135.6 185.11 135.73 185.03 135.86 184.95 135.99 184.87 136.12 184.79 136.25 184.71 136.38 184.63 136.51 184.55 136.63 184.46 136.76 184.38 136.9 184.31 137.02 184.22 137.15 184.14 137.28 184.05 137.4 183.97 137.53 183.89 137.66 183.8 137.79 183.72 137.92 183.63 138.04 183.54 138.17 183.47 138.29 183.38 138.43 183.29 138.55 183.2 138.68 183.12 138.8 183.03 138.93 182.95 139.06 182.86 139.18 182.78 139.31 182.69 139.43 182.6 139.55 182.51 139.68 182.42 139.81 182.33 139.93 182.24 140.05 182.15 140.18 182.07 140.31 181.97 140.43 181.88 140.55 181.8 140.67 181.71 140.79 181.61 140.92 181.52 141.04 181.43 141.16 181.34 141.28 181.25 141.41 181.16 141.53 181.06 141.65 180.97 141.77 180.88 141.9 180.79 142.02 180.69 142.14 180.6 142.26 180.51 142.38 180.41 142.5 180.32 142.62 180.22 142.74 180.13 142.86 180.04 142.98 179.94 143.1 179.85 143.22 179.75 143.34 179.65 143.46 179.56 143.58 179.46 143.7 179.37 143.81 179.27 143.93 179.17 144.05 179.07 144.17 178.97 144.28 178.88 144.4 178.78 144.52 178.68 144.63 178.58 144.75 178.48 144.87 178.39 144.98 178.28 145.1 178.19 145.22 178.08 145.33 177.98 145.45 177.89 145.56 177.78 145.67 177.69 145.79 177.58 145.91 177.48 146.02 177.38 146.14 177.28 146.25 177.17 146.36 177.07 146.48 176.97 146.59 176.86 146.71 176.77 146.81 176.66 146.92 176.56 147.04 176.45 147.15 176.35 147.26 176.24 147.38 176.14 147.48 176.03 147.6 175.93 147.71 175.82 147.82 175.72 147.93 175.61 148.04 175.51 148.15 175.4 148.26 175.3 148.37 175.19 148.48 175.08 148.58 174.98 148.7 174.87 148.8 174.77 148.92 174.65 149.02 174.55 149.14 174.44 149.24 174.33 149.35 174.22 149.46 174.11 149.56 174.01 149.67 173.89 149.77 173.79 149.88 173.67 149.99 173.57 150.1 173.46 150.2 173.35 150.31 173.24 150.41 173.12 150.52 173.02 150.62 172.9 150.73 172.79 150.83 172.68 150.94 172.57 151.04 172.46 151.15 172.34 151.24 172.23 151.35 172.12 151.45 172 151.56 171.89 151.66 171.78 151.76 171.66 151.86 171.55 151.97 171.44 152.06 171.32 152.17 171.21 152.27 171.09 152.37 170.98 152.47 170.87 152.57 170.75 152.67 170.63 152.77 170.52 152.87 170.4 152.97 170.29 153.07 170.17 153.17 170.05 153.27 169.94 153.37 169.82 153.46 169.7 153.56 169.58 153.66 169.47 153.76 169.35 153.86 169.23 153.95 169.11 154.05 169 154.15 168.87 154.24 168.76 154.34 168.64 154.43 168.52 154.53 168.4 154.63 168.28 154.71 168.17 154.81 168.04 154.91 167.92 155 167.8 155.1 167.68 155.19 167.56 155.28 167.44 155.38 167.32 155.47 167.2 155.56 167.07 155.66 166.95 155.75 166.83 155.84 166.71 155.93 166.58 156.03 166.46 156.11 166.34 156.2 166.22 156.3 166.09 156.38 165.97 156.47 165.85 156.57 165.73 156.65 165.6 156.74 165.47 156.83 165.35 156.93 165.23 157.01 165.11 157.1 164.98 157.19 164.85 157.28 164.73 157.36 164.61 157.45 164.48 157.54 164.35 157.62 164.22 157.71 164.1 157.8 163.98 157.88 163.85 157.97 163.72 158.05 163.59 158.14 163.47 158.22 163.34 158.31 163.22 158.39 163.09 158.47 162.95 158.56 162.83 158.65 162.7 158.73 162.57 158.81 162.45 158.89 162.32 158.97 162.19 159.06 162.06 159.14 161.93 159.22 161.8 159.3 161.67 159.38 161.54 159.46 161.42 159.55 161.28 159.63 161.15 159.71 161.02 159.78 160.89 159.86 160.76 159.94 160.63 160.02 160.5 160.1 160.37 160.18 160.24 160.26 160.1 160.34 159.97 160.41 159.84 160.49 159.71 160.57 159.58 160.64 159.45 160.72 159.32 160.8 159.18 160.88 159.05 160.95 158.92 161.03 158.78 161.1 158.65 161.17 158.51 161.25 158.38 161.32 158.25 161.39 158.11 161.47 157.98 161.54 157.85 161.62 157.71 161.69 157.58 161.76 157.45 161.84 157.31 161.91 157.18 161.98 157.04 162.05 156.9 162.12 156.76 162.19 156.63 162.27 156.49 162.34 156.36 162.41 156.22 162.48 156.09 162.54 155.95 162.61 155.82 162.68 155.68 162.75 155.54 162.82 155.41 162.89 155.27 162.95 155.13 163.02 155 163.09 154.86 163.16 154.72 163.22 154.59 163.29 154.45 163.35 154.31 163.42 154.17 163.48 154.03 163.55 153.9 163.61 153.76 163.68 153.62 163.75 153.48 163.81 153.34 163.87 153.2 163.94 153.06 164 152.92 164.06 152.79 164.12 152.65 164.18 152.51 164.24 152.37 164.31 152.23 164.37 152.09 164.44 151.95 164.49 151.81 164.55 151.66 164.61 151.52 164.67 151.38 164.73 151.24 164.79 151.1 164.85 150.96 164.91 150.82 164.97 150.68 165.03 150.53 165.08 150.39 165.14 150.25 165.2 150.11 165.26 149.97 165.31 149.82 165.37 149.68 165.42 149.54 165.48 149.4 165.54 149.25 165.59 149.11 165.64 148.97 165.7 148.83 165.76 148.69 165.81 148.55 165.86 148.4 165.91 148.26 165.97 148.11 166.02 147.97 166.07 147.83 166.12 147.68 166.18 147.54 166.23 147.39 166.28 147.25 166.33 147.1 166.39 146.96 166.43 146.82 166.48 146.68 166.53 146.53 166.58 146.39 166.63 146.24 166.68 146.1 166.73 145.95 166.78 145.8 166.82 145.66 166.87 145.51 166.92 145.36 166.96 145.22 167.01 145.08 167.06 144.94 167.1 144.79 167.15 144.64 167.2 144.49 167.24 144.35 167.29 144.2 167.33 144.05 167.37 143.91 167.42 143.76 167.46 143.62 167.5 143.47 167.55 143.33 167.59 143.18 167.64 143.03 167.68 142.88 167.71 142.73 167.76 142.58 167.8 142.44 167.85 142.3 167.88 142.15 167.92 142 167.96 141.85 168 141.7 168.04 141.55 168.08 141.4 168.12 141.26 168.16 141.12 168.2 140.97 168.23 140.82 168.27 140.67 168.31 140.52 168.34 140.37 168.38 140.22 168.41 140.07 168.45 139.93 168.49 139.78 168.53 139.63 168.56 139.48 168.6 139.33 168.62 139.18 168.66 139.03 168.69 138.89 168.73 138.74 168.76 138.59 168.8 138.43 168.82 138.28 168.86 138.13 168.89 137.99 168.92 137.84 168.96 137.69 168.98 137.54 169.02 137.39 169.04 137.24 169.08 137.08 169.1 136.94 169.13 136.79 169.17 136.64 169.19 136.49 169.22 136.34 169.25 136.18 169.28 136.04 169.31 135.89 169.33 135.74 169.36 135.59 169.38 135.43 169.41 135.28 169.44 135.13 169.46 134.99 169.49 134.83 169.52 134.68 169.53 134.53 169.56 134.38 169.59 134.23 169.61 134.08 169.63 133.93 169.66 133.78 169.68 133.62 169.7 133.47 169.73 133.33 169.74 133.17 169.77 133.02 169.79 132.87 169.8 132.71 169.83 132.56 169.85 132.42 169.87 132.26 169.89 132.11 169.91 131.96 169.93 131.8 169.94 131.66 169.96 131.51 169.98 131.35 170 131.2 170.01 131.04 170.03 130.89 170.05 130.75 170.07 130.59 170.08 130.44 170.1 130.29 170.11 130.13 170.13 129.99 170.14 129.83 170.15 129.68 170.17 129.53 170.19 129.37 170.2 129.22 170.21 129.07 170.22 128.92 170.23 128.76 170.25 128.61 170.26 128.46 170.28 128.31 170.28 128.16 170.29 128 170.3 127.85 170.31 127.69 170.33 127.55 170.34 127.39 170.35 127.24 170.35 127.09 170.36 126.93 170.37 126.79 170.38 126.63 170.39 126.48 170.39 126.32 170.4 126.17 170.41 126.02 170.42 125.87 170.42 125.71 170.42 125.56 170.43 125.4 170.43 125.26 170.44 125.1 170.44 124.95 170.45 124.79 170.45 124.64 170.46 124.49 170.46 124.34 170.46 124.19 170.47 124.03 170.47 123.88 170.47 123.73 170.47 123.58 170.48 123.42 170.48 123.27 170.48 123.11 170.48 122.96 170.48 122.81 170.48 122.66 170.48 122.5 170.48 122.35 170.48 122.2 170.47 122.05 170.47 121.89 170.47 121.74 170.47 121.58"/>
+    <polygon class="st11" points="172.97 121.54 172.97 121.4 172.97 121.25 172.96 121.11 172.96 120.97 172.95 120.82 172.95 120.68 172.94 120.53 172.94 120.39 172.93 120.25 172.93 120.11 172.93 119.97 172.92 119.82 172.92 119.68 172.91 119.53 172.9 119.39 172.89 119.24 172.88 119.1 172.88 118.96 172.87 118.81 172.86 118.67 172.86 118.52 172.85 118.38 172.84 118.24 172.83 118.09 172.81 117.96 172.8 117.81 172.79 117.67 172.79 117.53 172.78 117.38 172.76 117.24 172.75 117.09 172.74 116.95 172.72 116.81 172.72 116.66 172.7 116.52 172.69 116.38 172.67 116.23 172.66 116.09 172.65 115.94 172.63 115.8 172.62 115.66 172.6 115.52 172.58 115.38 172.57 115.24 172.56 115.09 172.54 114.95 172.52 114.81 172.51 114.66 172.49 114.52 172.47 114.38 172.45 114.23 172.44 114.09 172.42 113.95 172.4 113.81 172.38 113.66 172.36 113.52 172.34 113.38 172.32 113.23 172.3 113.09 172.28 112.95 172.26 112.81 172.24 112.67 172.22 112.53 172.2 112.39 172.17 112.25 172.16 112.1 172.13 111.96 172.1 111.82 172.09 111.68 172.06 111.53 172.03 111.39 172.02 111.25 171.99 111.11 171.96 110.97 171.94 110.82 171.91 110.68 171.89 110.54 171.87 110.4 171.84 110.26 171.81 110.11 171.79 109.97 171.75 109.83 171.73 109.69 171.7 109.55 171.67 109.41 171.65 109.27 171.62 109.13 171.59 108.98 171.56 108.84 171.53 108.71 171.5 108.57 171.47 108.43 171.44 108.29 171.41 108.15 171.38 108.01 171.35 107.87 171.32 107.73 171.29 107.59 171.26 107.45 171.22 107.31 171.19 107.17 171.16 107.03 171.12 106.89 171.09 106.75 171.05 106.61 171.03 106.47 170.99 106.33 170.96 106.19 170.92 106.05 170.89 105.91 170.85 105.77 170.82 105.63 170.77 105.49 170.74 105.35 170.7 105.21 170.67 105.07 170.63 104.94 170.59 104.8 170.56 104.66 170.52 104.52 170.48 104.38 170.44 104.24 170.4 104.1 170.36 103.97 170.32 103.83 170.28 103.69 170.24 103.55 170.21 103.41 170.16 103.28 170.12 103.14 170.08 103 170.04 102.86 170 102.72 169.95 102.59 169.92 102.45 169.87 102.31 169.83 102.17 169.79 102.03 169.74 101.9 169.7 101.76 169.66 101.62 169.61 101.49 169.57 101.35 169.52 101.21 169.47 101.08 169.43 100.94 169.38 100.81 169.34 100.67 169.29 100.53 169.24 100.4 169.2 100.26 169.15 100.13 169.1 99.99 169.05 99.86 169.01 99.72 168.96 99.59 168.91 99.45 168.86 99.32 168.81 99.18 168.76 99.04 168.71 98.91 168.66 98.77 168.61 98.64 168.56 98.5 168.51 98.37 168.46 98.24 168.41 98.1 168.35 97.97 168.3 97.84 168.25 97.7 168.2 97.57 168.14 97.44 168.09 97.3 168.04 97.16 167.99 97.03 167.93 96.9 167.88 96.77 167.82 96.63 167.77 96.5 167.71 96.37 167.66 96.24 167.6 96.11 167.55 95.98 167.49 95.84 167.43 95.7 167.37 95.57 167.32 95.44 167.26 95.31 167.21 95.18 167.15 95.05 167.08 94.92 167.03 94.79 166.97 94.66 166.91 94.52 166.86 94.39 166.8 94.26 166.74 94.13 166.67 94 166.61 93.87 166.55 93.74 166.49 93.61 166.43 93.47 166.37 93.35 166.31 93.22 166.25 93.09 166.18 92.96 166.12 92.83 166.06 92.71 165.99 92.57 165.93 92.44 165.87 92.31 165.81 92.19 165.74 92.06 165.68 91.93 165.61 91.8 165.55 91.67 165.48 91.54 165.41 91.41 165.35 91.29 165.28 91.16 165.21 91.04 165.15 90.9 165.08 90.78 165.02 90.65 164.95 90.52 164.88 90.4 164.81 90.27 164.75 90.14 164.68 90.02 164.61 89.89 164.54 89.77 164.47 89.64 164.4 89.51 164.33 89.39 164.26 89.26 164.19 89.14 164.12 89.01 164.05 88.88 163.98 88.76 163.91 88.64 163.83 88.51 163.76 88.39 163.69 88.26 163.62 88.14 163.54 88.02 163.47 87.89 163.4 87.77 163.33 87.64 163.26 87.52 163.18 87.4 163.11 87.28 163.03 87.15 162.96 87.03 162.88 86.91 162.81 86.79 162.73 86.66 162.65 86.54 162.58 86.42 162.5 86.3 162.42 86.17 162.35 86.05 162.28 85.93 162.2 85.81 162.12 85.68 162.04 85.57 161.96 85.45 161.88 85.33 161.8 85.2 161.73 85.08 161.65 84.97 161.57 84.85 161.49 84.72 161.41 84.61 161.33 84.49 161.25 84.36 161.17 84.25 161.09 84.13 161.01 84.01 160.93 83.89 160.84 83.77 160.76 83.66 160.69 83.53 160.6 83.42 160.52 83.3 160.43 83.18 160.35 83.07 160.27 82.95 160.19 82.83 160.1 82.71 160.02 82.6 159.93 82.49 159.85 82.36 159.77 82.25 159.68 82.14 159.59 82.02 159.5 81.9 159.43 81.79 159.34 81.67 159.25 81.56 159.16 81.44 159.08 81.33 158.99 81.22 158.9 81.09 158.81 80.98 158.73 80.87 158.64 80.75 158.55 80.64 158.46 80.53 158.38 80.41 158.29 80.31 158.2 80.19 158.11 80.08 158.02 79.97 157.93 79.85 157.84 79.74 157.75 79.63 157.66 79.52 157.57 79.41 157.48 79.29 157.39 79.18 157.29 79.08 157.21 78.96 157.11 78.85 157.02 78.74 156.93 78.63 156.84 78.52 156.74 78.41 156.65 78.3 156.56 78.19 156.46 78.08 156.37 77.97 156.28 77.87 156.18 77.76 156.09 77.65 155.99 77.54 155.89 77.43 155.81 77.33 155.71 77.21 155.61 77.11 155.52 77 155.42 76.9 155.33 76.78 155.23 76.68 155.13 76.57 155.04 76.47 154.94 76.37 154.84 76.26 154.74 76.15 154.64 76.04 154.55 75.94 154.45 75.83 154.36 75.73 154.25 75.62 154.15 75.53 154.06 75.42 153.95 75.32 153.86 75.21 153.76 75.11 153.66 75 153.56 74.9 153.45 74.8 153.36 74.7 153.25 74.59 153.16 74.49 153.05 74.39 152.95 74.28 152.85 74.18 152.75 74.08 152.64 73.98 152.55 73.88 152.44 73.78 152.34 73.68 152.24 73.58 152.13 73.48 152.03 73.37 151.92 73.28 151.82 73.18 151.71 73.08 151.61 72.98 151.51 72.89 151.41 72.78 151.3 72.68 151.2 72.59 151.09 72.49 150.99 72.39 150.88 72.29 150.77 72.19 150.67 72.1 150.56 72 150.46 71.91 150.35 71.81 150.25 71.71 150.13 71.62 150.03 71.52 149.92 71.43 149.81 71.33 149.7 71.23 149.6 71.14 149.49 71.05 149.38 70.95 149.28 70.86 149.16 70.76 149.06 70.66 148.94 70.58 148.84 70.48 148.72 70.38 148.62 70.3 148.51 70.2 148.39 70.11 148.29 70.02 148.17 69.93 148.07 69.83 147.96 69.75 147.84 69.65 147.73 69.56 147.62 69.48 147.51 69.38 147.4 69.29 147.28 69.2 147.17 69.11 147.06 69.02 146.95 68.93 146.84 68.85 146.72 68.75 146.61 68.66 146.5 68.58 146.38 68.49 146.27 68.4 146.15 68.31 146.04 68.23 145.93 68.14 145.81 68.05 145.7 67.96 145.59 67.88 145.46 67.79 145.35 67.71 145.24 67.62 145.12 67.53 145.01 67.45 144.89 67.37 144.77 67.28 144.66 67.19 144.54 67.12 144.42 67.03 144.31 66.94 144.19 66.86 144.07 66.77 143.96 66.7 143.84 66.61 143.72 66.53 143.6 66.44 143.49 66.36 143.37 66.28 143.25 66.2 143.13 66.12 143.01 66.04 142.89 65.96 142.77 65.87 142.66 65.79 142.53 65.72 142.41 65.64 142.3 65.56 142.18 65.48 142.05 65.4 141.93 65.32 141.82 65.24 141.7 65.17 141.57 65.09 141.45 65.01 141.33 64.93 141.21 64.85 141.09 64.77 140.97 64.7 140.85 64.62 140.72 64.54 140.6 64.47 140.48 64.4 140.36 64.32 140.24 64.25 140.11 64.17 139.99 64.09 139.87 64.02 139.75 63.94 139.62 63.87 139.5 63.79 139.38 63.72 139.25 63.65 139.12 63.57 139 63.5 138.88 63.43 138.76 63.36 138.63 63.29 138.5 63.22 138.38 63.15 138.26 63.08 138.13 63.01 138.01 62.94 137.88 62.87 137.75 62.8 137.63 62.73 137.51 62.66 137.38 62.59 137.25 62.52 137.12 62.45 137 62.38 136.87 62.31 136.75 62.25 136.62 62.18 136.49 62.11 136.36 62.04 136.24 61.97 136.11 61.9 135.99 61.84 135.86 61.77 135.72 61.7 135.6 61.64 135.47 61.57 135.34 61.51 135.22 61.45 135.09 61.38 134.95 61.32 134.83 61.26 134.7 61.19 134.57 61.13 134.44 61.06 134.32 61 134.19 60.93 134.05 60.87 133.92 60.81 133.79 60.75 133.67 60.69 133.54 60.63 133.41 60.57 133.28 60.51 133.14 60.44 133.01 60.38 132.88 60.33 132.75 60.27 132.62 60.21 132.49 60.15 132.36 60.09 132.23 60.03 132.1 59.97 131.96 59.92 131.83 59.86 131.7 59.8 131.57 59.74 131.44 59.68 131.31 59.63 131.18 59.57 131.04 59.52 130.91 59.46 130.78 59.4 130.64 59.35 130.51 59.3 130.37 59.24 130.24 59.19 130.11 59.13 129.98 59.08 129.85 59.03 129.71 58.98 129.58 58.92 129.45 58.87 129.31 58.82 129.18 58.77 129.04 58.71 128.9 58.66 128.77 58.61 128.64 58.56 128.5 58.5 128.37 58.46 128.23 58.41 128.1 58.35 127.97 58.3 127.83 58.26 127.7 58.21 127.56 58.16 127.43 58.11 127.29 58.07 127.16 58.01 127.02 57.97 126.88 57.92 126.74 57.87 126.61 57.83 126.47 57.78 126.34 57.73 126.2 57.69 126.06 57.64 125.93 57.59 125.79 57.55 125.66 57.51 125.52 57.46 125.38 57.42 125.25 57.38 125.11 57.33 124.97 57.29 124.84 57.24 124.7 57.2 124.56 57.16 124.43 57.11 124.29 57.08 124.15 57.03 124.01 56.99 123.88 56.95 123.74 56.91 123.6 56.87 123.46 56.83 123.32 56.79 123.19 56.75 123.05 56.71 122.91 56.68 122.77 56.63 122.63 56.6 122.49 56.55 122.36 56.52 122.22 56.48 122.08 56.45 121.94 56.4 121.8 56.37 121.66 56.33 121.52 56.3 121.38 56.27 121.24 56.23 121.1 56.2 120.97 56.16 120.83 56.13 120.69 56.09 120.55 56.06 120.41 56.02 120.27 55.99 120.13 55.95 119.99 55.92 119.85 55.89 119.71 55.85 119.57 55.83 119.43 55.79 119.29 55.76 119.15 55.73 119 55.7 118.86 55.67 118.72 55.64 118.58 55.61 118.44 55.57 118.3 55.55 118.16 55.52 118.02 55.49 117.88 55.46 117.74 55.43 117.6 55.41 117.45 55.38 117.31 55.36 117.17 55.32 117.03 55.29 116.89 55.27 116.75 55.24 116.6 55.22 116.46 55.2 116.32 55.17 116.18 55.15 116.04 55.12 115.9 55.09 115.76 55.07 115.62 55.05 115.48 55.02 115.34 55 115.19 54.98 115.05 54.95 114.91 54.94 114.77 54.91 114.62 54.89 114.48 54.87 114.34 54.85 114.2 54.83 114.05 54.8 113.91 54.79 113.77 54.77 113.63 54.74 113.48 54.73 113.34 54.71 113.2 54.69 113.05 54.67 112.91 54.66 112.77 54.64 112.63 54.62 112.49 54.6 112.35 54.59 112.2 54.57 112.06 54.55 111.92 54.53 111.77 54.52 111.63 54.51 111.49 54.49 111.34 54.47 111.2 54.46 111.06 54.45 110.91 54.43 110.77 54.42 110.63 54.4 110.48 54.39 110.34 54.38 110.19 54.37 110.05 54.36 109.91 54.34 109.77 54.33 109.63 54.32 109.49 54.31 109.34 54.3 109.2 54.29 109.05 54.28 108.91 54.27 108.77 54.26 108.62 54.25 108.48 54.25 108.33 54.24 108.19 54.23 108.04 54.22 107.9 54.21 107.76 54.2 107.62 54.19 107.48 54.19 107.33 54.18 107.19 54.18 107.05 54.17 106.9 54.17 106.76 54.16 106.61 54.16 106.47 54.15 106.32 54.15 106.18 54.14 106.04 54.14 105.89 54.13 105.75 54.13 105.6 54.13 105.46 54.12 105.32 54.12 105.18 54.12 105.03 54.12 104.89 54.12 104.75 54.12 104.6 54.12 104.46 54.11 104.31 54.11 104.17 54.12 104.02 54.12 103.88 54.12 103.74 54.12 103.59 54.12 103.45 54.12 103.31 54.12 103.17 54.13 103.02 54.13 102.88 54.13 102.73 54.14 102.59 54.14 102.45 54.15 102.3 54.15 102.16 54.16 102.01 54.16 101.87 54.17 101.72 54.17 101.58 54.18 101.44 54.18 101.29 54.18 101.15 54.19 101.01 54.2 100.87 54.21 100.73 54.22 100.58 54.22 100.44 54.23 100.29 54.24 100.15 54.25 100 54.25 99.86 54.26 99.72 54.27 99.57 54.29 99.43 54.3 99.28 54.31 99.14 54.32 99 54.32 98.86 54.34 98.72 54.35 98.58 54.36 98.43 54.38 98.29 54.39 98.14 54.4 98 54.41 97.86 54.43 97.71 54.44 97.57 54.46 97.43 54.47 97.28 54.48 97.14 54.5 97 54.52 96.85 54.53 96.71 54.54 96.57 54.56 96.42 54.58 96.28 54.6 96.14 54.61 96 54.63 95.86 54.65 95.72 54.67 95.57 54.68 95.43 54.7 95.29 54.72 95.14 54.74 95 54.76 94.86 54.78 94.72 54.8 94.57 54.82 94.43 54.84 94.29 54.86 94.15 54.88 94 54.9 93.86 54.93 93.72 54.94 93.58 54.97 93.43 55 93.29 55.01 93.15 55.04 93.01 55.07 92.87 55.08 92.73 55.11 92.59 55.14 92.45 55.16 92.31 55.19 92.16 55.21 92.02 55.23 91.88 55.26 91.74 55.29 91.6 55.31 91.46 55.35 91.32 55.37 91.17 55.4 91.03 55.43 90.89 55.45 90.75 55.48 90.61 55.51 90.47 55.54 90.33 55.57 90.19 55.6 90.05 55.63 89.9 55.66 89.76 55.69 89.62 55.72 89.48 55.75 89.34 55.78 89.2 55.81 89.06 55.85 88.92 55.88 88.78 55.91 88.64 55.94 88.5 55.98 88.36 56.01 88.22 56.05 88.08 56.07 87.94 56.11 87.8 56.14 87.66 56.18 87.52 56.21 87.38 56.25 87.25 56.28 87.11 56.33 86.97 56.36 86.83 56.4 86.69 56.43 86.55 56.47 86.41 56.51 86.27 56.54 86.13 56.58 86 56.62 85.86 56.66 85.72 56.7 85.58 56.74 85.44 56.78 85.31 56.82 85.17 56.86 85.03 56.89 84.89 56.94 84.75 56.98 84.62 57.02 84.48 57.06 84.34 57.1 84.21 57.15 84.07 57.18 83.93 57.23 83.79 57.27 83.66 57.31 83.52 57.36 83.38 57.4 83.25 57.45 83.11 57.49 82.98 57.53 82.84 57.59 82.7 57.63 82.57 57.67 82.43 57.72 82.3 57.76 82.16 57.81 82.02 57.86 81.89 57.9 81.75 57.95 81.61 58 81.47 58.05 81.34 58.09 81.2 58.14 81.07 58.19 80.93 58.24 80.8 58.29 80.67 58.34 80.53 58.39 80.4 58.44 80.26 58.49 80.13 58.54 80 58.59 79.86 58.64 79.73 58.7 79.59 58.75 79.45 58.8 79.32 58.85 79.19 58.91 79.05 58.96 78.92 59.01 78.79 59.06 78.66 59.12 78.52 59.17 78.39 59.22 78.26 59.28 78.13 59.33 77.99 59.39 77.85 59.45 77.72 59.5 77.59 59.55 77.46 59.61 77.33 59.67 77.2 59.73 77.07 59.78 76.94 59.84 76.8 59.89 76.67 59.95 76.53 60.02 76.4 60.07 76.27 60.13 76.14 60.19 76.01 60.25 75.88 60.3 75.75 60.37 75.63 60.43 75.49 60.49 75.36 60.55 75.23 60.61 75.1 60.67 74.97 60.73 74.84 60.79 74.71 60.86 74.58 60.92 74.45 60.98 74.32 61.04 74.19 61.11 74.06 61.17 73.94 61.23 73.81 61.29 73.68 61.36 73.55 61.42 73.42 61.49 73.29 61.55 73.17 61.62 73.04 61.69 72.91 61.75 72.78 61.82 72.65 61.89 72.53 61.95 72.4 62.02 72.28 62.08 72.15 62.15 72.01 62.22 71.89 62.29 71.77 62.35 71.64 62.42 71.52 62.49 71.38 62.56 71.26 62.63 71.13 62.7 71.01 62.77 70.89 62.84 70.76 62.91 70.63 62.98 70.51 63.05 70.38 63.12 70.26 63.19 70.13 63.27 70.01 63.34 69.88 63.41 69.76 63.48 69.64 63.56 69.51 63.63 69.39 63.7 69.27 63.78 69.14 63.85 69.02 63.92 68.89 63.99 68.77 64.07 68.65 64.14 68.53 64.22 68.4 64.29 68.28 64.37 68.16 64.45 68.04 64.52 67.91 64.6 67.79 64.68 67.67 64.75 67.56 64.82 67.43 64.9 67.31 64.98 67.19 65.06 67.07 65.14 66.94 65.22 66.83 65.3 66.71 65.38 66.58 65.45 66.46 65.53 66.35 65.61 66.23 65.69 66.1 65.77 65.99 65.85 65.87 65.93 65.75 66.01 65.63 66.09 65.51 66.17 65.4 66.26 65.27 66.34 65.16 66.42 65.04 66.5 64.92 66.58 64.8 66.67 64.69 66.75 64.57 66.84 64.45 66.91 64.34 67 64.22 67.08 64.1 67.17 63.99 67.25 63.87 67.33 63.75 67.42 63.64 67.51 63.52 67.6 63.41 67.67 63.3 67.76 63.18 67.85 63.06 67.94 62.95 68.02 62.83 68.11 62.72 68.2 62.61 68.29 62.49 68.37 62.38 68.46 62.27 68.55 62.15 68.64 62.04 68.72 61.92 68.81 61.81 68.9 61.7 68.99 61.58 69.08 61.48 69.17 61.37 69.26 61.25 69.35 61.14 69.44 61.02 69.53 60.92 69.62 60.81 69.71 60.69 69.81 60.59 69.9 60.47 69.99 60.36 70.08 60.26 70.18 60.14 70.26 60.04 70.36 59.92 70.45 59.81 70.54 59.7 70.64 59.6 70.73 59.49 70.82 59.38 70.92 59.27 71.01 59.16 71.11 59.05 71.21 58.94 71.29 58.84 71.39 58.73 71.49 58.62 71.58 58.52 71.68 58.41 71.77 58.31 71.87 58.19 71.97 58.09 72.06 57.98 72.16 57.88 72.26 57.77 72.36 57.67 72.46 57.56 72.55 57.46 72.65 57.35 72.75 57.25 72.85 57.14 72.95 57.04 73.04 56.93 73.15 56.83 73.24 56.72 73.35 56.63 73.44 56.52 73.54 56.42 73.65 56.31 73.74 56.22 73.85 56.11 73.94 56.01 74.05 55.91 74.15 55.8 74.25 55.7 74.35 55.6 74.46 55.5 74.56 55.4 74.66 55.3 74.77 55.2 74.86 55.1 74.97 55 75.07 54.9 75.18 54.8 75.28 54.7 75.39 54.6 75.49 54.5 75.59 54.41 75.69 54.3 75.8 54.2 75.9 54.11 76.01 54.01 76.11 53.92 76.23 53.82 76.33 53.72 76.43 53.62 76.54 53.52 76.64 53.43 76.75 53.33 76.85 53.23 76.97 53.14 77.07 53.04 77.18 52.95 77.29 52.86 77.4 52.76 77.5 52.67 77.62 52.57 77.72 52.47 77.83 52.39 77.94 52.29 78.04 52.19 78.16 52.11 78.26 52.01 78.38 51.91 78.48 51.83 78.59 51.73 78.71 51.64 78.81 51.55 78.93 51.46 79.03 51.36 79.15 51.28 79.26 51.18 79.37 51.09 79.48 51.01 79.59 50.91 79.7 50.82 79.82 50.73 79.93 50.65 80.04 50.55 80.15 50.46 80.26 50.38 80.38 50.29 80.49 50.2 80.61 50.11 80.72 50.03 80.83 49.94 80.95 49.85 81.06 49.76 81.17 49.68 81.29 49.59 81.4 49.5 81.52 49.41 81.64 49.33 81.75 49.24 81.86 49.16 81.98 49.07 82.09 48.99 82.21 48.9 82.33 48.82 82.44 48.73 82.56 48.64 82.68 48.57 82.79 48.48 82.91 48.4 83.03 48.31 83.14 48.23 83.26 48.15 83.38 48.07 83.5 47.99 83.61 47.9 83.74 47.82 83.85 47.74 83.97 47.66 84.09 47.58 84.21 47.5 84.33 47.42 84.44 47.34 84.57 47.25 84.69 47.18 84.8 47.1 84.92 47.02 85.05 46.94 85.17 46.86 85.28 46.78 85.41 46.7 85.53 46.62 85.65 46.55 85.77 46.48 85.89 46.4 86.01 46.32 86.13 46.24 86.25 46.17 86.38 46.09 86.5 46.01 86.62 45.94 86.74 45.86 86.87 45.79 86.99 45.72 87.11 45.64 87.23 45.57 87.35 45.49 87.48 45.42 87.6 45.35 87.72 45.27 87.85 45.2 87.98 45.13 88.1 45.05 88.22 44.98 88.34 44.91 88.47 44.84 88.6 44.76 88.72 44.69 88.84 44.62 88.97 44.55 89.09 44.48 89.22 44.41 89.35 44.34 89.47 44.27 89.59 44.2 89.72 44.13 89.85 44.06 89.98 44 90.1 43.93 90.23 43.86 90.35 43.79 90.48 43.73 90.61 43.66 90.74 43.59 90.86 43.53 90.99 43.46 91.11 43.39 91.25 43.33 91.38 43.26 91.5 43.2 91.63 43.14 91.76 43.07 91.88 43.01 92.01 42.94 92.15 42.87 92.27 42.81 92.4 42.75 92.53 42.68 92.66 42.62 92.78 42.56 92.92 42.5 93.05 42.44 93.18 42.38 93.31 42.31 93.43 42.25 93.56 42.19 93.69 42.13 93.82 42.07 93.96 42.01 94.09 41.95 94.22 41.89 94.35 41.83 94.48 41.77 94.61 41.71 94.74 41.65 94.87 41.6 95 41.54 95.14 41.48 95.27 41.42 95.4 41.36 95.53 41.31 95.66 41.25 95.79 41.2 95.92 41.14 96.06 41.08 96.19 41.03 96.33 40.97 96.46 40.92 96.59 40.86 96.73 40.81 96.86 40.76 96.99 40.7 97.12 40.64 97.25 40.59 97.39 40.54 97.52 40.49 97.65 40.43 97.79 40.38 97.93 40.33 98.06 40.28 98.2 40.23 98.33 40.18 98.46 40.13 98.6 40.08 98.73 40.02 98.87 39.98 99 39.93 99.13 39.88 99.27 39.83 99.4 39.78 99.54 39.74 99.67 39.68 99.81 39.64 99.94 39.59 100.08 39.54 100.22 39.49 100.36 39.45 100.49 39.4 100.63 39.35 100.76 39.31 100.9 39.26 101.04 39.22 101.17 39.18 101.31 39.13 101.44 39.08 101.58 39.04 101.72 38.99 101.85 38.95 101.99 38.9 102.13 38.86 102.26 38.83 102.4 38.78 102.54 38.74 102.67 38.7 102.81 38.65 102.95 38.62 103.09 38.57 103.22 38.53 103.36 38.49 103.5 38.45 103.64 38.42 103.78 38.37 103.91 38.34 104.05 38.29 104.19 38.26 104.33 38.21 104.47 38.18 104.61 38.14 104.74 38.1 104.88 38.07 105.02 38.03 105.16 38 105.3 37.95 105.44 37.92 105.58 37.88 105.72 37.85 105.86 37.81 106 37.78 106.13 37.74 106.27 37.71 106.41 37.67 106.55 37.64 106.69 37.61 106.83 37.58 106.97 37.54 107.11 37.51 107.25 37.48 107.39 37.44 107.53 37.41 107.67 37.38 107.81 37.35 107.95 37.32 108.1 37.29 108.24 37.26 108.38 37.23 108.52 37.2 108.66 37.17 108.8 37.14 108.94 37.11 109.08 37.09 109.22 37.06 109.36 37.03 109.51 37 109.65 36.97 109.79 36.95 109.93 36.92 110.07 36.89 110.21 36.87 110.35 36.84 110.5 36.82 110.64 36.79 110.78 36.76 110.92 36.75 111.06 36.72 111.21 36.69 111.35 36.67 111.49 36.65 111.63 36.62 111.77 36.6 111.91 36.58 112.05 36.55 112.19 36.54 112.33 36.51 112.48 36.49 112.62 36.47 112.76 36.45 112.9 36.43 113.05 36.4 113.19 36.39 113.33 36.37 113.47 36.35 113.62 36.33 113.76 36.31 113.9 36.29 114.05 36.27 114.19 36.26 114.33 36.24 114.48 36.22 114.62 36.2 114.76 36.19 114.9 36.18 115.04 36.16 115.18 36.14 115.33 36.12 115.47 36.11 115.61 36.1 115.76 36.08 115.9 36.06 116.04 36.05 116.19 36.04 116.33 36.03 116.47 36.01 116.62 36 116.76 35.98 116.91 35.98 117.05 35.97 117.19 35.95 117.33 35.94 117.47 35.93 117.62 35.92 117.76 35.91 117.9 35.9 118.05 35.89 118.19 35.88 118.33 35.87 118.48 35.86 118.62 35.85 118.77 35.84 118.91 35.84 119.06 35.83 119.2 35.83 119.34 35.82 119.49 35.81 119.62 35.8 119.77 35.8 119.91 35.79 120.05 35.78 120.2 35.78 120.34 35.77 120.49 35.77 120.63 35.77 120.78 35.77 120.92 35.76 121.06 35.76 121.21 35.76 121.35 35.75 121.5 35.75 121.64 35.75 121.78 35.75 121.92 35.74 122.07 35.74 122.21 35.74 122.35 35.74 122.5 35.74 122.64 35.74 122.79 35.74 122.93 35.74 123.08 35.74 123.22 35.74 123.36 35.74 123.51 35.75 123.65 35.75 123.8 35.75 123.94 35.75 124.08 35.76 124.22 35.76 124.37 35.77 124.51 35.77 124.65 35.77 124.8 35.77 124.94 35.78 125.09 35.78 125.23 35.79 125.38 35.79 125.52 35.8 125.66 35.81 125.81 35.82 125.95 35.82 126.09 35.83 126.23 35.84 126.38 35.84 126.52 35.85 126.66 35.86 126.81 35.87 126.95 35.88 127.1 35.89 127.24 35.9 127.38 35.91 127.53 35.91 127.67 35.92 127.82 35.94 127.96 35.95 128.1 35.96 128.25 35.98 128.39 35.98 128.53 35.99 128.67 36.01 128.81 36.02 128.96 36.04 129.1 36.05 129.24 36.06 129.39 36.08 129.53 36.09 129.67 36.11 129.82 36.12 129.96 36.13 130.1 36.15 130.25 36.17 130.39 36.19 130.53 36.2 130.68 36.22 130.82 36.23 130.96 36.25 131.1 36.27 131.24 36.29 131.38 36.31 131.53 36.33 131.67 36.34 131.81 36.36 131.96 36.38 132.1 36.4 132.24 36.42 132.38 36.44 132.53 36.47 132.67 36.48 132.81 36.5 132.96 36.53 133.1 36.54 133.24 36.57 133.38 36.59 133.52 36.61 133.67 36.64 133.81 36.66 133.95 36.68 134.09 36.71 134.23 36.74 134.37 36.75 134.51 36.78 134.65 36.81 134.79 36.83 134.94 36.86 135.08 36.89 135.22 36.91 135.36 36.94 135.5 36.96 135.64 36.99 135.79 37.02 135.93 37.04 136.07 37.08 136.21 37.1 136.35 37.13 136.49 37.16 136.63 37.19 136.77 37.22 136.91 37.25 137.05 37.28 137.2 37.31 137.34 37.34 137.48 37.37 137.62 37.4 137.76 37.44 137.9 37.46 138.04 37.5 138.18 37.53 138.32 37.57 138.46 37.59 138.6 37.63 138.74 37.66 138.88 37.7 139.02 37.73 139.16 37.77 139.3 37.8 139.44 37.84 139.58 37.87 139.72 37.91 139.85 37.94 139.99 37.98 140.13 38.01 140.27 38.06 140.41 38.09 140.55 38.13 140.69 38.16 140.83 38.21 140.97 38.24 141.1 38.28 141.24 38.32 141.38 38.36 141.52 38.4 141.66 38.44 141.79 38.48 141.93 38.52 142.07 38.56 142.21 38.6 142.35 38.64 142.48 38.69 142.62 38.72 142.76 38.76 142.9 38.81 143.03 38.85 143.17 38.9 143.31 38.94 143.44 38.98 143.58 39.03 143.72 39.07 143.85 39.11 143.99 39.16 144.13 39.2 144.26 39.25 144.4 39.29 144.53 39.34 144.67 39.39 144.8 39.43 144.94 39.48 145.08 39.53 145.22 39.57 145.36 39.62 145.49 39.67 145.63 39.72 145.76 39.76 145.9 39.81 146.03 39.86 146.17 39.91 146.3 39.96 146.43 40.01 146.57 40.06 146.7 40.11 146.84 40.16 146.97 40.22 147.1 40.26 147.24 40.31 147.38 40.36 147.51 40.42 147.65 40.47 147.78 40.52 147.91 40.57 148.05 40.63 148.18 40.68 148.31 40.73 148.44 40.79 148.58 40.85 148.71 40.9 148.84 40.95 148.97 41.01 149.11 41.06 149.25 41.12 149.38 41.18 149.51 41.23 149.64 41.29 149.77 41.34 149.9 41.41 150.03 41.46 150.16 41.52 150.3 41.57 150.44 41.63 150.57 41.69 150.7 41.75 150.83 41.81 150.96 41.87 151.09 41.93 151.22 41.99 151.35 42.05 151.48 42.1 151.61 42.17 151.74 42.23 151.87 42.29 152 42.35 152.13 42.41 152.26 42.47 152.39 42.54 152.52 42.6 152.65 42.66 152.78 42.73 152.91 42.79 153.04 42.86 153.16 42.92 153.29 42.98 153.43 43.05 153.55 43.11 153.68 43.17 153.81 43.24 153.93 43.3 154.06 43.37 154.19 43.43 154.32 43.5 154.45 43.57 154.57 43.63 154.7 43.7 154.83 43.77 154.96 43.84 155.09 43.91 155.21 43.98 155.34 44.05 155.46 44.12 155.58 44.19 155.72 44.25 155.84 44.32 155.97 44.39 156.09 44.46 156.21 44.53 156.35 44.6 156.47 44.68 156.59 44.75 156.72 44.82 156.84 44.89 156.97 44.95 157.09 45.02 157.22 45.1 157.34 45.17 157.46 45.24 157.59 45.32 157.71 45.39 157.83 45.47 157.96 45.54 158.09 45.62 158.21 45.69 158.33 45.77 158.45 45.84 158.57 45.92 158.7 45.99 158.82 46.07 158.94 46.14 159.06 46.21 159.19 46.29 159.31 46.37 159.43 46.45 159.55 46.53 159.67 46.6 159.79 46.68 159.91 46.76 160.03 46.83 160.16 46.91 160.27 46.99 160.39 47.07 160.52 47.15 160.64 47.23 160.75 47.31 160.87 47.39 161 47.47 161.11 47.55 161.23 47.63 161.35 47.72 161.47 47.8 161.59 47.88 161.7 47.95 161.83 48.04 161.94 48.12 162.06 48.21 162.18 48.29 162.3 48.37 162.41 48.45 162.53 48.54 162.65 48.62 162.76 48.71 162.88 48.79 163 48.87 163.11 48.96 163.23 49.05 163.35 49.13 163.46 49.21 163.58 49.3 163.69 49.39 163.8 49.48 163.93 49.55 164.04 49.64 164.15 49.73 164.27 49.82 164.38 49.9 164.49 49.99 164.61 50.08 164.72 50.17 164.83 50.25 164.95 50.35 165.06 50.44 165.18 50.52 165.29 50.61 165.4 50.7 165.52 50.8 165.63 50.88 165.74 50.97 165.85 51.07 165.96 51.15 166.08 51.24 166.18 51.34 166.29 51.42 166.41 51.52 166.51 51.61 166.63 51.7 166.74 51.79 166.85 51.89 166.96 51.98 167.07 52.07 167.18 52.17 167.29 52.26 167.4 52.35 167.51 52.45 167.61 52.54 167.72 52.63 167.83 52.73 167.94 52.82 168.05 52.92 168.16 53.02 168.26 53.11 168.37 53.21 168.48 53.3 168.59 53.4 168.69 53.5 168.8 53.59 168.91 53.69 169.01 53.79 169.12 53.88 169.22 53.98 169.33 54.07 169.43 54.18 169.54 54.27 169.64 54.37 169.75 54.47 169.85 54.57 169.96 54.67 170.06 54.76 170.17 54.87 170.27 54.97 170.38 55.06 170.47 55.17 170.58 55.26 170.68 55.37 170.79 55.46 170.88 55.57 170.99 55.67 171.09 55.77 171.19 55.87 171.3 55.97 171.4 56.08 171.5 56.18 171.6 56.28 171.7 56.38 171.8 56.49 171.9 56.59 172 56.7 172.1 56.79 172.2 56.9 172.3 57 172.4 57.11 172.5 57.21 172.6 57.32 172.69 57.42 172.8 57.53 172.9 57.63 172.99 57.74 173.09 57.84 173.18 57.95 173.28 58.05 173.39 58.16 173.48 58.27 173.58 58.38 173.67 58.48 173.77 58.59 173.87 58.69 173.96 58.8 174.06 58.91 174.15 59.01 174.24 59.13 174.34 59.23 174.43 59.34 174.53 59.45 174.63 59.56 174.71 59.67 174.81 59.77 174.91 59.89 174.99 59.99 175.09 60.11 175.19 60.21 175.27 60.33 175.37 60.44 175.46 60.54 175.55 60.66 175.64 60.77 175.74 60.88 175.82 60.99 175.92 61.1 176.01 61.22 176.1 61.32 176.19 61.44 176.28 61.55 176.37 61.66 176.45 61.78 176.55 61.89 176.64 62 176.72 62.12 176.81 62.23 176.9 62.34 176.99 62.46 177.07 62.57 177.16 62.69 177.25 62.8 177.34 62.91 177.42 63.03 177.51 63.14 177.6 63.25 177.69 63.37 177.77 63.49 177.86 63.6 177.94 63.72 178.03 63.83 178.12 63.94 178.2 64.07 178.28 64.18 178.37 64.29 178.46 64.42 178.53 64.53 178.62 64.65 178.7 64.77 178.79 64.88 178.87 65 178.95 65.12 179.03 65.24 179.11 65.35 179.2 65.47 179.28 65.59 179.36 65.71 179.44 65.83 179.52 65.95 179.6 66.07 179.68 66.19 179.76 66.31 179.85 66.43 179.92 66.55 180 66.66 180.08 66.79 180.16 66.91 180.24 67.03 180.32 67.14 180.4 67.27 180.48 67.39 180.55 67.51 180.62 67.63 180.7 67.76 180.78 67.88 180.86 68 180.93 68.11 181.01 68.24 181.09 68.36 181.16 68.48 181.24 68.6 181.32 68.74 181.38 68.86 181.46 68.98 181.53 69.1 181.61 69.23 181.68 69.35 181.75 69.47 181.83 69.59 181.9 69.71 181.97 69.85 182.05 69.97 182.12 70.09 182.19 70.21 182.26 70.34 182.34 70.47 182.41 70.59 182.48 70.72 182.55 70.84 182.62 70.97 182.69 71.1 182.76 71.22 182.83 71.34 182.9 71.47 182.97 71.59 183.04 71.73 183.1 71.85 183.17 71.98 183.24 72.1 183.31 72.23 183.37 72.36 183.44 72.49 183.51 72.61 183.57 72.74 183.64 72.86 183.71 72.99 183.77 73.12 183.84 73.25 183.9 73.38 183.97 73.51 184.03 73.63 184.1 73.76 184.17 73.89 184.23 74.03 184.29 74.15 184.35 74.28 184.42 74.41 184.48 74.54 184.54 74.66 184.6 74.79 184.66 74.93 184.72 75.06 184.79 75.19 184.85 75.32 184.91 75.45 184.97 75.58 185.03 75.71 185.09 75.83 185.15 75.97 185.21 76.1 185.28 76.23 185.33 76.36 185.39 76.49 185.45 76.62 185.5 76.75 185.56 76.89 185.63 77.02 185.68 77.16 185.74 77.29 185.79 77.42 185.85 77.55 185.91 77.68 185.97 77.81 186.02 77.94 186.07 78.08 186.13 78.21 186.18 78.34 186.24 78.48 186.29 78.61 186.34 78.75 186.4 78.88 186.46 79.01 186.51 79.15 186.56 79.28 186.61 79.41 186.67 79.54 186.72 79.68 186.77 79.81 186.82 79.94 186.88 80.08 186.92 80.22 186.97 80.36 187.02 80.49 187.08 80.62 187.12 80.76 187.17 80.89 187.23 81.03 187.27 81.16 187.32 81.3 187.37 81.43 187.42 81.57 187.46 81.7 187.51 81.84 187.56 81.97 187.61 82.11 187.65 82.24 187.7 82.38 187.75 82.52 187.79 82.65 187.84 82.79 187.88 82.93 187.92 83.07 187.98 83.21 188.02 83.34 188.06 83.48 188.11 83.62 188.15 83.75 188.2 83.89 188.24 84.03 188.27 84.16 188.32 84.3 188.36 84.44 188.41 84.57 188.45 84.71 188.48 84.85 188.53 84.99 188.57 85.12 188.61 85.26 188.65 85.4 188.69 85.54 188.73 85.68 188.77 85.82 188.81 85.95 188.84 86.09 188.89 86.23 188.92 86.37 188.96 86.51 189 86.65 189.04 86.79 189.07 86.92 189.1 87.06 189.15 87.2 189.18 87.34 189.22 87.48 189.25 87.62 189.29 87.76 189.32 87.9 189.36 88.04 189.39 88.18 189.43 88.32 189.46 88.46 189.49 88.6 189.52 88.74 189.56 88.88 189.59 89.02 189.62 89.16 189.66 89.3 189.69 89.44 189.72 89.58 189.75 89.72 189.78 89.86 189.81 90 189.84 90.14 189.87 90.28 189.9 90.42 189.93 90.57 189.96 90.71 189.99 90.85 190.01 90.99 190.04 91.13 190.08 91.27 190.1 91.41 190.13 91.55 190.15 91.69 190.18 91.83 190.21 91.97 190.23 92.11 190.26 92.25 190.29 92.39 190.31 92.54 190.34 92.68 190.36 92.82 190.38 92.96 190.41 93.1 190.43 93.25 190.45 93.39 190.48 93.53 190.5 93.67 190.52 93.82 190.55 93.96 190.57 94.1 190.59 94.24 190.61 94.39 190.63 94.53 190.65 94.67 190.67 94.81 190.7 94.96 190.71 95.1 190.73 95.24 190.75 95.38 190.77 95.52 190.79 95.66 190.81 95.8 190.83 95.95 190.84 96.09 190.86 96.23 190.88 96.38 190.9 96.52 190.91 96.66 190.93 96.81 190.94 96.95 190.96 97.09 190.98 97.24 190.99 97.38 191 97.52 191.02 97.67 191.04 97.81 191.05 97.95 191.06 98.09 191.07 98.23 191.09 98.38 191.1 98.52 191.12 98.66 191.12 98.81 191.13 98.95 191.15 99.1 191.16 99.24 191.17 99.38 191.18 99.53 191.19 99.67 191.2 99.82 191.21 99.96 191.22 100.1 191.23 100.25 191.24 100.39 191.25 100.53 191.26 100.67 191.26 100.81 191.27 100.96 191.27 101.1 191.28 101.25 191.29 101.39 191.3 101.54 191.3 101.68 191.31 101.82 191.32 101.97 191.32 102.11 191.33 102.26 191.33 102.4 191.33 102.54 191.33 102.68 191.34 102.82 191.34 102.97 191.34 103.11 191.35 103.26 191.35 103.4 191.35 103.55 191.35 103.69 191.36 103.83 191.36 103.98 191.36 104.12 191.36 104.27 191.36 104.41 191.36 104.56 191.36 104.7 191.36 104.84 191.36 104.98 191.36 105.12 191.36 105.27 191.35 105.41 191.35 105.56 191.35 105.7 191.35 105.85 191.34 105.99 191.34 106.13 191.33 106.28 191.33 106.42 191.33 106.57 191.33 106.71 191.32 106.85 191.32 106.99 191.31 107.13 191.31 107.28 191.3 107.42 191.29 107.57 191.28 107.71 191.28 107.86 191.27 108 191.26 108.14 191.26 108.29 191.25 108.43 191.24 108.58 191.23 108.72 191.22 108.86 191.21 109.01 191.2 109.15 191.19 109.29 191.19 109.43 191.18 109.57 191.16 109.72 191.15 109.86 191.14 110.01 191.12 110.15 191.12 110.29 191.11 110.44 191.09 110.58 191.08 110.72 191.06 110.87 191.05 111.01 191.04 111.16 191.03 111.3 191.01 111.44 190.99 111.58 190.98 111.72 190.97 111.86 190.95 112.01 190.93 112.15 190.91 112.29 190.9 112.44 190.88 112.58 190.87 112.72 190.85 112.87 190.84 113.01 190.81 113.15 190.79 113.3 190.77 113.44 190.76 113.58 190.74 113.72 190.72 113.87 190.7 114.01 190.68 114.15 190.66 114.29 190.63 114.43 190.62 114.57 190.6 114.71 190.57 114.86 190.56 115 190.53 115.14 190.51 115.28 190.49 115.42 190.46 115.57 190.44 115.71 190.42 115.85 190.39 115.99 190.36 116.13 190.35 116.28 190.32 116.42 190.29 116.56 190.27 116.7 190.24 116.84 190.22 116.99 190.19 117.13 190.16 117.27 190.14 117.41 190.11 117.55 190.08 117.69 190.06 117.83 190.02 117.97 190 118.12 189.97 118.26 189.94 118.4 189.91 118.54 189.88 118.68 189.85 118.82 189.82 118.96 189.79 119.09 189.76 119.23 189.73 119.37 189.7 119.51 189.66 119.65 189.64 119.79 189.6 119.93 189.57 120.07 189.53 120.21 189.51 120.35 189.47 120.49 189.44 120.63 189.4 120.77 189.37 120.91 189.33 121.05 189.3 121.19 189.26 121.33 189.23 121.47 189.19 121.61 189.16 121.75 189.12 121.89 189.09 122.03 189.04 122.16 189.01 122.3 188.97 122.44 188.94 122.58 188.9 122.72 188.86 122.86 188.82 123 188.78 123.13 188.75 123.27 188.7 123.41 188.66 123.55 188.62 123.69 188.58 123.82 188.55 123.96 188.5 124.1 188.46 124.24 188.41 124.38 188.38 124.52 188.34 124.66 188.29 124.79 188.25 124.93 188.2 125.07 188.16 125.2 188.12 125.34 188.07 125.48 188.03 125.61 187.99 125.75 187.94 125.89 187.9 126.02 187.85 126.16 187.81 126.29 187.76 126.43 187.71 126.57 187.67 126.7 187.62 126.84 187.57 126.97 187.53 127.11 187.48 127.24 187.44 127.38 187.38 127.51 187.34 127.65 187.29 127.79 187.24 127.92 187.19 128.06 187.14 128.19 187.09 128.33 187.04 128.46 186.99 128.6 186.94 128.73 186.89 128.86 186.84 129 186.79 129.13 186.74 129.26 186.68 129.4 186.63 129.53 186.58 129.67 186.53 129.8 186.47 129.94 186.42 130.07 186.37 130.2 186.31 130.33 186.25 130.47 186.2 130.6 186.15 130.73 186.09 130.86 186.04 130.99 185.98 131.13 185.92 131.27 185.87 131.4 185.81 131.53 185.76 131.66 185.7 131.79 185.64 131.92 185.58 132.05 185.53 132.18 185.47 132.31 185.41 132.45 185.35 132.58 185.29 132.71 185.23 132.84 185.17 132.97 185.11 133.1 185.06 133.23 185 133.36 184.93 133.49 184.87 133.63 184.81 133.75 184.75 133.88 184.69 134.01 184.63 134.14 184.56 134.27 184.5 134.4 184.44 134.53 184.38 134.66 184.31 134.79 184.24 134.92 184.18 135.04 184.12 135.17 184.05 135.3 183.99 135.43 183.93 135.56 183.86 135.69 183.8 135.81 183.73 135.94 183.67 136.06 183.6 136.2 183.53 136.32 183.47 136.45 183.4 136.58 183.33 136.7 183.26 136.83 183.19 136.96 183.12 137.08 183.05 137.21 182.98 137.33 182.91 137.46 182.85 137.59 182.78 137.72 182.71 137.84 182.64 137.96 182.57 138.09 182.5 138.22 182.43 138.34 182.36 138.46 182.29 138.59 182.22 138.71 182.15 138.84 182.08 138.96 182 139.09 181.93 139.21 181.86 139.33 181.78 139.46 181.71 139.58 181.63 139.7 181.56 139.82 181.48 139.95 181.41 140.07 181.33 140.19 181.26 140.31 181.18 140.44 181.11 140.56 181.04 140.68 180.96 140.8 180.89 140.93 180.81 141.05 180.73 141.17 180.65 141.29 180.57 141.42 180.5 141.54 180.42 141.65 180.34 141.77 180.27 141.9 180.19 142.02 180.11 142.13 180.03 142.25 179.95 142.38 179.87 142.49 179.79 142.61 179.71 142.74 179.63 142.85 179.55 142.97 179.47 143.09 179.38 143.21 179.3 143.33 179.23 143.44 179.15 143.57 179.06 143.68 178.98 143.8 178.89 143.92 178.81 144.03 178.73 144.15 178.65 144.27 178.56 144.39 178.48 144.5 178.39 144.62 178.31 144.74 178.23 144.85 178.14 144.97 178.05 145.08 177.98 145.2 177.89 145.31 177.8 145.43 177.71 145.54 177.63 145.66 177.55 145.77 177.46 145.88 177.37 146.01 177.28 146.12 177.2 146.23 177.11 146.35 177.02 146.46 176.93 146.57 176.85 146.69 176.75 146.8 176.66 146.91 176.58 147.02 176.49 147.13 176.4 147.25 176.31 147.36 176.22 147.47 176.13 147.58 176.03 147.69 175.95 147.81 175.86 147.92 175.76 148.03 175.68 148.14 175.58 148.25 175.49 148.36 175.4 148.47 175.31 148.58 175.21 148.69 175.13 148.8 175.03 148.91 174.93 149.02 174.85 149.13 174.75 149.23 174.65 149.35 174.56 149.45 174.47 149.56 174.37 149.67 174.28 149.77 174.18 149.89 174.08 149.99 173.99 150.1 173.89 150.2 173.8 150.32 173.7 150.42 173.6 150.53 173.51 150.63 173.41 150.74 173.32 150.84 173.22 150.95 173.12 151.06 173.03 151.16 172.92 151.27 172.83 151.37 172.73 151.48 172.63 151.58 172.53 151.68 172.43 151.78 172.34 151.89 172.23 151.99 172.13 152.1 172.04 152.2 171.93 152.3 171.84 152.41 171.73 152.51 171.64 152.62 171.53 152.71 171.44 152.82 171.33 152.92 171.23 153.02 171.13 153.12 171.02 153.22 170.92 153.32 170.82 153.42 170.72 153.52 170.61 153.62 170.51 153.73 170.4 153.82 170.31 153.92 170.2 154.02 170.1 154.12 169.99 154.22 169.89 154.32 169.78 154.42 169.68 154.51 169.57 154.61 169.47 154.71 169.36 154.81 169.26 154.91 169.15 155 169.05 155.1 168.94 155.19 168.83 155.29 168.73 155.39 168.62 155.48 168.52 155.58 168.41 155.68 168.3 155.77 168.19 155.87 168.09 155.96 167.97 156.06 167.87 156.15 167.76 156.24 167.65 156.34 167.54 156.44 167.43 156.52 167.33 156.62 167.21 156.72 167.11 156.8 166.99 156.9 166.89 156.99 166.78 157.08 166.66 157.17 166.56 157.27 166.44 157.35 166.33 157.45 166.22 157.54 166.11 157.63 166 157.72 165.88 157.81 165.78 157.9 165.67 157.99 165.55 158.08 165.44 158.17 165.32 158.25 165.21 158.35 165.1 158.44 164.98 158.53 164.87 158.61 164.76 158.7 164.64 158.79 164.53 158.88 164.41 158.96 164.3 159.05 164.19 159.14 164.07 159.22 163.96 159.31 163.85 159.39 163.73 159.48 163.62 159.57 163.5 159.65 163.38 159.73 163.27 159.82 163.16 159.91 163.03 159.99 162.92 160.07 162.81 160.16 162.68 160.24 162.57 160.33 162.45 160.41 162.33 160.49 162.22 160.57 162.1 160.66 161.98 160.74 161.86 160.82 161.75 160.9 161.63 160.98 161.51 161.06 161.39 161.14 161.27 161.23 161.15 161.31 161.03 161.38 160.92 161.46 160.8 161.54 160.67 161.62 160.55 161.7 160.44 161.78 160.31 161.86 160.19 161.94 160.07 162.01 159.96 162.09 159.83 162.17 159.71 162.25 159.59 162.33 159.47 162.4 159.34 162.48 159.22 162.56 159.1 162.63 158.99 162.7 158.86 162.78 158.74 162.86 158.62 162.93 158.5 163.01 158.37 163.08 158.24 163.16 158.12 163.23 158 163.31 157.88 163.38 157.75 163.45 157.63 163.53 157.51 163.6 157.39 163.67 157.25 163.75 157.13 163.81 157.01 163.88 156.89 163.95 156.76 164.02 156.63 164.09 156.51 164.16 156.38 164.23 156.26 164.3 156.14 164.37 156 164.44 155.88 164.51 155.76 164.58 155.63 164.65 155.51 164.72 155.37 164.79 155.25 164.86 155.12 164.93 155 165 154.87 165.07 154.75 165.13 154.61 165.2 154.49 165.27 154.36 165.33 154.24 165.4 154.11 165.46 153.98 165.53 153.85 165.59 153.72 165.65 153.59 165.72 153.47 165.78 153.34 165.84 153.21 165.91 153.08 165.97 152.95 166.04 152.82 166.1 152.69 166.17 152.56 166.23 152.44 166.29 152.31 166.35 152.17 166.41 152.04 166.47 151.91 166.53 151.78 166.6 151.65 166.66 151.52 166.72 151.4 166.77 151.27 166.83 151.13 166.89 151 166.95 150.87 167.01 150.74 167.07 150.61 167.13 150.48 167.18 150.35 167.24 150.22 167.3 150.08 167.36 149.95 167.42 149.81 167.47 149.68 167.53 149.55 167.58 149.42 167.64 149.29 167.7 149.16 167.75 149.02 167.8 148.89 167.86 148.76 167.92 148.63 167.97 148.49 168.02 148.35 168.07 148.22 168.13 148.09 168.18 147.95 168.23 147.82 168.28 147.69 168.34 147.56 168.39 147.42 168.44 147.29 168.49 147.16 168.54 147.02 168.6 146.89 168.64 146.75 168.69 146.61 168.75 146.48 168.8 146.34 168.84 146.21 168.89 146.07 168.94 145.94 168.99 145.8 169.03 145.67 169.09 145.53 169.13 145.4 169.18 145.26 169.23 145.13 169.27 144.99 169.32 144.86 169.37 144.72 169.41 144.59 169.46 144.45 169.51 144.31 169.55 144.18 169.59 144.04 169.64 143.9 169.68 143.76 169.73 143.62 169.77 143.48 169.81 143.35 169.86 143.21 169.9 143.07 169.94 142.94 169.99 142.8 170.02 142.66 170.07 142.53 170.11 142.39 170.15 142.25 170.19 142.11 170.23 141.98 170.27 141.84 170.31 141.7 170.35 141.56 170.39 141.42 170.42 141.29 170.47 141.15 170.5 141.01 170.55 140.87 170.58 140.73 170.62 140.59 170.66 140.45 170.7 140.31 170.73 140.18 170.77 140.04 170.8 139.9 170.84 139.76 170.87 139.62 170.91 139.48 170.94 139.34 170.98 139.2 171.01 139.06 171.05 138.92 171.08 138.78 171.12 138.64 171.15 138.5 171.18 138.36 171.21 138.22 171.25 138.08 171.27 137.94 171.31 137.8 171.34 137.66 171.37 137.52 171.4 137.38 171.43 137.24 171.47 137.1 171.49 136.96 171.53 136.82 171.55 136.68 171.58 136.53 171.61 136.39 171.64 136.25 171.67 136.11 171.69 135.97 171.72 135.83 171.74 135.69 171.78 135.55 171.81 135.41 171.83 135.27 171.86 135.13 171.88 134.99 171.9 134.85 171.93 134.71 171.95 134.56 171.98 134.42 172.01 134.28 172.03 134.14 172.05 134 172.08 133.85 172.1 133.71 172.12 133.57 172.15 133.43 172.16 133.28 172.19 133.14 172.21 133 172.23 132.86 172.25 132.71 172.28 132.57 172.3 132.43 172.31 132.29 172.33 132.14 172.36 132 172.37 131.87 172.39 131.72 172.41 131.58 172.43 131.44 172.44 131.3 172.46 131.15 172.48 131.01 172.5 130.87 172.51 130.72 172.53 130.58 172.55 130.44 172.57 130.29 172.58 130.15 172.59 130.01 172.61 129.86 172.63 129.72 172.64 129.58 172.65 129.43 172.67 129.29 172.68 129.15 172.7 129.01 172.71 128.87 172.72 128.72 172.73 128.58 172.74 128.44 172.76 128.29 172.77 128.15 172.78 128 172.79 127.86 172.8 127.72 172.81 127.57 172.82 127.43 172.83 127.28 172.84 127.14 172.85 127 172.86 126.86 172.86 126.72 172.87 126.57 172.88 126.43 172.89 126.29 172.9 126.14 172.91 126 172.91 125.85 172.92 125.71 172.93 125.56 172.93 125.42 172.93 125.28 172.94 125.13 172.94 124.99 172.95 124.84 172.95 124.7 172.96 124.56 172.96 124.42 172.97 124.28 172.97 124.13 172.97 123.99 172.98 123.84 172.98 123.7 172.98 123.55 172.98 123.41 172.98 123.27 172.98 123.12 172.98 122.98 172.99 122.83 172.99 122.69 172.99 122.55 172.98 122.41 172.98 122.26 172.98 122.12 172.98 121.98 172.98 121.83 172.98 121.69 172.97 121.54"/>
+    <text class="st22" transform="translate(24.29 127.8)"><tspan x="0" y="0">94</tspan></text>
+    <text class="st22" transform="translate(168.98 146.5)"><tspan x="0" y="0">9</tspan></text>
+    <line class="st9" x1="171.85" y1="136.39" x2="171.72" y2="121.57"/>
+    <text class="st22" transform="translate(94.36 126.53)"><tspan x="0" y="0">637</tspan></text>
+    <text class="st18" transform="translate(31.71 53.93)"><tspan x="0" y="0">JTK_</tspan><tspan class="st49" x="25.65" y="0">R</tspan><tspan class="st45" x="33.02" y="0">UV</tspan></text>
+    <text class="st13" transform="translate(113.94 57.59)"><tspan x="0" y="0">JTK_no</tspan><tspan class="st50" x="38.47" y="0">R</tspan><tspan x="45.84" y="0">UV</tspan></text>
+  </g>
+  <text class="st21" transform="translate(19.84 34.78)"><tspan x="0" y="0">A</tspan></text>
+  <text class="st21" transform="translate(211.45 34.78)"><tspan x="0" y="0">B</tspan></text>
+</svg>

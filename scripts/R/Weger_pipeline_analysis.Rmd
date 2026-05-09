@@ -55,6 +55,7 @@ library(plotly)
 library("RColorBrewer")
 
 library("clusterProfiler")
+library("ggExtra")
 ```
 
 
@@ -198,7 +199,7 @@ pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
 ggplot(pca_df_raw, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
-  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
   theme_bw() +
   theme(
     panel.grid = element_blank(),
@@ -206,18 +207,20 @@ ggplot(pca_df_raw, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, se
     axis.text = element_text(colour = "black"),
     axis.title = element_text(colour = "black", size = 12),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
-    legend.key = element_blank()
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
   ) + 
   labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
-       color = 'Light condition:Genotype') 
+       color = 'Light condition:\nGenotype') 
 
 ggsave(
   filename = "../../results/Plots/Weger_volcano_PCA_raw.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 
@@ -231,7 +234,7 @@ pca_df_TMM$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
 ggplot(pca_df_TMM, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
-  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
   theme_bw() +
   theme(
     panel.grid = element_blank(),
@@ -239,18 +242,20 @@ ggplot(pca_df_TMM, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, se
     axis.text = element_text(colour = "black"),
     axis.title = element_text(colour = "black", size = 12),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
-    legend.key = element_blank()
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
   ) + 
   labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
-       color = 'Light condition:Genotype') 
+       color = 'Light condition:\nGenotype') 
 
 ggsave(
   filename = "../../results/Plots/Weger_volcano_PCA_TMM.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 
@@ -264,7 +269,7 @@ pca_df_RUV$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
 
 ggplot(pca_df_RUV, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
   geom_point(size = 2) +
-  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 2.5) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
   theme_bw() +
   theme(
     panel.grid = element_blank(),
@@ -272,18 +277,20 @@ ggplot(pca_df_RUV, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, se
     axis.text = element_text(colour = "black"),
     axis.title = element_text(colour = "black", size = 12),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
-    legend.key = element_blank()
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
   ) + 
   labs(title = "",
        x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
        y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
-       color = 'Light condition:Genotype') 
+       color = 'Light condition:\nGenotype') 
 
 ggsave(
   filename = "../../results/Plots/Weger_volcano_PCA_RUV.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5, 
   units = "in"
 )
 
@@ -343,7 +350,7 @@ amplitude_lmr_abs = 2^(mean + amplitude_lmr) - 2^mean
 
 cbind(amplitude_lmr, coefs[, "(Intercept)"])
 
-hist(amplitude_lmr, ylim = c(0,100))
+hist(amplitude_lmr, ylim = c(0,10000))
 ```
 
 ```{r}
@@ -387,15 +394,16 @@ ggplot(df) +
 
 
 ```{r}
+metadata_dt <- as.data.table(metadata)
 
 geneSymbolsNow = c("Per1", "Per2", "Per3", "Cry1", "Cry2", "Arntl")
 #, "Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Kcnj15"
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
 
-df = data.table(t(y[geneIdsNow, ]))
+df = data.table(t(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ]))
 setnames(df, geneSymbolsNow)
-df[, geo_accession := colnames(y[geneIdsNow, ])]
+df[, geo_accession := colnames(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ])]
 
 df = merge(df, metadata_dt[, .(geo_accession, genotype, time)], by = 'geo_accession')
 df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
@@ -406,14 +414,16 @@ df[, genotype := factor(genotype, levels = c("Cry1/2_WT", "Cry1/2_dKO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Weger_oscillations1.svg",
+  height = 4,
+  width = 5,
   plot = get_last_plot()
 )
 ```
@@ -423,10 +433,9 @@ ggsave(
 geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0")
 geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
 
-
-df = data.table(t(y[geneIdsNow, ]))
+df = data.table(t(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ]))
 setnames(df, geneSymbolsNow)
-df[, geo_accession := colnames(y[geneIdsNow, ])]
+df[, geo_accession := colnames(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ])]
 
 df = merge(df, metadata_dt[, .(geo_accession, genotype, time)], by = 'geo_accession')
 df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
@@ -437,14 +446,16 @@ df[, genotype := factor(genotype, levels = c("Cry1/2_WT", "Cry1/2_dKO"))]
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Weger_oscillations2.svg",
+  height = 4,
+  width = 5,
   plot = get_last_plot()
 )
 ```
@@ -599,8 +610,8 @@ venn.plot <- venn.diagram(
   cat.cex = 1.5,
   cat.fontface = "bold",
   cat.default.pos = "outer",
-  cat.pos = c(-30, -50),
-  cat.dist = c(0.03, 0.05),
+  cat.pos = c(-30, -60),
+  cat.dist = c(0.03, 0.06),
   cat.fontfamily = "sans",
   cat.col = myCol[1:2],
   rotation.degree = 1,
@@ -612,7 +623,7 @@ venn.plot <- venn.diagram(
   ext.length = 0.84
 )
 
-pdf("Weger_JTK_RUV_WTvsMut.pdf", width = 4, height = 4)
+pdf("Weger_JTK_RUV_WTvsMut.pdf", width = 3, height = 3)
 grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
@@ -651,7 +662,7 @@ deLimma$diffExpressed[deLimma$logFC>0.58 & deLimma$adj.P.Val<0.05] <- 'UP'
 deLimma$diffExpressed[deLimma$logFC<(-0.58) & deLimma$adj.P.Val<0.05] <- 'DOWN'
 table(deLimma$diffExpressed)
 
-pdf("VennDiagram/Weger_plotSA.pdf", width = 6, height = 4)
+pdf("VennDiagram/Weger_plotSA.pdf", width = 5, height = 3.5)
 plotSA(fit)
 dev.off()
 ```
@@ -680,6 +691,11 @@ JTK_deLimma <- left_join(deLimma, JTK_output_RUV, by = "gene_id") |>
   dplyr::relocate(gene_name, .after = gene_id)
 
 table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+
+JTK_deLimma$DE <- JTK_deLimma$diffExpressed != "NO"
+summary_table <- table(JTK_deLimma[, c('DE', 'Rhythmicity_lmrAMP')])
+summary_table[,2:3]
+chisq.test(summary_table[,2:3], correct = FALSE)
 ```
 
              Rhythmicity_lmrAMP
@@ -708,6 +724,11 @@ diffExpressed Ambiguous Non-rhythmic Rhythmic
          DOWN        17          119       18
          NO         571        11049      354
          UP          34          153       36
+         
+	Pearson's Chi-squared test
+
+data:  summary_table[, 2:3]
+X-squared = 171.02, df = 1, p-value < 2.2e-16
 
 *very few rhythmic genes*
 
@@ -1031,7 +1052,7 @@ dev.off()
 ```{r}
 JTK_deLimma
 JTK_deLimma$DE_col <- ifelse(JTK_deLimma$diffExpressed_fac == "NO", "Not DE", "DE")
-ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
+logFC_amp <- ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
   geom_vline(xintercept = c(0.29), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(-0.58, 0.58), col='gray', linetype='dashed') +
   geom_hline(yintercept=c(0), col='black', lwd = 0.2) +
@@ -1045,7 +1066,7 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
     aes(, label = gene_name), 
     hjust=0, vjust=0, 
     color = "red", 
-    size = 2.5) + 
+    size = 2.7) + 
   theme(
     panel.grid = element_blank(),
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
@@ -1055,11 +1076,20 @@ ggplot(JTK_deLimma, aes(x = amp_lmr, y = logFC)) +
     legend.key = element_blank()
   )
 
+logFC_amp_marginal <- ggMarginal(
+  p = logFC_amp,
+  type = "histogram",
+  margins = "x",
+  bins = 30,
+  fill = "grey",
+  linewidth = 0.3
+)
+
 ggsave(
   filename = "../../results/Plots/Weger_DE_amp.svg",
-  plot = get_last_plot(),
-  width = 7, 
-  height = 5, 
+  plot = logFC_amp_marginal,
+  width = 5, 
+  height = 3.5, 
   units = "in"
 )
 
@@ -1155,9 +1185,9 @@ threshold_result[threshold_result$AMP == 0.55 & threshold_result$logFC == 1.0, ]
 ```{r}
 plot_df <- threshold_result |>
   filter(
-    abs(logFC - 0.3) < 1e-6 |
-    abs(logFC - 0.5) < 1e-6 |
-    abs(logFC - 0.7) < 1e-6 |
+    abs(logFC - 0.2) < 1e-6 |
+    abs(logFC - 0.4) < 1e-6 |
+    abs(logFC - 0.6) < 1e-6 |
     abs(logFC - 1) < 1e-6
   ) |>
   mutate(logFC_label = paste0("|logFC| ≥ ", round(logFC, 2)))
@@ -1183,7 +1213,9 @@ ggplot(plot_df, aes(x = AMP, y = ratio, color = log_rhythmic_DE)) +
     axis.title.y = element_text(margin = margin(r = 10)),
     plot.title = element_text(colour = "black", size = 12, hjust = 0),
     legend.key = element_blank(),
-    legend.title.align = 0.5
+    legend.title.align = 0.5,
+    axis.ticks = element_line(color = "black"),
+    axis.ticks.length = unit(3, "pt") 
   ) +
   scale_color_viridis_c(
     breaks = c(0, 1, 2, 3),
@@ -1195,8 +1227,8 @@ ggplot(plot_df, aes(x = AMP, y = ratio, color = log_rhythmic_DE)) +
 ggsave(
   filename = "../../results/Plots/Weger_AMP_threshold_fixedFC.svg",
   plot = get_last_plot(),
-  width = 8, 
-  height = 5, 
+  width = 6, 
+  height = 3.5,
   units = "in"
 )
 ```

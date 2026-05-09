@@ -115,7 +115,6 @@ colnames(raw_count) <- metadata[match(colnames(raw_count), metadata$title), ]$ge
 
 
 test <- pData(gse)
-test$
 ```
 
 
@@ -440,14 +439,16 @@ df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"), labels=c("Bmal1_
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Circadian time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Yang_oscillations1.svg",
+  height = 4 ,
+  width = 5.5,
   plot = get_last_plot()
 )
 
@@ -472,14 +473,16 @@ df[, genotype := factor(genotype, levels = c("WT", "Bmal1 KO"), labels=c("Bmal1_
 
 ggplot(df) +
   facet_grid(symbol ~ genotype, scales = 'free_y') +
-  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 2) +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
   labs(x = 'Circadian time (h)', y = 'Expression (log)') +
   scale_shape(solid = FALSE, guide = 'none') +
   scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
-  scale_x_continuous(limits = c(0, 24), breaks = seq(0, 24, 4))
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
 
 ggsave(
   filename = "../../results/Plots/Yang_oscillations2.svg",
+  height = 3.5,
+  width = 4.5,
   plot = get_last_plot()
 )
 ```
