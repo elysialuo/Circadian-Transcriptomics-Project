@@ -13,7 +13,7 @@ This pipeline analyses time-course RNA-seq data to simultaneously detect rhythmi
 ## Setup
 Run the following before using the pipeline to set up the environment required:
 
-```r{
+```r
     source("setup.R")
-}
+
 
