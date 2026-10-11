@@ -1,0 +1,1232 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## a. Basic setup
+
+### Install and load the necessary packages
+
+```{r}
+# (Optional) Set library path to desired mamba environment folder
+mamba_folder <- "/Users/elysialuo/miniforge3"
+env_name <- "circadian"
+.libPaths(paste(mamba_folder, "envs", env_name, "lib/R/library", sep = "/"))
+```
+
+
+```{r}
+# Install the required packages
+install.packages(c("tidyverse", "stringr", "ggplot2", "ggpubr", "MASS", "janitor", "naniar", "patchwork", "scales", "cluster"))
+
+install.packages(c("VennDiagram", "plotly", "RColorBrewer", "ggrepel"))
+
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install(c("limma", "edgeR", "RUVSeq", "limorhyde", "GEOquery", "AnnotationHub", "AnnotationDbi", "ensembldb", "org.Mm.eg.db"))
+
+BiocManager::install("RUVSeq")
+
+install.packages("devtools")
+devtools::install_github("naef-lab/dryR")
+
+```
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(ggplot2)
+library(ggpubr)
+library(MASS)
+library(janitor)
+library(naniar)
+library(patchwork)
+library(scales)
+library(cluster)
+library(data.table)
+
+library(dryR)
+library(limma)
+library(edgeR)
+library(RUVSeq)
+library(limorhyde)
+
+library(VennDiagram)
+library(grid)
+library(plotly)
+library(RColorBrewer)
+library(ggrepel)
+
+library(GEOquery)
+library(AnnotationHub)
+library(AnnotationDbi)
+library(ensembldb)
+library(org.Mm.eg.db)
+# 
+# library(annotate)
+# library(data.table)
+# library(foreach)  # ??
+
+library("clusterProfiler")
+library('ggExtra')
+```
+
+
+## b. Prepare the dataset for analysis
+
+### Download gene annotation dataset
+For comparable analysis, the same reference genome should be used for different datasets
+
+```{r}
+ah <- AnnotationHub()
+
+# search for id of desired dataset
+
+dbResult <- query(ah, c("EnsDb", "Mus musculus", "102")) 
+dbResult[3]
+str(dbResult)
+
+# load mouse transcript dataset
+MouseEnsDb <- ah[[dbResult$ah_id]]
+str(MouseEnsDb)
+
+# output data of interest in form of data.frame
+annotations <- genes(MouseEnsDb, return.type = "data.frame")
+```
+
+### Load matadata and raw count, followed by clean up
+
+Customisation required for this part, depending on how the data was labelled and where it was downloaded.
+
+
+```{r}
+## Load raw count matrix and metadata from Nextflow pipeline
+
+raw_count_assay <- read_rds("sample_salmon.merged.gene_counts.rds")
+raw_count_unfiltered <- assays(raw_count_assay)$counts    # raw count matrix
+
+gse <- getGEO("GSE216252", getGPL = FALSE)
+meta <- as.data.frame(gse[[1]])   # metadata
+
+```
+
+```{r}
+## Filter for protein-coding genes (necessity of this step depends on the purpose of analysis)
+raw_count <- raw_count_unfiltered |> rownames_to_column("gene_id") |> dplyr::filter(gene_id %in% annotations[annotations$gene_biotype == "protein_coding", ]$gene_id) |> column_to_rownames("gene_id")
+```
+
+
+```{r}
+## Clean up metadata for later use
+
+metadata <- meta |>   # Capture syntax to be changed according to the labels used while sampling
+  dplyr::mutate(genotype = if_else(grepl("KO", title, fixed = TRUE), true = 'KO', false = 'C')) |> # genotype 
+  dplyr::mutate(time = str_extract(meta$title, 'ZT(\\d*)', group = 1)) |> # time
+  dplyr::mutate(replicate = str_extract(meta$title, 'rep (\\d*)', group = 1)) |> # replicate
+  dplyr::mutate(experiment_accession = str_extract(meta$relation.1, 'term=(SRX\\d+)', group = 1)) |>
+  # Note: SRX accessions are extracted to match the column names in the raw count file from QC
+    dplyr::select(experiment_accession, genotype, time, replicate) |>
+  rownames_to_column("geo_accession") |>
+  arrange(geo_accession)
+
+```
+
+
+
+To this step, you should have the raw count and metadata dataframes in the following format:
+
+```{r raw data check}
+raw_count
+
+metadata
+```
+
+
+## Exciting data analysis!!
+
+Major steps were adapted from the workflow described in Bignon et al. 2023, with careful validation.
+
+### Normalisation
+#### 1. Convert to CPM & filter
+
+```{r}
+# Compute CPM
+raw_count_cpm <- as.data.frame(raw_count) |>
+  mutate(across(.cols = everything(), .fns = ~ . * 1000000 / sum(.), .names = "{col}"))
+
+# Low count filter: at least CPM >= 1 in at least two samples
+raw_count_cpm_filtered <- raw_count_cpm[rowSums(raw_count_cpm >= 1) >= 2, ]
+
+```
+
+Note: CPM values are not directly used in downstream analysis, it's only used to filter away genes with too low and insignificant abundance. TMM 
+
+#### 2. TMM normalisation
+
+```{r}
+# Filter raw count based on cpm low count filter obtained in 1.
+raw_count_filtered <- raw_count[rownames(raw_count) %in% rownames(raw_count_cpm_filtered),]
+
+# Normalise library size of filtered raw count using TMM method
+raw_count_filtered_norm <- DGEList(counts=raw_count_filtered) |> normLibSizes()
+str(raw_count_filtered_norm)
+raw_count_filtered_norm$samples
+
+# log2 cpm with normalised library size
+raw_filtered_norm_logcpm <- cpm(raw_count_filtered_norm, log=TRUE)
+raw_filtered_norm_logcpm_prior <- cpm(raw_count_filtered_norm, log=TRUE, prior.count=3)
+
+```
+
+
+
+#### 1. Remove Unwanted Variance (RUV)
+
+```{r}
+# Check coefficient of variance: limma-trend (to be used) works best for similar library sizes across samples
+
+cov <- sd(raw_count_filtered_norm$samples$lib.size) / mean(raw_count_filtered_norm$samples$lib.size) * 100
+cov
+```
+
+5.3% is good!
+
+```{r}
+### RUV
+
+x <- str_c(metadata$genotype,metadata$time,sep="_")
+differences <- makeGroups(x)
+controls <- rownames(raw_filtered_norm_logcpm_prior)
+
+# k=2, prior (better to keep low but can increase if separation if quite poor in the PCA plots later)
+RUVs_output_prior <- RUVs(raw_filtered_norm_logcpm_prior, controls, k=2, differences, isLog=TRUE)
+raw_filtered_norm_logcpm_prior_RUVcount_k2 <- RUVs_output_prior$normalizedCounts
+as.data.frame(raw_filtered_norm_logcpm_prior)
+as.data.frame(raw_filtered_norm_logcpm_prior_RUVcount_k2)
+W1 <- RUVs_output_prior$W[,1]
+W2 <- RUVs_output_prior$W[,2]
+```
+
+### Diagnostic plots
+
+### a. Variance plot across samples for unnormalised, TMM normalised and TMM & RUV normalised
+
+```{r RLE-plots}
+
+## filtered, unnormalised
+plotRLE(as.matrix(raw_count_filtered), outline=FALSE, exprs_logged = FALSE,
+        ylim=c(-0.9, 0.9), main = 'Unnormalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
+
+## filtered, TMM normalised
+plotRLE(raw_filtered_norm_logcpm_prior, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM normalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
+
+## filtered, TMM & RUV normalised
+plotRLE(RUVs_output_prior$normalizedCounts, outline=FALSE, exprs_logged = TRUE,
+        ylim=c(-0.9, 0.9), main = 'TMM & RUV normalised', xlab = "Samples", ylab = "Relative log", cex.main = 1.2)
+
+```
+
+#### b. PCA plots for unnormalised, TMM normalised and TMM & RUV normalised
+
+```{r PCA-plots-1}
+# PCA plot: CPM filtered raw count
+
+pca_test_raw <- prcomp(t(raw_count_filtered), center=TRUE, scale=TRUE)
+pca_df_raw <- as.data.frame(pca_test_raw$x)
+pca_df_raw <- left_join(rownames_to_column(pca_df_raw, "experiment_accession"), metadata, by = "experiment_accession") |> dplyr::mutate(genotype = ifelse(genotype == "C", "WT", "Bmal1KO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "Bmal1KO")))
+pca_df_raw$lightdark <- "light"
+pca_df_raw$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
+
+ggplot(pca_df_raw, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
+  ) + 
+  labs(title = "",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
+       color = 'Light condition:\nGenotype') 
+
+```
+
+
+```{r PCA-plots-2}
+## PCA plot: TMM_log_cpm normalised
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
+pca_df_TMM <- as.data.frame(pca_test$x)
+pca_df_TMM <- left_join(rownames_to_column(pca_df_TMM, "experiment_accession"), metadata, by = "experiment_accession") |> dplyr::mutate(genotype = ifelse(genotype == "C", "WT", "Bmal1KO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "Bmal1KO")))
+pca_df_TMM$lightdark <- "light"
+pca_df_TMM$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
+
+ggplot(pca_df_TMM, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
+  ) + 
+  labs(title = "",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
+       color = 'Light condition:\nGenotype') 
+```
+
+```{r PCA-plots-3}
+## PCA plot: RUV normalised, k=2, prior
+
+pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior_RUVcount_k2), center=TRUE, scale=TRUE)
+pca_df_RUV <- as.data.frame(pca_test$x)
+pca_df_RUV <- left_join(rownames_to_column(pca_df_RUV, "experiment_accession"), metadata, by = "experiment_accession") |> dplyr::mutate(genotype = ifelse(genotype == "C", "WT", "Bmal1KO")) |> dplyr::mutate(genotype_fac = factor(genotype, levels = c("WT", "Bmal1KO")))
+pca_df_RUV$lightdark <- "light"
+pca_df_RUV$lightdark[pca_df_raw$time %in% c("0", "16", "20")] <- "dark"
+
+ggplot(pca_df_RUV, aes(PC1, PC2, color = interaction(lightdark, genotype_fac, sep=':'), label = time)) +
+  geom_point(size = 2) +
+  geom_text(hjust=-0.2, vjust=-0.2, color = "black", size = 3) +
+  theme_bw() +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank(),
+    legend.title = element_text(size=12),
+    legend.text=element_text(size=10)
+  ) + 
+  labs(title = "",
+       x = paste0("PC1 (", round(summary(pca_test_raw)$importance[2,1] * 100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca_test_raw)$importance[2,2] * 100, 1), "%)"),
+       color = 'Light condition:\nGenotype') 
+```
+
+### Rhythm analysis (JTK_cycle) and DE analysis (LimoRhyde)
+
+
+### Annotation
+```{r}
+annotation_selection <- annotations |> 
+    dplyr::select(gene_id, gene_name, description, entrezid) |>
+    dplyr::filter(gene_id %in% rownames(raw_count_filtered))
+```
+
+
+### DE and rhythmicity detection
+
+#### 1. Limorhyde
+
+```{r}
+period = 24
+qvalRhyCutoff = 0.15
+
+y = raw_filtered_norm_logcpm_prior # normalised but un-RUV-ed matrix is used
+
+metadata_lmr <- metadata |>
+  dplyr::select(experiment_accession, genotype, time) |> 
+  dplyr::mutate(time = as.integer(time), cond = factor(genotype)) |>
+  dplyr::mutate(title = meta$title) |> 
+  dplyr::relocate(title, .after=experiment_accession)
+
+
+metadata_lmr = cbind(metadata_lmr, limorhyde(metadata_lmr$time, 'time_'), W1, W2)
+class(metadata_lmr)
+setDT(metadata_lmr)
+```
+
+Note that the normalised but un-RUV-ed matrix should be used as *y* as RUV normalisation will be included using the two covariate matrices W1 and W2 later in *metadata_lmr*. This is to ensure that the data input is 'RUV-ed only once'.
+
+```{r}
+condNow <- "C"
+
+design = model.matrix(~ time_cos + time_sin, data = metadata_lmr[cond == condNow])
+fit = lmFit(y[, metadata_lmr$cond == condNow], design)
+fit = eBayes(fit, trend = TRUE)
+rhyNow = data.table(topTable(fit, coef = 2:3, number = Inf), keep.rownames = TRUE)
+setnames(rhyNow, 'rn', 'gene_id')
+rhyNow[, cond := condNow]
+
+rhyLimmaSummary = rhyNow[, .(P.Value = min(P.Value)), by = gene_id]
+rhyLimmaSummary[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(rhyLimmaSummary, 'adj.P.Val')
+```
+
+```{r}
+# Relative log amplitude calculation
+
+# Extract coefficients from your limma fit
+coefs = coef(fit)[, c("(Intercept)", "time_cos", "time_sin")]
+
+# Compute (log2 *relative*) amplitude for each gene
+amplitude_lmr = sqrt(coefs[, "time_cos"]^2 + coefs[, "time_sin"]^2)
+mean = coefs[, "(Intercept)"]
+
+hist(amplitude_lmr, ylim = c(0,100))
+
+rhyLimmaSummary <- rhyLimmaSummary |> left_join(rownames_to_column(as.data.frame(amplitude_lmr), "gene_id"))
+lmr_rhythmic <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05 & rhyLimmaSummary$amplitude_lmr > 0.29, ]$gene_id
+lmr_rhythmic_unfiltered <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]$gene_id 
+```
+
+(Sinusoidal curves fitted to log2 data is asymmetric w.r.t. the baseline, hence relative log2 amplitude greater than 1 is possible.)
+
+#### 2. JTK 
+
+To classify genes as rhythmic or non-rhythmic in WT.
+
+MetaCycle could be explored for better accuracy. However, due to the regularity of the sampling time, JTK was deemed sufficient in my initial analysis.
+
+```{r}
+# Set upt the data input
+
+JTK_matrix_RUV <- as.data.frame(RUVs_output_prior$normalizedCounts[,1:30])  # columns 1-30 are the WT data
+JTK_matrix_RUV <- rownames_to_column(JTK_matrix_RUV, 'Probe')
+
+# Create .txt files in the format used by JTK
+write.table(JTK_matrix_RUV['Probe'], file = 'Sample_JTK/Bignon_sample_annot.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+write.table(JTK_matrix_RUV, file = 'Sample_JTK/Bignon_sample_data.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+```
+
+--- Run JTK in _Bignon_sample_run.R_ ---
+Ensure _JTK_CYCLE_v3_sample.R_, _Bignon_sample_annot.txt_ and _Bignon_sample_data.txt_ are in the right work directory.
+
+Edit the script of _Bignon_sample_run_v3.R_ according to the sampling structure of the data, referencing the _JTK Users Guide (v3).doc_ and examples provided by the Hughes Lab. Note that missing samples can be accounted for in the analysis with appropriate setting.                                                                                                       
+
+```{r JTK-wt}
+JTK_output <- read.table(file = 'Sample_JTK/JTK.Bignon_JTK_run_v3.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output$amp_lmr <- amplitude_lmr[JTK_output$gene_id]
+JTK_output <- dplyr::relocate(JTK_output, amp_lmr, .after = AMP)
+
+
+JTK_output$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output$Rhythmicity_lmrAMP[JTK_output$BH.Q > 0.1 | JTK_output$amp_lmr < 0.29] <- 'Non-rhythmic'
+JTK_output$Rhythmicity_lmrAMP[JTK_output$BH.Q < 0.05 & JTK_output$amp_lmr > 0.29] <- 'Rhythmic'
+JTK_output <- dplyr::relocate(JTK_output, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output$Rhythmicity_lmrAMP)
+```
+
+
+```{r JTK-wt-venn}
+## rhythmic (filtered)
+JTK_rhythmic_list <- JTK_output$gene_id[JTK_output$Rhythmicity_lmrAMP == 'Rhythmic'] 
+lmr_rhythmic_list <- lmr_rhythmic
+
+length(JTK_rhythmic_list) 
+length(lmr_rhythmic_list)
+
+
+vlist <- list(lmr_rhythmic_list, JTK_rhythmic_list)
+names(vlist) <- c("LimoRhyde", "JTK_CYCLE")
+myCol <- brewer.pal(3, "Pastel2")
+
+venn.plot <- venn.diagram(
+  x = vlist,
+  filename = NULL,
+  output = FALSE,
+  #main = "Limorhyde vs JTK_Cycle (Rhythmic genes, ambiguous unfiltered)", # Title
+
+  # Output features
+  imagetype="svg" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol[1:2],
+  
+  # Numbers
+  cex = 1,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 1,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 30),
+  cat.dist = c(0.03, 0.03),
+  cat.fontfamily = "sans",
+  cat.col = myCol[1:2],
+  rotation.degree = 1,
+  
+  # The --3 label
+  # scaled = FALSE,
+  ext.pos = c(180.5, 180.5),
+  ext.dist = c(-0.13, -0.13),
+  ext.length = c(0.7, 0.7),
+  ext.lwd = 2
+)
+
+venn.plot
+
+pdf("sample_diagrams/lmr_vs_JTK_rhythmic_filtered.pdf", width = 2.5, height = 2.5)
+grid::grid.newpage()
+grid::grid.draw(venn.plot)
+dev.off()
+
+```
+
+Run JTK on mutant to check loss of rhythmicity in mutant.
+
+
+```{r}
+# Set upt the data input
+
+JTK_matrix_RUV_mut <- as.data.frame(RUVs_output_prior$normalizedCounts[,31:60])  # columns 1-30 are the WT data
+JTK_matrix_RUV_mut <- rownames_to_column(JTK_matrix_RUV_mut, 'Probe')
+
+# Create .txt files in the format used by JTK
+write.table(JTK_matrix_RUV_mut['Probe'], file = 'Sample_JTK/Bignon_sample_annot_mut.txt', sep = '/t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+write.table(JTK_matrix_RUV_mut, file = 'Sample_JTK/Bignon_sample_data_mut.txt', sep = '\t', row.names = FALSE, col.names = TRUE, quote=FALSE)
+
+```
+
+--- Run JTK in _Bignon_sample_run.R_ ---
+
+```{r JTK-mut}
+JTK_output_mut <- read.table(file = 'Sample_JTK/JTK.Bignon_JTK_run_v3_mut.txt', header = TRUE ) |> dplyr::rename('gene_id' = 'Probe')
+
+# Lable as rythmic & non-rhythmic using limorhyde's amplitude
+
+JTK_output_mut$amp_lmr <- amplitude_lmr[JTK_output_mut$gene_id]
+JTK_output_mut <- dplyr::relocate(JTK_output_mut, amp_lmr, .after = AMP)
+
+
+JTK_output_mut$Rhythmicity_lmrAMP <- 'Ambiguous'
+JTK_output_mut$Rhythmicity_lmrAMP[JTK_output_mut$BH.Q > 0.1 | JTK_output_mut$amp_lmr < 0.29] <- 'Non-rhythmic'
+JTK_output_mut$Rhythmicity_lmrAMP[JTK_output_mut$BH.Q < 0.05 & JTK_output_mut$amp_lmr > 0.29] <- 'Rhythmic'
+JTK_output_mut <- dplyr::relocate(JTK_output_mut, Rhythmicity_lmrAMP, .before = BH.Q)
+table(JTK_output_mut$Rhythmicity_lmrAMP)
+
+```
+
+```{r JTK-mut-venn}
+## Visualise overlap (WT vs mutant rhythmic genes)
+
+JTK_rhythmic_list_wt <- JTK_output$gene_id[JTK_output$Rhythmicity_lmrAMP == 'Rhythmic'] 
+JTK_rhythmic_list_mut <- JTK_output_mut$gene_id[JTK_output_mut$Rhythmicity_lmrAMP == 'Rhythmic'] 
+
+length(JTK_rhythmic_list_wt)
+length(JTK_rhythmic_list_mut)
+
+vlist <- list(JTK_rhythmic_list_wt, JTK_rhythmic_list_mut)
+names(vlist) <- c("JTK_RUV_wt", "JTK_RUV_mut")
+myCol <- brewer.pal(3, "Pastel2")
+
+venn.plot <- venn.diagram(
+  x = vlist,
+  category.names = c("WT", "Bmal1 KO"),
+  filename = NULL,
+  output = FALSE,
+  # main = "Bignon: WT vs Mutant rhythmic genes", # Title
+  
+  # Output features
+  imagetype="svg" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol[1:2],
+  
+  # Numbers
+  cex = 1.5,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 1.5,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 15),
+  cat.dist = c(0.03, 0.035),
+  cat.fontfamily = "sans",
+  cat.col = myCol[1:2], 
+  rotation.degree = 1,
+  
+  # The --3 label
+  # scaled = FALSE,
+  ext.pos = 181.5,
+  ext.dist = -0.035,
+  ext.length = 0.84,
+  ext.lwd = 2
+)
+
+
+venn.plot
+
+pdf("sample_diagrams//Bignon_JTK_WTvsMut.pdf", width = 3, height = 3)
+grid::grid.newpage()
+grid::grid.draw(venn.plot)
+dev.off()
+```
+
+The high number of rhythmic genes in mutant can be explained by the systemic effect (Renal specific mutation in Bignon's experiment)
+
+
+#### 3. Differential expression analysis with LimoRhyde
+
+
+```{r Limma}
+design = model.matrix(~ cond + time_cos + time_sin + cond:time_cos + cond:time_sin + W1 + W2, data = metadata_lmr)
+
+qr(design)$rank  # check if W1/2 are colinear with cond
+cor(metadata_lmr[, c("W1", "W2", "time_cos", "time_sin")])  # check if W1/2 is eating away time information
+
+
+fit = lmFit(y, design)
+fit = eBayes(fit, trend = TRUE)
+plotSA <- plotSA(fit)
+deLimma = data.table(topTable(fit, coef = 2, number = Inf), keep.rownames = TRUE)
+setnames(deLimma, 'rn', 'gene_id')
+
+# record mean level of WT and KO!
+mean_wt <- fit$coefficients[,1]
+mean_ko <- fit$coefficients[,1] + fit$coefficients[,2]
+
+# deLimma = deLimma[!(gene_id %in% drLimma[adj.P.Val <= qvalDrCutoff]$gene_id)] ## don't ignore differentially rhythmic genes
+deLimma[, adj.P.Val := p.adjust(P.Value, method = 'BH')]
+setorderv(deLimma, 'adj.P.Val')
+
+deLimma
+
+deLimma$diffExpressed <- 'NO'
+deLimma$diffExpressed[deLimma$logFC>0.58 & deLimma$adj.P.Val<0.05] <- 'UP'
+deLimma$diffExpressed[deLimma$logFC<(-0.58) & deLimma$adj.P.Val<0.05] <- 'DOWN'
+table(deLimma$diffExpressed)
+
+pdf("sample_diagrams//Bignon_plotSA.pdf", width = 5, height = 3.5)
+plotSA(fit)
+dev.off()
+```
+
+Proper variance-mean behaviour - DE analysis all good.
+
+##### Plotting various specific trascripts levels over time for reality checking 
+
+Note: values plotted are log2 transformed.
+
+```{r gene-time-plot-1}
+## Plot most & least DE
+most_DE <- head(deLimma$gene_id, 3)
+least_DE <- tail(deLimma$gene_id, 3)
+
+metadata_dt <- as.data.table(metadata)
+
+geneIdsNow = most_DE
+geneSymbolsNow = annotations[match(geneIdsNow, annotations$gene_id),]$gene_name
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
+
+ggsave(
+  filename = "sample_diagrams/Bignon_mostDE.svg",
+  height = 3,
+  width = 5,
+  plot = get_last_plot()
+)
+
+
+geneIdsNow = least_DE
+geneSymbolsNow = annotations[match(geneIdsNow, annotations$gene_id),]$gene_name
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
+
+ggsave(
+  filename = "sample_diagrams/Bignon_leastDE.svg",
+  height = 3,
+  width = 5,
+  plot = get_last_plot()
+)
+```
+
+```{r gene-time-plot-2}
+### Plot known rhythmic vs non-rhythmic in WT
+
+geneSymbolsNow = c("Per1", "Per2", "Dbp", "Clock")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession') 
+df = df[genotype == "C", ]
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT"),
+                        levels = c("C"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
+
+ggsave(
+  filename = "sample_diagrams/Bignon_known_rhythmic.svg",
+  height = 4,
+  width = 4,
+  plot = get_last_plot()
+)
+
+JTK_output_RUV[JTK_output_RUV$gene_id %in% geneIdsNow,]
+
+
+
+geneSymbolsNow = c("Ppia", "Tbp", "Rplp0", "Actb")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+df = data.table(t(y[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession') 
+df = df[genotype == "C", ]
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT"),
+                        levels = c("C"))]
+
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
+
+ggsave(
+  filename = "sample_diagrams/Bignon_known_arrhythmic.svg",
+  height = 4,
+  width = 4,
+  plot = get_last_plot()
+)
+
+JTK_output_RUV[JTK_output_RUV$gene_id %in% geneIdsNow,]
+```
+
+```{r gene-time-plot-3}
+metadata_dt <- as.data.table(metadata)
+
+geneSymbolsNow = c("Per1", "Per2", "Per3", "Cry1", "Cry2", "Arntl")
+#, "Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Kcnj15"
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+
+df = data.table(t(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
+
+ggsave(
+  filename = "sample_diagrams/Bignon_oscillations1.svg",
+  height = 4,
+  width = 5,
+  plot = get_last_plot()
+)
+
+```
+
+
+```{r gene-time-plot-4}
+
+geneSymbolsNow = c("Clock", "Npas2", "Nr1d1","Dbp", "Actb", "Rplp0")
+geneIdsNow = annotations[match(geneSymbolsNow, annotations$gene_name),]$gene_id
+
+
+df = data.table(t(raw_filtered_norm_logcpm_prior_RUVcount_k2[geneIdsNow, ]))
+setnames(df, geneSymbolsNow)
+df[, experiment_accession := colnames(y[geneIdsNow, ])]
+
+df = merge(df, metadata_dt[, .(experiment_accession, genotype, time)], by = 'experiment_accession')
+df = melt(df, measure.vars = geneSymbolsNow, variable.name = 'symbol',
+          value.name = 'expr')
+df[, symbol := factor(symbol, geneSymbolsNow)]
+df[, time := as.integer(time)]
+df[, genotype := factor(genotype,
+                        labels = c("Bmal1_WT", "Bmal1_KO"),
+                        levels = c("C", "KO"))]
+
+ggplot(df) +
+  facet_grid(symbol ~ genotype, scales = 'free_y') +
+  geom_point(aes(x = time, y = expr, shape = genotype, color = symbol), size = 1.5) +
+  labs(x = 'Zeitgeber time (h)', y = 'Expression (log)') +
+  scale_shape(solid = FALSE, guide = 'none') +
+  scale_color_brewer(type = 'qual', palette = 'Dark2', guide = 'none') +
+  scale_x_continuous(limits = c(0, 20), breaks = seq(0, 20, 4))
+
+ggsave(
+  filename = "sample_diagrams/Bignon_oscillations2.svg",
+  height = 4,
+  width = 5,
+  plot = get_last_plot()
+)
+```
+
+
+#### 4. Combining rhythmicity and DE results
+
+```{r DE-rhythmicity}
+
+JTK_deLimma <- left_join(deLimma, JTK_output, by = "gene_id") |> 
+  dplyr::mutate(Rhythmicity_fac = factor(Rhythmicity_lmrAMP)) |>
+  # dplyr::mutate(Rhythmicity_abs_fac = factor(Rhythmicity_lmrAMP_abs)) |>
+  dplyr::mutate(diffExpressed_fac = factor(diffExpressed)) |> 
+  dplyr::relocate(Rhythmicity_fac, .after = "gene_id") |> 
+  dplyr::relocate(diffExpressed_fac, .after = "gene_id") |> 
+  left_join(annotation_selection[, 1:2], by = "gene_id") |> 
+  dplyr::relocate(gene_name, .after = gene_id)
+
+table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+# table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP_abs')])
+
+
+JTK_deLimma$DE <- JTK_deLimma$diffExpressed != "NO"
+summary_table <- table(JTK_deLimma[, c('DE', 'Rhythmicity_lmrAMP')])
+summary_table[,2:3]
+chisq.test(summary_table[,2:3], correct = FALSE)
+```
+
+```{r DE-rhythmicity-ratio}
+# Calculate the ratio of DE-rhythmic genes
+table <- table(JTK_deLimma[, c('diffExpressed', 'Rhythmicity_lmrAMP')])
+
+DEratio <- (table[1, ] + table[3,]) / colSums(table)
+DEratio
+```
+
+```{r DE-rhythmicity-na}
+# Check for NA values
+table(which(is.na(JTK_deLimma), arr.ind=TRUE)[,2])
+
+```
+
+##### a. Volcano plots
+
+
+```{r volcano}
+volcano_data_rhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Rhythmic')
+volcano_data_nonrhythmic <- JTK_deLimma |> dplyr::filter(Rhythmicity_lmrAMP=='Non-rhythmic')
+
+ggplot(data=volcano_data_rhythmic, aes(x=logFC, y=-log10(adj.P.Val), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.58, 0.58), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07", "black"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated", "black")) +
+  ggtitle("Volcano plot of rhythmic genes in wild type") +
+  labs(colour = "Differential expression")+ 
+  xlim(-6, 6) +
+  ylim(-1, 55) +
+  labs(
+    x = expression(log[2]~fold~change),
+    y = expression(-log[10]~adjusted~p~value),
+    colour = NULL) +
+  geom_text_repel(data = dplyr::filter(volcano_data_rhythmic, abs(logFC) > 2 | -log10(adj.P.Val) > 30), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5) + 
+  theme_bw(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  )
+
+ggsave(
+  filename = "sample_diagrams/Bignon_volcano_plot_rhythmic.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
+
+
+ggplot(data=volcano_data_nonrhythmic, aes(x=logFC, y=-log10(adj.P.Val
+), col = diffExpressed_fac)) +
+  geom_vline(xintercept = c(-0.58, 0.58), col='gray', linetype='dashed') +
+  geom_hline(yintercept=c(-log10(0.05)), col='gray', linetype='dashed') +
+  geom_point(size=1) +
+  scale_color_manual(values = c("#00AFBB", "grey", "#FC4E07"), 
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+  ggtitle("Volcano plot of non-rhythmic genes in wild type") +
+  labs(colour = "Differential expression")+ 
+  xlim(-6, 6) +
+  ylim(-1, 55) +
+  labs(
+    x = expression(log[2]~fold~change),
+    y = expression(-log[10]~adjusted~p~value),
+    colour = NULL) +
+  geom_text_repel(data = dplyr::filter(volcano_data_nonrhythmic, abs(logFC) > 2.5 | -log10(adj.P.Val) > 40), aes(, label = gene_name), hjust=0, vjust=0, color = "black", size = 2.5) +
+  theme_bw(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank()
+  )
+
+ggsave(
+  filename = "sample_diagrams/Bignon_volcano_plot_nonrhythmic.svg",
+  plot = get_last_plot(),
+  width = 8, 
+  height = 5, 
+  units = "in"
+)
+```
+
+
+#### Effect of varying AMP and DE threshold (3D and 2D plots)
+
+```{r}
+### Create lists of thresholds
+AMP_threshold_list <- seq(0, 2, by=0.05)
+logFC_threshold_list <- seq(0, 5, by=0.1)
+
+
+# Calculate the DE-rhythmic ratio at different threshold combinations
+threshold_result <- data.frame(
+  AMP = NA,
+  logFC = NA,
+  ratio = NA,
+  rhythmic_DE = NA,
+  DE = NA,
+  rhythmic = NA,
+  log_rhythmic_DE = NA
+)
+
+for (logFC_threshold in logFC_threshold_list){
+  for (AMP_threshold in AMP_threshold_list){
+    N_rhythmic_DE <- nrow(JTK_deLimma[abs(JTK_deLimma$logFC) > logFC_threshold & JTK_deLimma$adj.P.Val < 0.05 & JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > AMP_threshold])
+    N_rhythmic <- nrow(JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > AMP_threshold])
+    # print(c(AMP_threshold, N_rhythmic))
+    N_DE <- nrow(JTK_deLimma[abs(JTK_deLimma$logFC) > logFC_threshold & JTK_deLimma$adj.P.Val < 0.05])
+    
+    if (N_rhythmic == 0){
+      DE_ratio = NA
+    } 
+    else{
+      DE_ratio <- N_rhythmic_DE/N_rhythmic
+    }
+    threshold_result <- rbind(threshold_result, c(AMP = AMP_threshold, logFC = logFC_threshold, ratio = DE_ratio, rhythmic_DE = N_rhythmic_DE, DE = N_DE, rhythmic = N_rhythmic, log10_rhythmic_DE = log10(N_rhythmic_DE)))
+  }
+}
+
+threshold_result <- drop_na(threshold_result)
+threshold_result_finite <- threshold_result[is.finite(threshold_result$log_rhythmic_DE), ]
+
+```
+
+```{r 3D}
+# a. 3D plot
+
+fig <- plot_ly(threshold_result_finite, x = ~logFC, y = ~AMP, z = ~ratio,
+                mode = "markers",
+                marker = list(
+                  size = 3,
+                  color = ~log_rhythmic_DE,
+                  colorscale = "Rainbow",
+                  cmin = 0,
+                  cmax = 3.2,
+                  colorbar = list(
+                    title = "# DE-rhythmic genes",
+                    tickmode = "array",
+                    tickvals = c(0, 1, 2, 3),
+                    ticktext = c(1, 10, 100, 1000),
+                    x = 0.8,
+                    y = 0.5,
+                    len = 0.5,    
+                    thickness = 15
+                  )
+                ),
+               hovertemplate = paste(" logFC: %{x}<br>",
+                                     "AMP: %{y}<br>",
+                                     "ratio: %{z:.2f}<extra></extra>"))
+#fig <- fig %>% add_markers()
+fig <- fig %>% layout(title = list(text="(Relative) DE ratio for various logFC and relative AMP thresholds", y = 0.95, x = 0.5, xanchor = 'center', yanchor = "top"),
+  scene = list(xaxis = list(title = 'log2 Fold Change <br> Magnitude',
+                                                range = c(0, 3.5)),
+                                   yaxis = list(title = 'Amplitude (relative)',
+                                                range = c(0, 1.5)),
+                                   zaxis = list(title = 'Ratio of DE genes : Rhythmic genes',
+                                                range = c(0, 0.9)),
+               aspectmode = "cube")
+  )
+
+htmlwidgets::saveWidget(fig, "sample_diagrams/Bignon_AMP_FC_threshold_3D.html", selfcontained = TRUE)
+fig
+```
+
+
+```{r 2D-1}
+# b. 2D 'slices' of fixed logFCs thresholds
+
+plot_df <- threshold_result |>
+  dplyr::filter(
+    abs(logFC - 0.2) < 1e-6 |
+    abs(logFC - 0.4) < 1e-6 |
+    abs(logFC - 0.6) < 1e-6 |
+    abs(logFC - 1) < 1e-6
+  ) |>
+  mutate(logFC_label = paste0("|logFC| ≥ ", round(logFC, 2)))
+
+plot_df
+
+ggplot(plot_df, aes(x = AMP, y = ratio, color = log_rhythmic_DE)) +
+  geom_point(size = 1) +
+  facet_wrap(~ logFC_label, ncol = 2, nrow = 2) +
+  labs(
+    x = "Relative amplitude threshold",
+    y = "Proportion of rhythmic genes that are DE",
+    color = "# rhythmic DE genes"
+  ) +
+  ylim(0, 0.9) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.6),
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(colour = "black", size = 12),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    plot.title = element_text(colour = "black", size = 12, hjust = 0),
+    legend.key = element_blank(),
+    legend.title.align = 0.5,
+    axis.ticks = element_line(color = "black"),
+    axis.ticks.length = unit(3, "pt") 
+  ) +
+  scale_color_viridis_c(
+    breaks = c(0, 1, 2, 3),
+    labels = c("1", "10", "100", "1000"),
+    values = scales::rescale(c(0, 1, 2, 3)),
+    limits = c(0, 3.3)
+  )
+
+ggsave(
+  filename = "sample_diagrams/Bignon_AMP_threshold_fixedFC.svg",
+  plot = get_last_plot(),
+  width = 6, 
+  height = 3.5, 
+  units = "in"
+)
+```
+
+```{r 2D-2}
+# 2D 'slices' of fixed AMP threshold
+
+logFC_plot <- threshold_result[near(threshold_result$AMP, 0.5),]
+
+sum(near(threshold_result$AMP, 0.5))
+
+ggplot(logFC_plot) +
+  geom_point(mapping = aes(x = logFC, y = log(ratio))) +
+  xlim(0, 2)
+
+ggsave(
+  filename = "sample_diagrams/Bignon_AMP_threshold_fixedAMP.svg",
+  plot = get_last_plot(),
+  width = 6, 
+  height = 3.5, 
+  units = "in"
+)
+```
+
+```{r GO}
+## (Thanks Gemini for shortening this part of the code for me :>)
+
+
+# ------------------------------------------------------------------------------
+# 1. Background Gene Mapping (Run ONCE)
+# ------------------------------------------------------------------------------
+bg_ids <- AnnotationDbi::select(
+  org.Mm.eg.db,
+  keys = rownames(raw_count_filtered),
+  columns = "ENTREZID",
+  keytype = "ENSEMBL"
+)$ENTREZID |> na.omit() |> unique()
+
+# ------------------------------------------------------------------------------
+# 2. Complete Processing Function (Export TSV + Plot with Title)
+# ------------------------------------------------------------------------------
+process_gene_subset <- function(df, subset_name, bg_ids, plot_title, pval_cutoff = 0.05) {
+  
+  # A. Annotate & Save TSV File
+  annot_df <- right_join(
+    as.data.frame(annotations)[match(df$gene_id, annotations$gene_id), ],
+    as.data.frame(df),
+    by = "gene_id"
+  ) |> arrange(desc(abs(logFC)))
+  
+  # Clean list columns if any exist to prevent write.table errors
+  annot_df <- annot_df |> 
+    mutate(across(where(is.list), ~ sapply(., paste, collapse = ";")))
+
+  tsv_path <- paste0("Bignon_", subset_name, "_genes_annot.tsv")
+  write.table(annot_df, file = tsv_path, sep = "\t", row.names = FALSE, quote = FALSE)
+  
+  # B. Map Symbols to Entrez IDs
+  sig_ids <- AnnotationDbi::select(
+    org.Mm.eg.db,
+    keys = df$gene_name,
+    columns = "ENTREZID",
+    keytype = "SYMBOL"
+  )$ENTREZID |> na.omit() |> unique()
+  
+  # C. GO Enrichment
+  ego <- enrichGO(
+    gene          = sig_ids,
+    universe      = bg_ids,
+    OrgDb         = org.Mm.eg.db,
+    keyType       = "ENTREZID",
+    ont           = "BP",
+    pAdjustMethod = "BH",
+    pvalueCutoff  = pval_cutoff,
+    qvalueCutoff  = pval_cutoff,
+    readable      = TRUE
+  )
+  
+  # Preview results in console
+  print(head(as.data.frame(ego)))
+  
+  # D. Plotting with Title
+  p <- dotplot(ego, showCategory = 10) +
+    ggtitle(plot_title)
+  
+  pdf_path <- paste0("sample_diagrams/Bignon_GO_", subset_name, ".pdf")
+  pdf(pdf_path, width = 6, height = 4)
+  print(p)
+  dev.off()
+  
+  print(p)
+  
+  return(list(annotated_df = annot_df, ego = ego))
+}
+
+# ------------------------------------------------------------------------------
+# 3. Define Gene Subsets & Run All
+# ------------------------------------------------------------------------------
+gene_subsets <- list(
+  "DE_rhythmic"     = JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > 0.29 & abs(JTK_deLimma$logFC) > 0.58 & JTK_deLimma$adj.P.Val < 0.05, ],
+  "DE_rhythmic_AMP" = JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > 0.58 & abs(JTK_deLimma$logFC) > 0.58 & JTK_deLimma$adj.P.Val < 0.05, ],
+  "DE"              = JTK_deLimma[abs(JTK_deLimma$logFC) > 0.58 & JTK_deLimma$adj.P.Val < 0.05, ],
+  "rhythmic"        = JTK_deLimma[JTK_deLimma$BH.Q < 0.05 & JTK_deLimma$amp_lmr > 0.29, ]
+)
+
+# Custom plot titles for each section
+titles <- c(
+  "DE_rhythmic"     = "DE & Rhythmic Genes",
+  "DE_rhythmic_AMP" = " & Rhythmic Genes (High AMP cutoff)",
+  "DE"              = "DE Genes Only",
+  "rhythmic"        = "Rhythmic Genes Only"
+)
+
+# Custom p-value cutoffs per subset (subset 1 uses 0.1, others 0.05)
+pval_cutoffs <- c("DE_rhythmic" = 0.1, "DE_rhythmic_AMP" = 0.05, "DE" = 0.05, "rhythmic" = 0.05)
+
+# Execute everything in one clean loop
+results <- purrr::imap(gene_subsets, function(df, name) {
+  process_gene_subset(
+    df          = df,
+    subset_name = name,
+    bg_ids      = bg_ids,
+    plot_title  = titles[[name]],
+    pval_cutoff = pval_cutoffs[[name]]
+  )
+})
+```
+
+

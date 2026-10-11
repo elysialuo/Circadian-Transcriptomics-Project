@@ -150,7 +150,6 @@ nrow(raw_count_cpm_filtered)
 nrow(Bignon_processed_data_sorted) # Bignon's number of genes detected
 nrow(raw_count)
 
-
 ```
 
 
@@ -198,6 +197,7 @@ W2 <- RUVs_output_prior$W[,2]
 
 
 ```{r}
+getwd()
 pdf("../../results/Plots/Bignon_RLE.pdf", width = 3, height = 7)
 
 par(mfrow = c(3,1))
@@ -258,7 +258,6 @@ ggsave(
 
 
 ```{r}
-
 ## PCA plot: TMM_log_cpm normalised
 
 pca_test <- prcomp(t(raw_filtered_norm_logcpm_prior), center=TRUE, scale=TRUE)
@@ -543,7 +542,7 @@ lmr_rhythmic <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05 & rhyLimmaSumma
 lmr_rhythmic_unfiltered <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]$gene_id 
 ```
 
-I do have some genes with rAMP > 1: (my A calcutaed is the peak-mean ratio, hence possible) very high peak to trough ratio!?
+I do have some genes with rAMP > 1: (my A calcutaed is the peak-mean ratio, hence possible) very high peak to trough ratio!? NOOOOOO WRONG
 
 ### c. JTK (WT)
 
@@ -946,7 +945,7 @@ grid::grid.newpage()
 grid::grid.draw(venn.plot)
 dev.off()
 ```
-
+#### Comparison of three methods
 ```{r}
 library(eulerr)
 library(RColorBrewer)
