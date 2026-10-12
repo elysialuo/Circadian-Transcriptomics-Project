@@ -17,3 +17,6 @@ Run the following before using the pipeline to set up the environment required:
 source("setup.R")
 ```
 
+## References
+(To be updated)
+
