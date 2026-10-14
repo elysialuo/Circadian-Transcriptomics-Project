@@ -3,7 +3,7 @@
 ## Pipeline overview
 This pipeline analyses time-course RNA-seq data to simultaneously detect rhythmic and differentially expressed genes, as illustrated in the flowchart below:
 
-![alt text](/results/Figures/Final%20Illustrations/Pipeline%20Flowchart-3.png)
+![alt text](/results/Figures/Final%20Illustrations/Pipeline%20Flowchart-3.png){width=70%}
 
 ## Directory
 * Raw and processed data used are stored in /data
