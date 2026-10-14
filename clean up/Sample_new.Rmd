@@ -394,7 +394,7 @@ lmr_rhythmic_unfiltered <- rhyLimmaSummary[rhyLimmaSummary$adj.P.Val < 0.05, ]$g
 
 #### 2. JTK 
 
-To classify genes as rhythmic or non-rhythmic in WT.
+To classify genes as rhythmic or non-rhythmic in WT. Detailed guide of running JTK_CYCLE (v3) can be found here: https://openwetware.org/wiki/File:JTKversion3.zip.
 
 MetaCycle could be explored for better accuracy. However, due to the regularity of the sampling time, JTK was deemed sufficient in my initial analysis.
 
@@ -597,6 +597,8 @@ The high number of rhythmic genes in mutant can be explained by the systemic eff
 
 
 #### 3. Differential expression analysis with LimoRhyde
+
+To compare expression levels between WT and mutant while accounting for rhythmicity. Detailed guide on how to run LimoRhyde can be found here: https://cran.r-project.org/web/packages/limorhyde/vignettes/introduction.html.
 
 
 ```{r Limma}
