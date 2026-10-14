@@ -3,15 +3,19 @@
 # Set CRAN mirror
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-# Install BiocManager if missing
+# Get list of currently installed packages
+installed_pkgs <- rownames(installed.packages())
+
+# 1. Install BiocManager if missing
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 
-# CRAN packages
+# 2. CRAN packages
 cran_packages <- c(
   "tidyverse",
-  "dryR",
+  "stringr",
+  "ggplot2",
   "ggpubr",
   "MASS",
   "janitor",
@@ -19,42 +23,42 @@ cran_packages <- c(
   "patchwork",
   "scales",
   "cluster",
-  "RColorBrewer",
-  "ggrepel",
   "data.table",
-  "foreach",
   "VennDiagram",
   "plotly",
-  "ggExtra"
+  "RColorBrewer",
+  "ggrepel",
+  "foreach",
+  "ggExtra",
+  "devtools"
 )
 
-# Bioconductor packages
-bioc_packages <- c(
-  "GEOquery",
-  "AnnotationHub",
-  "AnnotationDbi",
-  "ensembldb",
-  "limma",
-  "edgeR",
-  "RUVSeq",
-  "limorhyde",
-  "annotate",
-  "org.Mm.eg.db",
-  "clusterProfiler"
-)
-
-# Install missing CRAN packages
-installed_packages <- rownames(installed.packages())
-
-missing_cran <- setdiff(cran_packages, installed_packages)
-
+missing_cran <- setdiff(cran_packages, installed_pkgs)
 if (length(missing_cran) > 0) {
   install.packages(missing_cran)
 }
 
-# Install missing Bioconductor packages
-missing_bioc <- setdiff(bioc_packages, installed_packages)
+# 3. Bioconductor packages
+bioc_packages <- c(
+  "limma",
+  "edgeR",
+  "RUVSeq",
+  "limorhyde",
+  "GEOquery",
+  "AnnotationHub",
+  "AnnotationDbi",
+  "ensembldb",
+  "org.Mm.eg.db",
+  "annotate",
+  "clusterProfiler"
+)
 
+missing_bioc <- setdiff(bioc_packages, installed_pkgs)
 if (length(missing_bioc) > 0) {
-  BiocManager::install(missing_bioc)
+  BiocManager::install(missing_bioc, update = FALSE)
+}
+
+# 4. GitHub packages
+if (!requireNamespace("dryR", quietly = TRUE)) {
+  devtools::install_github("naef-lab/dryR")
 }

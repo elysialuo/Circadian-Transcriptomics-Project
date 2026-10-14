@@ -14,8 +14,11 @@ env_name <- "circadian"
 .libPaths(paste(mamba_folder, "envs", env_name, "lib/R/library", sep = "/"))
 ```
 
+Note the section below can be skipped if the packages are already installed in the mamba environment according to setup.R.
 
 ```{r}
+# （Optional) Download the necessary packages if not already installed according to setup.R
+
 # Install the required packages
 install.packages(c("tidyverse", "stringr", "ggplot2", "ggpubr", "MASS", "janitor", "naniar", "patchwork", "scales", "cluster"))
 
